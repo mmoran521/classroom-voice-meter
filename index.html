@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Classroom Voice Meter</title>
 
   <style>
@@ -104,16 +103,16 @@
       left: 0;
       width: 100%;
       height: 2px;
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.85);
       z-index: 2;
     }
 
     .line-quiet {
-      bottom: 38%;
+      bottom: 35%;
     }
 
     .line-loud {
-      bottom: 70%;
+      bottom: 72%;
     }
 
     .status-box {
@@ -131,6 +130,12 @@
     .status {
       font-size: 36px;
       font-weight: 700;
+    }
+
+    .db-readout {
+      margin-top: 10px;
+      font-size: 15px;
+      color: #64748b;
     }
 
     .controls {
@@ -249,7 +254,6 @@
 <body>
 
 <div class="wrap">
-
   <div class="card">
 
     <h1>Classroom Voice Meter</h1>
@@ -267,50 +271,27 @@
       </div>
 
       <div class="meter-shell">
-
         <div class="meter-line line-loud"></div>
         <div class="meter-line line-quiet"></div>
-
-        <div
-          id="meterFill"
-          class="meter-fill">
-        </div>
-
+        <div id="meterFill" class="meter-fill"></div>
       </div>
 
       <div class="status-box">
-
-        <div
-          id="emoji"
-          class="emoji">
-          🎤
-        </div>
-
-        <div
-          id="status"
-          class="status">
-          Ready
-        </div>
-
+        <div id="emoji" class="emoji">🎤</div>
+        <div id="status" class="status">Ready</div>
+        <div id="dbReadout" class="db-readout">— dB</div>
       </div>
 
     </div>
 
     <div class="controls">
-
-      <button
-        id="startBtn"
-        type="button">
+      <button id="startBtn" type="button">
         🎤 Start Listening
       </button>
 
-      <button
-        id="stopBtn"
-        type="button"
-        disabled>
+      <button id="stopBtn" type="button" disabled>
         Stop
       </button>
-
     </div>
 
     <div class="settings">
@@ -322,10 +303,10 @@
       <input
         id="sensitivity"
         type="range"
-        min="50"
-        max="500"
-        step="10"
-        value="200"
+        min="-25"
+        max="25"
+        step="1"
+        value="0"
       >
 
       <div class="range-labels">
@@ -336,24 +317,19 @@
       <div
         id="sensitivityValue"
         class="sensitivity-value">
-        Sensitivity: 200%
+        Sensitivity: 0
       </div>
 
       <div class="helper">
-        Start around 200%. Adjust it later using the microphone on your classroom board.
+        Move this until normal classroom talking sits mostly in “Just Right.”
       </div>
 
     </div>
 
-    <div
-      id="message"
-      class="message">
-    </div>
+    <div id="message" class="message"></div>
 
   </div>
-
 </div>
-
 
 <script>
 
@@ -363,14 +339,11 @@ let source = null;
 let stream = null;
 let animationFrame = null;
 
-let smoothedVolume = 0;
+let smoothedLevel = 0;
 let loudStartTime = null;
 let currentlyTooLoud = false;
 
-const QUIET_LIMIT = 38;
-const LOUD_LIMIT = 70;
 const LOUD_DELAY = 1200;
-
 
 const meterFill =
   document.getElementById('meterFill');
@@ -380,6 +353,9 @@ const statusEl =
 
 const emojiEl =
   document.getElementById('emoji');
+
+const dbReadout =
+  document.getElementById('dbReadout');
 
 const startBtn =
   document.getElementById('startBtn');
@@ -397,16 +373,14 @@ const message =
   document.getElementById('message');
 
 
-/* =========================================
-   LOAD SAVED SENSITIVITY
-========================================= */
+/* LOAD SAVED SETTING */
 
 const savedSensitivity =
   localStorage.getItem(
-    'classroomVoiceSensitivityV2'
+    'classroomVoiceDbSensitivity'
   );
 
-if (savedSensitivity) {
+if (savedSensitivity !== null) {
   sensitivity.value = savedSensitivity;
 }
 
@@ -420,7 +394,7 @@ sensitivity.addEventListener(
     updateSensitivityLabel();
 
     localStorage.setItem(
-      'classroomVoiceSensitivityV2',
+      'classroomVoiceDbSensitivity',
       sensitivity.value
     );
 
@@ -430,17 +404,18 @@ sensitivity.addEventListener(
 
 function updateSensitivityLabel() {
 
+  const value =
+    Number(sensitivity.value);
+
   sensitivityValue.textContent =
     'Sensitivity: ' +
-    sensitivity.value +
-    '%';
+    (value > 0 ? '+' : '') +
+    value;
 
 }
 
 
-/* =========================================
-   BUTTONS
-========================================= */
+/* BUTTONS */
 
 startBtn.addEventListener(
   'click',
@@ -453,24 +428,11 @@ stopBtn.addEventListener(
 );
 
 
-/* =========================================
-   START MICROPHONE
-========================================= */
+/* START */
 
 async function startListening() {
 
   message.textContent = '';
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-
-    message.textContent =
-      'This browser does not support microphone access.';
-
-    return;
-  }
 
   try {
 
@@ -489,9 +451,7 @@ async function startListening() {
         window.webkitAudioContext
       )();
 
-    if (
-      audioContext.state === 'suspended'
-    ) {
+    if (audioContext.state === 'suspended') {
       await audioContext.resume();
     }
 
@@ -500,7 +460,7 @@ async function startListening() {
 
     analyser.fftSize = 2048;
 
-    analyser.smoothingTimeConstant = 0.82;
+    analyser.smoothingTimeConstant = 0.75;
 
     source =
       audioContext.createMediaStreamSource(
@@ -524,8 +484,6 @@ async function startListening() {
 
   catch (error) {
 
-    console.error(error);
-
     message.textContent =
       'Microphone error: ' +
       error.name +
@@ -542,34 +500,22 @@ async function startListening() {
 }
 
 
-/* =========================================
-   STOP MICROPHONE
-========================================= */
+/* STOP */
 
 function stopListening() {
 
   if (animationFrame) {
-
-    cancelAnimationFrame(
-      animationFrame
-    );
-
+    cancelAnimationFrame(animationFrame);
   }
 
   if (stream) {
-
     stream
       .getTracks()
-      .forEach(
-        track => track.stop()
-      );
-
+      .forEach(track => track.stop());
   }
 
   if (audioContext) {
-
     audioContext.close();
-
   }
 
   stream = null;
@@ -577,15 +523,12 @@ function stopListening() {
   analyser = null;
   source = null;
 
-  smoothedVolume = 0;
+  smoothedLevel = 0;
   loudStartTime = null;
   currentlyTooLoud = false;
 
   meterFill.style.height =
     '0%';
-
-  meterFill.style.background =
-    '#75c9b7';
 
   statusEl.textContent =
     'Ready';
@@ -593,15 +536,16 @@ function stopListening() {
   emojiEl.textContent =
     '🎤';
 
+  dbReadout.textContent =
+    '— dB';
+
   startBtn.disabled = false;
   stopBtn.disabled = true;
 
 }
 
 
-/* =========================================
-   READ SOUND
-========================================= */
+/* READ SOUND */
 
 function updateMeter() {
 
@@ -610,15 +554,13 @@ function updateMeter() {
   }
 
   const data =
-    new Uint8Array(
+    new Float32Array(
       analyser.fftSize
     );
 
-  analyser.getByteTimeDomainData(
-    data
-  );
+  analyser.getFloatTimeDomainData(data);
 
-  let total = 0;
+  let sumSquares = 0;
 
   for (
     let i = 0;
@@ -626,73 +568,105 @@ function updateMeter() {
     i++
   ) {
 
-    const sample =
-      (data[i] - 128) / 128;
-
-    total +=
-      sample * sample;
+    sumSquares +=
+      data[i] * data[i];
 
   }
 
   const rms =
     Math.sqrt(
-      total / data.length
+      sumSquares / data.length
     );
 
 
-  /* =======================================
-     STRONGER MICROPHONE AMPLIFICATION
-  ======================================= */
+  /*
+    Convert RMS to dBFS.
 
-  const sensitivityMultiplier =
-    Number(sensitivity.value) / 100;
+    Silence is roughly -100 dB.
+    Louder sound moves closer to 0.
+  */
 
-  let rawVolume =
-    rms *
-    1000 *
-    sensitivityMultiplier;
+  let db =
+    rms > 0
+      ? 20 * Math.log10(rms)
+      : -100;
 
 
-  rawVolume =
-    Math.min(
-      Math.max(
-        rawVolume,
-        0
-      ),
-      100
+  /*
+    The sensitivity slider shifts
+    the perceived dB level.
+
+    +20 = much more sensitive
+    -20 = much less sensitive
+  */
+
+  const sensitivityOffset =
+    Number(sensitivity.value);
+
+  const adjustedDb =
+    db + sensitivityOffset;
+
+
+  /*
+    Map dB range into 0–100 meter.
+
+    -65 dB = bottom
+    -20 dB = top
+  */
+
+  const DB_FLOOR = -65;
+  const DB_CEILING = -20;
+
+  let level =
+    (
+      (adjustedDb - DB_FLOOR) /
+      (DB_CEILING - DB_FLOOR)
+    ) * 100;
+
+  level =
+    Math.max(
+      0,
+      Math.min(
+        level,
+        100
+      )
     );
 
 
-  /* =======================================
-     SMOOTH RISE + SLOW FALL
-  ======================================= */
+  /*
+    Smooth the meter.
+  */
 
   if (
-    rawVolume >
-    smoothedVolume
+    level > smoothedLevel
   ) {
 
-    smoothedVolume =
-      smoothedVolume * 0.78 +
-      rawVolume * 0.22;
+    smoothedLevel =
+      smoothedLevel * .78 +
+      level * .22;
 
   }
 
   else {
 
-    smoothedVolume =
-      smoothedVolume * 0.95 +
-      rawVolume * 0.05;
+    smoothedLevel =
+      smoothedLevel * .94 +
+      level * .06;
 
   }
 
 
   meterFill.style.height =
-    smoothedVolume + '%';
+    smoothedLevel + '%';
+
+
+  dbReadout.textContent =
+    adjustedDb.toFixed(1) +
+    ' dB';
 
 
   setStatus(
-    smoothedVolume
+    smoothedLevel
   );
 
 
@@ -704,33 +678,25 @@ function updateMeter() {
 }
 
 
-/* =========================================
-   STATUS
-========================================= */
+/* STATUS */
 
-function setStatus(volume) {
+function setStatus(level) {
 
+  const QUIET_LIMIT = 35;
+  const LOUD_LIMIT = 72;
 
-  /* TOO LOUD */
 
   if (
-    volume >= LOUD_LIMIT
+    level >= LOUD_LIMIT
   ) {
 
     if (!loudStartTime) {
-
-      loudStartTime =
-        Date.now();
-
+      loudStartTime = Date.now();
     }
 
-    const loudDuration =
-      Date.now() -
-      loudStartTime;
-
-
     if (
-      loudDuration >=
+      Date.now() -
+      loudStartTime >=
       LOUD_DELAY
     ) {
 
@@ -744,10 +710,8 @@ function setStatus(volume) {
 
     loudStartTime = null;
 
-
     if (
-      volume <
-      LOUD_LIMIT - 8
+      level < 64
     ) {
 
       currentlyTooLoud = false;
@@ -771,15 +735,11 @@ function setStatus(volume) {
       '#e9838f';
 
     return;
-
   }
 
 
-  /* QUIET */
-
   if (
-    volume <
-    QUIET_LIMIT
+    level < QUIET_LIMIT
   ) {
 
     statusEl.textContent =
@@ -792,9 +752,6 @@ function setStatus(volume) {
       '#75c9b7';
 
   }
-
-
-  /* JUST RIGHT */
 
   else {
 
