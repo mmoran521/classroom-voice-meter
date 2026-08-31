@@ -182,8 +182,24 @@
       width: min(500px, 100%);
     }
 
-    .helper {
+    .sensitivity-row {
+      display: flex;
+      justify-content: space-between;
+      width: min(500px, 100%);
+      margin: 6px auto 0;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .sensitivity-value {
       margin-top: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #566fd8;
+    }
+
+    .helper {
+      margin-top: 8px;
       color: #64748b;
       font-size: 14px;
     }
@@ -305,13 +321,24 @@
       <input
         id="sensitivity"
         type="range"
-        min="20"
-        max="90"
-        value="55"
+        min="25"
+        max="200"
+        value="100"
       >
 
+      <div class="sensitivity-row">
+        <span>Less Sensitive</span>
+        <span>More Sensitive</span>
+      </div>
+
+      <div
+        id="sensitivityValue"
+        class="sensitivity-value">
+        Sensitivity: 100%
+      </div>
+
       <div class="helper">
-        Adjust this later using the microphone on your classroom board.
+        Adjust this until normal classroom talking stays mostly in “Just Right.”
       </div>
 
     </div>
@@ -335,11 +362,13 @@ let stream = null;
 let animationFrame = null;
 
 let smoothedVolume = 0;
-
 let loudStartTime = null;
 let currentlyTooLoud = false;
 
 const LOUD_DELAY = 1400;
+
+const QUIET_LIMIT = 38;
+const LOUD_LIMIT = 70;
 
 
 const meterFill =
@@ -360,8 +389,50 @@ const stopBtn =
 const sensitivity =
   document.getElementById('sensitivity');
 
+const sensitivityValue =
+  document.getElementById('sensitivityValue');
+
 const message =
   document.getElementById('message');
+
+
+/*
+  LOAD SAVED SENSITIVITY
+*/
+
+const savedSensitivity =
+  localStorage.getItem('classroomVoiceSensitivity');
+
+if (savedSensitivity) {
+  sensitivity.value = savedSensitivity;
+}
+
+updateSensitivityLabel();
+
+
+sensitivity.addEventListener(
+  'input',
+  function() {
+
+    updateSensitivityLabel();
+
+    localStorage.setItem(
+      'classroomVoiceSensitivity',
+      sensitivity.value
+    );
+
+  }
+);
+
+
+function updateSensitivityLabel() {
+
+  sensitivityValue.textContent =
+    'Sensitivity: ' +
+    sensitivity.value +
+    '%';
+
+}
 
 
 startBtn.addEventListener(
@@ -542,8 +613,30 @@ function updateMeter() {
       total / data.length
     );
 
+
+  /*
+    BASE MICROPHONE READING
+  */
+
   let rawVolume =
     rms * 350;
+
+
+  /*
+    APPLY SENSITIVITY
+
+    100 = normal
+    50 = half as reactive
+    200 = twice as reactive
+  */
+
+  const sensitivityMultiplier =
+    Number(sensitivity.value) / 100;
+
+  rawVolume =
+    rawVolume *
+    sensitivityMultiplier;
+
 
   rawVolume =
     Math.min(
@@ -553,9 +646,7 @@ function updateMeter() {
 
 
   /*
-    Slow rise + slow fall.
-    This keeps one sudden sound from
-    making the meter jump wildly.
+    SMOOTH MOVEMENT
   */
 
   if (
@@ -594,23 +685,15 @@ function updateMeter() {
 
 function setStatus(volume) {
 
-  const loudLimit =
-    Number(
-      sensitivity.value
-    );
-
-  const quietLimit =
-    loudLimit * .54;
-
 
   /*
-    TOO LOUD
-    Must remain over threshold
-    for 1.4 seconds.
+    TOO LOUD MUST STAY
+    ABOVE THE LIMIT
+    FOR 1.4 SECONDS
   */
 
   if (
-    volume >= loudLimit
+    volume >= LOUD_LIMIT
   ) {
 
     if (!loudStartTime) {
@@ -642,7 +725,7 @@ function setStatus(volume) {
 
     if (
       volume <
-      loudLimit * .85
+      LOUD_LIMIT - 8
     ) {
 
       currentlyTooLoud = false;
@@ -670,7 +753,7 @@ function setStatus(volume) {
 
 
   if (
-    volume < quietLimit
+    volume < QUIET_LIMIT
   ) {
 
     statusEl.textContent =
