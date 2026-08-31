@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Classroom Voice Meter</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7fafc;
+      color: #243447;
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(900px, 100%);
+      background: white;
+      border-radius: 28px;
+      padding: 36px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 42px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 18px;
+      margin-bottom: 28px;
+    }
+
+    .emoji {
+      font-size: 82px;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .meter-shell {
+      width: 100%;
+      height: 72px;
+      background: #e8edf3;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 4px solid #d5dce5;
+    }
+
+    .meter-fill {
+      width: 0%;
+      height: 100%;
+      background: #75c9b7;
+      border-radius: 36px;
+      transition:
+        width .08s linear,
+        background .15s ease;
+    }
+
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #startBtn {
+      background: #566fd8;
+      color: white;
+    }
+
+    #stopBtn {
+      background: #e9eef5;
+      color: #243447;
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: default;
+    }
+
+    .settings {
+      margin-top: 28px;
+      padding: 20px;
+      background: #f5f7fa;
+      border-radius: 20px;
+    }
+
+    .settings label {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      width: min(500px, 100%);
+    }
+
+    .helper {
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .message {
+      margin-top: 18px;
+      min-height: 24px;
+      color: #9b2c2c;
+      font-size: 15px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      .status {
+        font-size: 32px;
+      }
+
+      .emoji {
+        font-size: 64px;
+      }
+
+      .meter-shell {
+        height: 58px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="card">
+
+    <h1>Classroom Voice Meter</h1>
+
+    <div class="subtitle">
+      Let's keep our classroom volume just right
+    </div>
+
+    <div id="emoji" class="emoji">
+      🎤
+    </div>
+
+    <div id="status" class="status">
+      Ready
+    </div>
+
+    <div class="meter-shell">
+      <div id="meterFill" class="meter-fill"></div>
+    </div>
+
+    <div class="labels">
+      <span>Quiet</span>
+      <span>Just Right</span>
+      <span>Too Loud</span>
+    </div>
+
+    <div class="controls">
+
+      <button id="startBtn" type="button">
+        🎤 Start Listening
+      </button>
+
+      <button id="stopBtn" type="button" disabled>
+        Stop
+      </button>
+
+    </div>
+
+    <div class="settings">
+
+      <label for="sensitivity">
+        Noise Sensitivity
+      </label>
+
+      <input
+        id="sensitivity"
+        type="range"
+        min="15"
+        max="85"
+        value="50"
+      >
+
+      <div class="helper">
+        Move this until normal classroom talking lands around “Just Right.”
+      </div>
+
+    </div>
+
+    <div id="message" class="message"></div>
+
+  </div>
+</div>
+
+<script>
+
+let audioContext = null;
+let analyser = null;
+let source = null;
+let stream = null;
+let animationFrame = null;
+
+let smoothedVolume = 0;
+
+const meterFill =
+  document.getElementById('meterFill');
+
+const statusEl =
+  document.getElementById('status');
+
+const emojiEl =
+  document.getElementById('emoji');
+
+const startBtn =
+  document.getElementById('startBtn');
+
+const stopBtn =
+  document.getElementById('stopBtn');
+
+const sensitivity =
+  document.getElementById('sensitivity');
+
+const message =
+  document.getElementById('message');
+
+
+startBtn.addEventListener(
+  'click',
+  startListening
+);
+
+stopBtn.addEventListener(
+  'click',
+  stopListening
+);
+
+
+async function startListening() {
+
+  message.textContent = '';
+
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+
+    message.textContent =
+      'This browser does not support microphone access.';
+
+    return;
+  }
+
+  try {
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+    if (
+      audioContext.state === 'suspended'
+    ) {
+      await audioContext.resume();
+    }
+
+    analyser =
+      audioContext.createAnalyser();
+
+    analyser.fftSize = 1024;
+
+    analyser.smoothingTimeConstant = 0.7;
+
+    source =
+      audioContext.createMediaStreamSource(
+        stream
+      );
+
+    source.connect(analyser);
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+
+    statusEl.textContent =
+      'Listening';
+
+    emojiEl.textContent =
+      '👂';
+
+    updateMeter();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      'Microphone error: ' +
+      error.name +
+      ' — ' +
+      error.message;
+
+    statusEl.textContent =
+      'Microphone unavailable';
+
+    emojiEl.textContent =
+      '🚫🎤';
+  }
+}
+
+
+function stopListening() {
+
+  if (animationFrame) {
+    cancelAnimationFrame(
+      animationFrame
+    );
+  }
+
+  if (stream) {
+
+    stream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+  }
+
+  if (audioContext) {
+    audioContext.close();
+  }
+
+  stream = null;
+  audioContext = null;
+  analyser = null;
+  source = null;
+
+  smoothedVolume = 0;
+
+  meterFill.style.width =
+    '0%';
+
+  meterFill.style.background =
+    '#75c9b7';
+
+  statusEl.textContent =
+    'Ready';
+
+  emojiEl.textContent =
+    '🎤';
+
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+}
+
+
+function updateMeter() {
+
+  if (!analyser) {
+    return;
+  }
+
+  const data =
+    new Uint8Array(
+      analyser.fftSize
+    );
+
+  analyser.getByteTimeDomainData(
+    data
+  );
+
+  let total = 0;
+
+  for (
+    let i = 0;
+    i < data.length;
+    i++
+  ) {
+
+    const sample =
+      (data[i] - 128) / 128;
+
+    total +=
+      sample * sample;
+
+  }
+
+  const rms =
+    Math.sqrt(
+      total / data.length
+    );
+
+  let rawVolume =
+    rms * 320;
+
+  rawVolume =
+    Math.min(
+      rawVolume,
+      100
+    );
+
+  smoothedVolume =
+    smoothedVolume * .72 +
+    rawVolume * .28;
+
+  meterFill.style.width =
+    smoothedVolume + '%';
+
+  setStatus(
+    smoothedVolume
+  );
+
+  animationFrame =
+    requestAnimationFrame(
+      updateMeter
+    );
+}
+
+
+function setStatus(volume) {
+
+  const loudLimit =
+    Number(
+      sensitivity.value
+    );
+
+  const talkingLimit =
+    loudLimit * .55;
+
+
+  if (
+    volume <
+    talkingLimit
+  ) {
+
+    statusEl.textContent =
+      'Quiet';
+
+    emojiEl.textContent =
+      '🤫';
+
+    meterFill.style.background =
+      '#75c9b7';
+
+  }
+
+  else if (
+    volume <
+    loudLimit
+  ) {
+
+    statusEl.textContent =
+      'Just Right';
+
+    emojiEl.textContent =
+      '🙂';
+
+    meterFill.style.background =
+      '#8aa7e8';
+
+  }
+
+  else {
+
+    statusEl.textContent =
+      'Too Loud';
+
+    emojiEl.textContent =
+      '⚠️';
+
+    meterFill.style.background =
+      '#e9838f';
+
+  }
+}
+
+</script>
+
+</body>
+</html>
