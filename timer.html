@@ -7,514 +7,349 @@
 <title>Classroom Timer</title>
 
 <style>
-/* =========================================================
-   CLASSROOM TOOLS — VISUAL TIMER
-   ========================================================= */
-
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --ink: #26364b;
-  --muted: #7b8797;
+  --navy: #263a55;
+  --text: #263a55;
+  --muted: #718096;
   --border: #dfe6ee;
-  --panel: rgba(255,255,255,.94);
+  --bg: #f4f7fb;
+  --white: #ffffff;
 
-  --green: #59bd8a;
-  --green-dark: #409f72;
+  --green: #52bb8a;
+  --green-light: #eaf8f1;
 
-  --blue: #739add;
-  --purple: #8d82dc;
+  --blue: #7fa5dd;
+  --purple: #968bd5;
+  --pink: #df8ca4;
 
-  --pause: #f2b84b;
-  --reset: #df7885;
-
-  --shadow: 0 14px 38px rgba(56,75,98,.11);
+  --shadow: 0 8px 24px rgba(45,65,90,.09);
 }
 
-html,
 body {
   margin: 0;
-  min-height: 100%;
-}
-
-body {
-  font-family:
-    "Trebuchet MS",
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
-  color: var(--ink);
+  min-height: 100vh;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  color: var(--text);
 
   background:
-    radial-gradient(circle at 0% 0%, #edf4ff 0, transparent 34%),
-    radial-gradient(circle at 100% 100%, #edf9f5 0, transparent 34%),
-    #f7f9fc;
-
-  overflow-x: hidden;
+    radial-gradient(circle at top left,#eef4ff,transparent 35%),
+    radial-gradient(circle at bottom right,#ebf8f4,transparent 35%),
+    var(--bg);
 }
 
-button {
+button,
+input,
+select {
   font: inherit;
 }
 
-/* =========================================================
+
+/* ======================================================
    PAGE
-   ========================================================= */
+====================================================== */
 
-.app {
-  width: min(1500px, 100%);
-  margin: 0 auto;
-  padding: 20px 24px 30px;
+.page {
+  width: min(1700px, calc(100% - 20px));
+  margin: auto;
+  padding: 22px 0 40px;
 }
 
-.topbar {
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.header {
+  position: relative;
   display: grid;
-  grid-template-columns: 180px 1fr 290px;
+  grid-template-columns: 220px 1fr 320px;
   align-items: center;
-  min-height: 92px;
-  gap: 16px;
+  gap: 15px;
+
+  margin-bottom: 18px;
 }
 
-.home-btn,
-.top-control {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: 0 5px 15px rgba(55,75,100,.08);
-
-  height: 54px;
-  padding: 0 18px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-
-  color: var(--ink);
-  font-size: 17px;
-  font-weight: 800;
-
-  cursor: pointer;
-  text-decoration: none;
+.header-center {
+  text-align: center;
 }
 
-.home-btn {
-  justify-self: start;
+.header h1 {
+  margin: 0;
+  font-size: clamp(40px,5vw,64px);
+  letter-spacing: -2px;
 }
 
-.top-actions {
+.header p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.header-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-.title-wrap {
-  text-align: center;
-}
+.header-button {
+  min-height: 58px;
 
-.title {
-  margin: 0;
-  font-size: clamp(38px, 4vw, 56px);
-  line-height: 1;
-  letter-spacing: -.8px;
-}
-
-.subtitle {
-  margin-top: 9px;
-  font-size: 17px;
-  color: var(--muted);
-}
-
-/* =========================================================
-   MAIN GRID
-   ========================================================= */
-
-.main-grid {
-  display: grid;
-  grid-template-columns: 245px minmax(0, 1fr);
-  gap: 20px;
-}
-
-/* =========================================================
-   THEME PANEL
-   ========================================================= */
-
-.theme-panel {
-  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 25px;
+  background: white;
+
+  padding: 0 20px;
+  border-radius: 20px;
+
+  font-weight: 900;
+  color: var(--navy);
+
+  cursor: pointer;
+
   box-shadow: var(--shadow);
+}
 
-  padding: 16px;
-  height: calc(100vh - 140px);
-  min-height: 650px;
+.tools-button {
+  justify-self: start;
+}
 
+
+/* ======================================================
+   MAIN LAYOUT
+====================================================== */
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 22px;
+}
+
+
+/* ======================================================
+   THEMES SIDEBAR
+====================================================== */
+
+.sidebar {
+  background: rgba(255,255,255,.85);
+  border: 1px solid var(--border);
+
+  border-radius: 30px;
+  padding: 18px;
+
+  box-shadow: var(--shadow);
+}
+
+.sidebar-title {
+  margin: 0 0 15px 4px;
+
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.theme-list {
   display: flex;
   flex-direction: column;
-}
+  gap: 10px;
 
-.panel-label {
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: .8px;
-  margin: 2px 4px 13px;
-}
-
-.theme-scroll {
+  max-height: 700px;
   overflow-y: auto;
-  padding-right: 4px;
+
+  padding-right: 5px;
 }
 
-.theme-scroll::-webkit-scrollbar {
+.theme-list::-webkit-scrollbar {
   width: 7px;
 }
 
-.theme-scroll::-webkit-scrollbar-thumb {
-  background: #d9e1e9;
-  border-radius: 10px;
+.theme-list::-webkit-scrollbar-thumb {
+  background: #ccd6e2;
+  border-radius: 20px;
 }
 
 .theme-button {
   width: 100%;
-  min-height: 68px;
 
   display: grid;
-  grid-template-columns: 56px 1fr;
+  grid-template-columns: 62px 1fr;
   align-items: center;
-  gap: 11px;
+  gap: 14px;
+
+  min-height: 78px;
 
   background: white;
-  border: 1px solid #e3e8ee;
-  border-radius: 17px;
+  border: 1px solid var(--border);
 
-  margin-bottom: 9px;
-  padding: 7px 10px;
+  border-radius: 20px;
+
+  padding: 8px 12px;
 
   cursor: pointer;
-
-  color: var(--ink);
   text-align: left;
 
-  transition:
-    transform .15s ease,
-    border-color .15s ease,
-    box-shadow .15s ease;
+  color: var(--navy);
+
+  font-weight: 900;
+
+  transition: .15s ease;
 }
 
 .theme-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(50,70,95,.08);
+  box-shadow: 0 5px 14px rgba(45,65,90,.08);
 }
 
 .theme-button.active {
   border: 2px solid var(--green);
-  box-shadow: 0 6px 15px rgba(89,189,138,.13);
+  background: #fbfffd;
 }
 
-.theme-name {
-  font-size: 15px;
-  font-weight: 800;
-}
+.thumbnail {
+  width: 60px;
+  height: 58px;
 
-.thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
+
   position: relative;
 
-  border: 1px solid rgba(35,55,75,.08);
+  background: #e9eef5;
 }
 
-/* mini theme previews */
 
-.thumb-sand {
-  background:
-    linear-gradient(to bottom, #d9edf5 0 48%, #ddbd76 48% 52%, #d9edf5 52%);
-}
-
-.thumb-sand::before,
-.thumb-sand::after {
-  content: "";
-  position: absolute;
-  left: 16px;
-  width: 18px;
-  height: 17px;
-  background: #d9a647;
-}
-
-.thumb-sand::before {
-  top: 7px;
-  clip-path: polygon(0 0,100% 0,55% 100%,45% 100%);
-}
-
-.thumb-sand::after {
-  bottom: 7px;
-  clip-path: polygon(45% 0,55% 0,100% 100%,0 100%);
-}
-
-.thumb-coaster {
-  background: linear-gradient(#b9e5ff 0 68%, #a8d68d 68%);
-}
-
-.thumb-coaster::before {
-  content: "";
-  position: absolute;
-  width: 65px;
-  height: 38px;
-  border: 4px solid #625e8e;
-  border-color: #625e8e transparent transparent transparent;
-  border-radius: 50%;
-  left: -7px;
-  top: 22px;
-  transform: rotate(-12deg);
-}
-
-.thumb-coaster::after {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 8px;
-  border-radius: 5px;
-  background: #de6876;
-  left: 18px;
-  top: 15px;
-  box-shadow: 9px 0 #e69b53;
-}
-
-.thumb-bubbles {
-  background: linear-gradient(145deg,#dcefff,#91c8ef);
-}
-
-.thumb-bubbles::before {
-  content: "";
-  position: absolute;
-  width: 17px;
-  height: 17px;
-  border: 2px solid rgba(255,255,255,.8);
-  border-radius: 50%;
-  left: 8px;
-  top: 21px;
-  box-shadow:
-    21px -12px 0 -3px rgba(255,255,255,.4),
-    26px 13px 0 2px rgba(255,255,255,.25);
-}
-
-.thumb-balloon {
-  background: linear-gradient(#bfe4fb 0 73%, #a8d78e 73%);
-}
-
-.thumb-balloon::before {
-  content: "";
-  position: absolute;
-  width: 19px;
-  height: 25px;
-  border-radius: 50% 50% 46% 46%;
-  background: linear-gradient(90deg,#e88383,#f3c264,#79a7dc);
-  left: 16px;
-  top: 8px;
-}
-
-.thumb-balloon::after {
-  content: "";
-  position: absolute;
-  width: 8px;
-  height: 6px;
-  background: #806249;
-  left: 22px;
-  top: 37px;
-}
-
-.thumb-rocket {
-  background: linear-gradient(#14233d,#364d76);
-}
-
-.thumb-rocket::before {
-  content: "";
-  position: absolute;
-  left: 20px;
-  top: 8px;
-  width: 14px;
-  height: 29px;
-  background: #f3f4f6;
-  border-radius: 50% 50% 30% 30%;
-  transform: rotate(30deg);
-}
-
-.thumb-rocket::after {
-  content: "";
-  position: absolute;
-  width: 8px;
-  height: 14px;
-  background: #ef9461;
-  left: 15px;
-  top: 33px;
-  transform: rotate(30deg);
-  clip-path: polygon(50% 100%,0 0,100% 0);
-}
+/* ======================================================
+   THUMBNAILS
+====================================================== */
 
 .thumb-ocean {
   background:
-    linear-gradient(#bfe8f8 0 42%, #48a9cf 42% 61%, #197da5 61%);
+    linear-gradient(to bottom,
+      #a9dff0 0 40%,
+      #78cee9 40% 57%,
+      #2284aa 57% 100%);
+}
+
+.thumb-ocean::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 32px;
+  height: 3px;
+  background: rgba(255,255,255,.8);
 }
 
 .thumb-rain {
-  background: linear-gradient(#8799ab,#c2ced8);
+  background:
+    linear-gradient(#72839a,#c5d1dc);
 }
 
-.thumb-rain::before {
-  content: "";
+.thumb-rain::after {
+  content: "╱╱╱";
   position: absolute;
-  inset: 8px;
-  background:
-    repeating-linear-gradient(
-      110deg,
-      transparent 0 7px,
-      rgba(255,255,255,.65) 7px 9px,
-      transparent 9px 15px
-    );
+  inset: 9px 5px;
+  color: rgba(255,255,255,.85);
+  font-size: 25px;
+  letter-spacing: 4px;
 }
 
 .thumb-storm {
-  background: linear-gradient(#354050,#758495);
+  background:
+    linear-gradient(#263b55,#67788c);
 }
 
-.thumb-storm::before {
-  content: "";
+.thumb-storm::after {
+  content: "⚡";
   position: absolute;
-  width: 14px;
-  height: 33px;
-  left: 20px;
-  top: 8px;
-  background: #f2d76d;
-  clip-path: polygon(55% 0,100% 0,62% 43%,92% 43%,25% 100%,40% 53%,10% 53%);
+  inset: 4px;
+  display: grid;
+  place-items: center;
+  font-size: 33px;
 }
 
 .thumb-snow {
-  background: linear-gradient(#cce7f3 0 72%,#edf5f8 72%);
-}
-
-.thumb-snow::before {
-  content: "•  •\A   •\A •    •";
-  white-space: pre;
-  position: absolute;
-  color: white;
-  font-size: 20px;
-  line-height: 14px;
-  left: 8px;
-  top: 5px;
+  background:
+    radial-gradient(circle at 20% 30%,white 0 3px,transparent 4px),
+    radial-gradient(circle at 65% 24%,white 0 3px,transparent 4px),
+    radial-gradient(circle at 50% 60%,white 0 3px,transparent 4px),
+    linear-gradient(#b8def1,#eaf6fb);
 }
 
 .thumb-fall {
-  background: linear-gradient(#e9d3b5 0 72%,#a87d57 72%);
-}
-
-.thumb-fall::before {
-  content: "";
-  position: absolute;
-  width: 6px;
-  height: 34px;
-  background: #6f513c;
-  left: 24px;
-  top: 15px;
+  background:
+    radial-gradient(circle at 35% 40%,#c75538 0 12px,transparent 13px),
+    radial-gradient(circle at 52% 30%,#e3973f 0 14px,transparent 15px),
+    radial-gradient(circle at 66% 44%,#d66b34 0 13px,transparent 14px),
+    linear-gradient(#f6dcc1 0 64%,#a88565 64%);
 }
 
 .thumb-fall::after {
   content: "";
   position: absolute;
-  width: 39px;
-  height: 28px;
-  background:
-    radial-gradient(circle at 20% 50%,#cb6246 0 8px,transparent 9px),
-    radial-gradient(circle at 45% 25%,#e59649 0 9px,transparent 10px),
-    radial-gradient(circle at 70% 50%,#b95342 0 9px,transparent 10px),
-    radial-gradient(circle at 48% 70%,#d77f3b 0 10px,transparent 11px);
-  left: 6px;
-  top: 4px;
+  width: 7px;
+  height: 30px;
+  background: #704d39;
+  left: 28px;
+  bottom: 5px;
+  border-radius: 4px;
 }
 
 .thumb-spring {
-  background: linear-gradient(#cce7fa 0 72%,#aed894 72%);
-}
-
-.thumb-spring::before {
-  content: "";
-  position: absolute;
-  left: 23px;
-  top: 16px;
-  width: 5px;
-  height: 28px;
-  background: #735b44;
-}
-
-.thumb-spring::after {
-  content: "";
-  position: absolute;
-  width: 35px;
-  height: 28px;
-  left: 8px;
-  top: 4px;
   background:
-    radial-gradient(circle,#efa5b8 0 5px,transparent 6px) 0 0/14px 13px;
+    radial-gradient(circle at 25% 33%,#f4a8bd 0 8px,transparent 9px),
+    radial-gradient(circle at 50% 25%,#ee92ad 0 9px,transparent 10px),
+    radial-gradient(circle at 72% 35%,#f4a8bd 0 8px,transparent 9px),
+    linear-gradient(#bde6ef 0 60%,#99cf76 60%);
 }
 
 .thumb-beach {
-  background: linear-gradient(#a9def4 0 42%,#4bb4d1 42% 65%,#e9c67e 65%);
+  background:
+    linear-gradient(#91d9ee 0 46%,#35a8cb 46% 66%,#ebcb80 66%);
 }
 
 .thumb-fire {
-  background: linear-gradient(#342e31,#66504a);
+  background:
+    linear-gradient(#413637,#6d5145);
 }
 
-.thumb-fire::before {
-  content: "";
+.thumb-fire::after {
+  content: "🔥";
   position: absolute;
-  width: 27px;
-  height: 33px;
-  left: 13px;
-  top: 11px;
-  background: linear-gradient(#f6dd75,#e98251);
-  clip-path: polygon(50% 0,85% 45%,71% 100%,29% 100%,13% 48%);
-  border-radius: 50%;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 32px;
 }
 
-.thumb-night {
-  background: linear-gradient(#101b35,#283f65);
-}
 
-.thumb-night::before {
-  content: "·   ✦\A   ·   ·\A ✦";
-  white-space: pre;
-  position: absolute;
-  color: #fff8d7;
-  left: 8px;
-  top: 4px;
-  font-size: 15px;
-  line-height: 16px;
-}
-
-/* =========================================================
+/* ======================================================
    CONTENT
-   ========================================================= */
+====================================================== */
 
 .content {
   min-width: 0;
 }
 
-.scene-card {
-  position: relative;
-  height: min(63vh, 690px);
-  min-height: 470px;
 
-  border-radius: 27px;
+/* ======================================================
+   SCENE
+====================================================== */
+
+.scene-wrapper {
+  position: relative;
+
+  width: 100%;
+  min-height: 570px;
+
   overflow: hidden;
 
-  border: 1px solid var(--border);
-  background: #eaf3f7;
+  border-radius: 32px;
+
   box-shadow: var(--shadow);
+
+  background: #dce7ef;
 }
 
 .scene {
@@ -523,1166 +358,489 @@ button {
   overflow: hidden;
 }
 
-.timer-overlay {
-  position: absolute;
-  z-index: 40;
+.scene svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
-  top: 50%;
+
+/* ======================================================
+   TIMER FLOATING CARD
+====================================================== */
+
+.timer-display-card {
+  position: absolute;
+
   right: 7%;
-  transform: translateY(-50%);
+  top: 27%;
+
+  width: min(420px,38%);
+
+  padding: 28px;
+
+  border-radius: 30px;
 
   text-align: center;
 
-  min-width: 340px;
+  background: rgba(255,255,255,.88);
 
-  padding: 22px 26px;
+  backdrop-filter: blur(8px);
 
-  border-radius: 26px;
+  box-shadow:
+    0 12px 35px rgba(40,50,70,.16);
 
-  background: rgba(255,255,255,.72);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-
-  border: 1px solid rgba(255,255,255,.75);
-  box-shadow: 0 9px 28px rgba(35,55,75,.12);
+  z-index: 30;
 }
 
-.time-display {
-  font-size: clamp(70px, 8vw, 126px);
-  font-weight: 900;
+.timer-number {
+  font-size: clamp(70px,8vw,130px);
+
   line-height: .95;
 
-  letter-spacing: -5px;
+  font-weight: 900;
 
-  font-variant-numeric: tabular-nums;
+  letter-spacing: -5px;
 }
 
-.time-caption {
-  margin-top: 13px;
-  font-size: 22px;
-  font-weight: 800;
+.timer-label {
+  margin-top: 18px;
+
+  font-size: 24px;
+
+  font-weight: 900;
 }
 
 .progress-track {
-  width: 100%;
-  height: 9px;
-  background: rgba(38,54,75,.13);
-  border-radius: 100px;
+  margin-top: 24px;
+
+  height: 11px;
+
+  background: #dce5e1;
+
+  border-radius: 20px;
+
   overflow: hidden;
-  margin-top: 19px;
 }
 
 .progress-fill {
   width: 100%;
   height: 100%;
+
   background: var(--green);
-  transition: width .3s linear;
+
+  border-radius: 20px;
+
+  transition: width .35s linear;
 }
 
-/* =========================================================
-   LOWER CONTROLS
-   ========================================================= */
 
-.controls-area {
+/* ======================================================
+   FULLSCREEN BUTTON
+====================================================== */
+
+.fullscreen-button {
+  position: absolute;
+
+  right: 22px;
+  bottom: 20px;
+
+  z-index: 40;
+
+  width: 54px;
+  height: 54px;
+
+  border: 1px solid rgba(255,255,255,.6);
+
+  background: rgba(255,255,255,.9);
+
+  border-radius: 50%;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+
+/* ======================================================
+   CONTROLS
+====================================================== */
+
+.controls {
   display: grid;
-  grid-template-columns: minmax(410px, 1.15fr) minmax(330px, .85fr);
-  gap: 17px;
-  margin-top: 17px;
+
+  grid-template-columns: 1.3fr .95fr;
+  gap: 20px;
+
+  margin-top: 20px;
 }
 
 .control-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 23px;
-  box-shadow: 0 8px 24px rgba(50,70,95,.07);
+  background: rgba(255,255,255,.92);
 
-  padding: 18px;
+  border: 1px solid var(--border);
+
+  border-radius: 28px;
+
+  padding: 20px;
+
+  box-shadow: var(--shadow);
 }
 
 .control-title {
-  font-size: 14px;
-  letter-spacing: .6px;
+  margin-bottom: 14px;
+
   font-weight: 900;
-  margin-bottom: 13px;
 }
 
-.quick-buttons {
+.quick-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+
+  grid-template-columns: repeat(7,1fr);
+
+  gap: 10px;
 }
 
-.quick-btn {
-  height: 65px;
-  border: 1px solid #e0e5eb;
+.quick-button {
+  min-height: 75px;
+
+  border: 1px solid var(--border);
+
   background: white;
-  border-radius: 15px;
+
+  border-radius: 18px;
+
+  color: var(--navy);
 
   cursor: pointer;
-  color: var(--ink);
 
-  font-size: 20px;
   font-weight: 900;
 
-  box-shadow: 0 3px 8px rgba(40,60,80,.05);
-
-  transition: .15s ease;
+  font-size: 22px;
 }
 
-.quick-btn span {
+.quick-button span {
   display: block;
-  font-size: 10px;
-  font-weight: 700;
-  margin-top: 2px;
+  font-size: 11px;
+  margin-top: 3px;
 }
 
-.quick-btn:hover {
-  transform: translateY(-1px);
-}
-
-.quick-btn.selected {
-  background: #e8f7ef;
+.quick-button.active {
   border: 2px solid var(--green);
-  color: #338560;
+  background: var(--green-light);
+  color: #318562;
 }
 
-.custom-set {
+
+/* ======================================================
+   CUSTOM TIMER
+====================================================== */
+
+.custom-row {
   display: grid;
-  grid-template-columns: 52px 1fr 52px;
+
+  grid-template-columns: 60px 1fr 60px;
+
   align-items: center;
+
   gap: 12px;
 }
 
-.adjust-btn {
-  width: 52px;
-  height: 52px;
+.circle-button {
+  width: 60px;
+  height: 60px;
+
   border-radius: 50%;
 
-  border: 1px solid #dce2e9;
+  border: 1px solid var(--border);
+
   background: white;
 
   font-size: 28px;
-  font-weight: 500;
 
   cursor: pointer;
 }
 
 .custom-display {
-  background: #f7f8fb;
-  border: 1px solid #e5e8ed;
-  border-radius: 18px;
-  padding: 14px;
+  min-height: 80px;
+
+  display: grid;
+  place-items: center;
+
+  background: #f6f8fb;
+
+  border: 1px solid var(--border);
+
+  border-radius: 20px;
+
+  font-size: 36px;
+
+  font-weight: 900;
+}
+
+.custom-caption {
+  margin-top: -23px;
 
   text-align: center;
 
-  font-size: 36px;
-  font-weight: 900;
-  letter-spacing: -1px;
-
-  font-variant-numeric: tabular-nums;
-}
-
-.custom-display small {
-  display: block;
-  font-size: 11px;
-  letter-spacing: .4px;
   color: var(--muted);
-  margin-top: 2px;
+
+  font-size: 11px;
 }
 
-.action-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 13px;
-  margin-top: 15px;
-}
 
-.action-btn {
-  min-height: 72px;
+/* ======================================================
+   START BUTTONS
+====================================================== */
 
-  border: 0;
-  border-radius: 22px;
-
-  color: white;
-
-  font-size: 20px;
-  font-weight: 900;
-
-  cursor: pointer;
-
-  box-shadow: 0 8px 16px rgba(45,65,90,.1);
-
-  transition: transform .15s ease;
-}
-
-.action-btn:hover {
-  transform: translateY(-1px);
-}
-
-.start {
-  background: linear-gradient(135deg,var(--green),var(--green-dark));
-}
-
-.pause {
-  background: linear-gradient(135deg,#f3c45c,#e9a932);
-}
-
-.reset {
-  background: linear-gradient(135deg,#e88994,#d86c7b);
-}
-
-.footer-note {
-  margin-top: 15px;
-  background: #f1f7f4;
-  border: 1px solid #dcece4;
-  border-radius: 18px;
-  padding: 12px 17px;
-
+.timer-actions {
   display: flex;
-  align-items: center;
+
+  justify-content: center;
+
   gap: 12px;
 
-  color: #536578;
-  font-size: 14px;
+  margin-top: 20px;
 }
 
-.footer-note strong {
-  color: var(--ink);
-}
-
-/* =========================================================
-   SETTINGS DRAWER
-   ========================================================= */
-
-.settings-drawer {
-  position: fixed;
-  z-index: 150;
-  top: 0;
-  right: -370px;
-
-  width: min(360px, 92vw);
-  height: 100vh;
-
-  background: white;
-
-  box-shadow: -12px 0 35px rgba(35,55,75,.15);
-
-  padding: 23px;
-
-  transition: right .25s ease;
-}
-
-.settings-drawer.open {
-  right: 0;
-}
-
-.drawer-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 25px;
-}
-
-.drawer-title {
-  font-size: 24px;
-  font-weight: 900;
-}
-
-.close-btn {
-  width: 40px;
-  height: 40px;
+.action-button {
+  min-width: 150px;
+  min-height: 58px;
 
   border: 0;
-  border-radius: 50%;
-  background: #f0f3f6;
 
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.setting-block {
-  border-top: 1px solid #edf0f3;
-  padding: 18px 0;
-}
-
-.setting-label {
-  font-weight: 900;
-  margin-bottom: 8px;
-}
-
-.setting-help {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.toggle {
-  width: 54px;
-  height: 30px;
-  border-radius: 30px;
-  border: 0;
-  background: #d9dfe6;
-  padding: 3px;
-  cursor: pointer;
-}
-
-.toggle-dot {
-  width: 24px;
-  height: 24px;
-  background: white;
-  border-radius: 50%;
-  transition: transform .2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,.14);
-}
-
-.toggle.on {
-  background: var(--green);
-}
-
-.toggle.on .toggle-dot {
-  transform: translateX(24px);
-}
-
-/* =========================================================
-   FULLSCREEN
-   ========================================================= */
-
-.fullscreen-btn {
-  position: absolute;
-  z-index: 50;
-  right: 18px;
-  bottom: 18px;
-
-  width: 48px;
-  height: 48px;
-
-  border: 1px solid rgba(255,255,255,.6);
-  border-radius: 50%;
-
-  background: rgba(255,255,255,.78);
-
-  font-size: 21px;
-  cursor: pointer;
-}
-
-/* =========================================================
-   GENERIC SCENE ITEMS
-   ========================================================= */
-
-.hidden {
-  display: none !important;
-}
-
-/* ------------------ SAND ------------------ */
-
-.scene-sand {
-  background:
-    linear-gradient(115deg,rgba(255,255,255,.62),transparent 45%),
-    linear-gradient(#dcebef,#eee2d1);
-}
-
-.sand-table {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 28%;
-  background: linear-gradient(#bd9167,#9b7150);
-}
-
-.hourglass {
-  position: absolute;
-  left: 16%;
-  top: 8%;
-
-  width: min(33vw, 350px);
-  height: 79%;
-}
-
-.hg-top,
-.hg-bottom {
-  position: absolute;
-  left: 6%;
-  width: 88%;
-  height: 8%;
   border-radius: 18px;
-  background: linear-gradient(#805330,#b77b45,#7a4c2d);
-  box-shadow: 0 6px 9px rgba(35,25,20,.2);
-  z-index: 5;
+
+  font-weight: 900;
+
+  font-size: 17px;
+
+  cursor: pointer;
 }
 
-.hg-top { top: 0; }
-.hg-bottom { bottom: 0; }
-
-.hg-glass {
-  position: absolute;
-  left: 17%;
-  top: 7%;
-  width: 66%;
-  height: 86%;
-
-  background: rgba(220,243,250,.32);
-  border: 6px solid rgba(235,250,255,.77);
-
-  clip-path: polygon(
-    5% 0,
-    95% 0,
-    78% 38%,
-    56% 50%,
-    78% 62%,
-    95% 100%,
-    5% 100%,
-    22% 62%,
-    44% 50%,
-    22% 38%
-  );
-
-  filter: drop-shadow(0 3px 5px rgba(40,60,70,.2));
-  z-index: 3;
+.start-button {
+  background: var(--green);
+  color: white;
 }
 
-.top-sand {
-  position: absolute;
-  z-index: 2;
-
-  left: 25%;
-  top: 19%;
-
-  width: 50%;
-  height: 28%;
-
-  background: #daa94f;
-
-  clip-path: polygon(0 0,100% 0,62% 100%,38% 100%);
-  transform-origin: bottom;
+.pause-button {
+  background: #eef3ff;
+  color: #6076aa;
 }
 
-.bottom-sand {
-  position: absolute;
-  z-index: 2;
-
-  left: 25%;
-  bottom: 17%;
-
-  width: 50%;
-  height: 28%;
-
-  background: #daa94f;
-
-  clip-path: polygon(38% 0,62% 0,100% 100%,0 100%);
-  transform-origin: bottom;
+.reset-button {
+  background: #f7edf1;
+  color: #a46c7c;
 }
 
-.sand-stream {
-  position: absolute;
-  z-index: 4;
-  left: 49%;
-  top: 46%;
-  width: 4px;
-  height: 19%;
-  background: #daa94f;
+
+/* ======================================================
+   FALL ANIMATION
+====================================================== */
+
+.falling-leaf {
+  transform-box: fill-box;
+  transform-origin: center;
+
+  animation:
+    leafFall 8s linear infinite;
 }
 
-/* ------------------ BUBBLES ------------------ */
-
-.scene-bubbles {
-  background:
-    radial-gradient(circle at 20% 25%,rgba(255,255,255,.8),transparent 2%),
-    linear-gradient(145deg,#dbefff,#8ac5ed);
+.falling-leaf:nth-child(2) {
+  animation-delay: -2s;
 }
 
-.bubble {
-  position: absolute;
-  border: 2px solid rgba(255,255,255,.78);
-  background:
-    radial-gradient(circle at 30% 25%,rgba(255,255,255,.85),transparent 20%),
-    linear-gradient(145deg,rgba(147,211,245,.2),rgba(212,168,232,.24));
-
-  border-radius: 50%;
-  animation: floatBubble 8s linear infinite;
+.falling-leaf:nth-child(3) {
+  animation-delay: -5s;
 }
 
-@keyframes floatBubble {
-  from { transform: translateY(80px) translateX(0); }
-  50% { transform: translateY(-240px) translateX(35px); }
-  to { transform: translateY(-620px) translateX(-25px); }
+.falling-leaf:nth-child(4) {
+  animation-delay: -3.4s;
 }
 
-/* ------------------ COASTER ------------------ */
-
-.scene-coaster {
-  background:
-    linear-gradient(#bce4f5 0 67%, #a9ce8f 67% 82%, #8db470 82%);
-}
-
-.coaster-cloud {
-  position: absolute;
-  width: 110px;
-  height: 40px;
-  border-radius: 40px;
-  background: rgba(255,255,255,.8);
-  top: 15%;
-  left: 15%;
-  box-shadow:
-    45px 8px 0 -7px rgba(255,255,255,.7),
-    22px -15px 0 -5px rgba(255,255,255,.85);
-}
-
-.coaster-track {
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 22%;
-  height: 57%;
-}
-
-.coaster-track svg {
-  width: 100%;
-  height: 100%;
-}
-
-.coaster-car {
-  position: absolute;
-  width: 66px;
-  height: 30px;
-  border-radius: 10px 10px 5px 5px;
-  background: #d76470;
-
-  z-index: 7;
-  transition: left .8s linear, top .8s linear;
-
-  box-shadow:
-    inset -18px 0 #e89c53,
-    0 6px 9px rgba(50,50,50,.18);
-}
-
-.coaster-car::before,
-.coaster-car::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #4c5661;
-}
-
-.coaster-car::before { left: 9px; }
-.coaster-car::after { right: 9px; }
-
-/* ------------------ BALLOON ------------------ */
-
-.scene-balloon {
-  background: linear-gradient(#b7def3 0 69%,#abc98c 69%);
-}
-
-.balloon-wrap {
-  position: absolute;
-  left: 23%;
-  top: 8%;
-  width: 230px;
-  height: 430px;
-  transition: top .5s linear;
-}
-
-.balloon {
-  width: 190px;
-  height: 235px;
-  margin: auto;
-
-  border-radius: 50% 50% 45% 45%;
-
-  background:
-    linear-gradient(
-      90deg,
-      #db7880 0 20%,
-      #e3ad5e 20% 40%,
-      #6c9ed2 40% 60%,
-      #76b79e 60% 80%,
-      #a27fc4 80%
-    );
-
-  box-shadow:
-    inset 20px 0 rgba(255,255,255,.08),
-    inset -20px 0 rgba(0,0,0,.05);
-}
-
-.balloon-lines {
-  width: 100px;
-  height: 95px;
-  margin: -3px auto 0;
-
-  border-left: 2px solid #765d46;
-  border-right: 2px solid #765d46;
-
-  transform: perspective(100px) rotateX(-15deg);
-}
-
-.balloon-basket {
-  width: 62px;
-  height: 49px;
-  background: #987250;
-  margin: -4px auto;
-  border-radius: 5px 5px 12px 12px;
-}
-
-/* ------------------ ROCKET ------------------ */
-
-.scene-rocket {
-  background:
-    radial-gradient(circle at 70% 23%,#ffffff 0 1px,transparent 2px),
-    radial-gradient(circle at 20% 38%,#ffffff 0 1px,transparent 2px),
-    radial-gradient(circle at 30% 13%,#ffffff 0 2px,transparent 3px),
-    radial-gradient(circle at 82% 69%,#ffffff 0 1px,transparent 2px),
-    linear-gradient(#101c34,#263a62);
-}
-
-.rocket-wrap {
-  position: absolute;
-  left: 22%;
-  bottom: 5%;
-  width: 180px;
-  height: 350px;
-  transition: bottom .5s linear;
-}
-
-.rocket-body {
-  position: absolute;
-  left: 38px;
-  top: 0;
-  width: 104px;
-  height: 245px;
-
-  background: linear-gradient(90deg,#dce4ec,#ffffff,#bbc8d5);
-  border-radius: 55% 55% 32% 32%;
-}
-
-.rocket-window {
-  position: absolute;
-  top: 68px;
-  left: 29px;
-
-  width: 46px;
-  height: 46px;
-
-  border-radius: 50%;
-
-  background: #71add0;
-  border: 6px solid #768698;
-}
-
-.rocket-fin-left,
-.rocket-fin-right {
-  position: absolute;
-  top: 165px;
-  width: 45px;
-  height: 95px;
-  background: #ce6872;
-}
-
-.rocket-fin-left {
-  left: 10px;
-  clip-path: polygon(100% 0,100% 100%,0 100%);
-}
-
-.rocket-fin-right {
-  right: 10px;
-  clip-path: polygon(0 0,100% 100%,0 100%);
-}
-
-.rocket-flame {
-  position: absolute;
-  left: 67px;
-  top: 235px;
-
-  width: 48px;
-  height: 100px;
-
-  background: linear-gradient(#f9de72,#ed8152,transparent);
-  clip-path: polygon(50% 100%,0 0,100% 0);
-
-  animation: flame .25s infinite alternate;
-}
-
-@keyframes flame {
-  from { transform: scaleY(.83); }
-  to { transform: scaleY(1.05); }
-}
-
-/* ------------------ OCEAN / BEACH ------------------ */
-
-.scene-ocean {
-  background: linear-gradient(#acdff2 0 42%,#57b6d2 42% 62%,#258cae 62%);
-}
-
-.wave {
-  position: absolute;
-  left: -10%;
-  width: 120%;
-  height: 60px;
-
-  border-radius: 50%;
-  border-top: 5px solid rgba(255,255,255,.7);
-
-  animation: waveMove 5s ease-in-out infinite alternate;
-}
-
-.wave1 { top: 44%; }
-.wave2 { top: 53%; animation-delay: -1.6s; }
-
-@keyframes waveMove {
-  from { transform: translateX(-2%) rotate(-1deg); }
-  to { transform: translateX(2%) rotate(1deg); }
-}
-
-.scene-beach {
-  background: linear-gradient(#addff0 0 40%,#4db5cf 40% 60%,#e7c680 60%);
-}
-
-.beach-sun {
-  position: absolute;
-  width: 115px;
-  height: 115px;
-  border-radius: 50%;
-  background: #edc867;
-  left: 13%;
-  top: 14%;
-}
-
-/* ------------------ WEATHER ------------------ */
-
-.scene-rain {
-  background: linear-gradient(#8498aa,#c4d0da);
-}
-
-.scene-storm {
-  background: linear-gradient(#303a49,#758396);
-}
-
-.raindrop {
-  position: absolute;
-  width: 2px;
-  height: 25px;
-  background: rgba(255,255,255,.65);
-  transform: rotate(15deg);
-  animation: rainfall 1s linear infinite;
-}
-
-@keyframes rainfall {
-  from { transform: translateY(-80px) rotate(15deg); }
-  to { transform: translateY(780px) rotate(15deg); }
-}
-
-.lightning {
-  position: absolute;
-  left: 25%;
-  top: 20%;
-  width: 75px;
-  height: 190px;
-  background: #f7df76;
-  clip-path: polygon(55% 0,100% 0,62% 42%,92% 42%,20% 100%,38% 53%,7% 53%);
-  opacity: 0;
-
-  animation: lightning 5s infinite;
-}
-
-@keyframes lightning {
-  0%,90%,100% { opacity: 0; }
-  91%,93%,95% { opacity: 1; }
-  92%,94% { opacity: .2; }
-}
-
-/* ------------------ SNOW ------------------ */
-
-.scene-snow {
-  background: linear-gradient(#c5dfeb 0 72%,#edf3f5 72%);
-}
-
-.snowflake {
-  position: absolute;
-  color: rgba(255,255,255,.95);
-  font-size: 18px;
-  animation: snowfall linear infinite;
-}
-
-@keyframes snowfall {
-  from {
-    transform: translateY(-80px) rotate(0);
-  }
-  to {
-    transform: translateY(780px) rotate(250deg);
-  }
-}
-
-.snow-ground {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 15%;
-  background: #f5f8fa;
-  border-radius: 50% 50% 0 0;
-}
-
-/* ------------------ FALL ------------------ */
-
-.scene-fall {
-  background: linear-gradient(#edd7bd 0 70%,#b18b65 70%);
-}
-
-.fall-tree {
-  position: absolute;
-  left: 18%;
-  bottom: 8%;
-  width: 280px;
-  height: 450px;
-}
-
-.trunk {
-  position: absolute;
-  width: 55px;
-  height: 255px;
-  background: linear-gradient(90deg,#6d4c39,#8e664d,#604332);
-  left: 112px;
-  bottom: 0;
-  border-radius: 35% 35% 10% 10%;
-}
-
-.tree-crown {
-  position: absolute;
-  width: 260px;
-  height: 220px;
-  top: 0;
-  left: 10px;
-
-  background:
-    radial-gradient(circle at 20% 50%,#b95745 0 52px,transparent 53px),
-    radial-gradient(circle at 43% 28%,#e09347 0 62px,transparent 63px),
-    radial-gradient(circle at 70% 42%,#cc6940 0 60px,transparent 61px),
-    radial-gradient(circle at 53% 70%,#d27c3e 0 66px,transparent 67px);
-}
-
-.leaf {
-  position: absolute;
-  width: 16px;
-  height: 11px;
-  border-radius: 70% 15% 70% 15%;
-  background: #d2733f;
-  animation: leafFall linear infinite;
+.falling-leaf:nth-child(5) {
+  animation-delay: -6.3s;
 }
 
 @keyframes leafFall {
+  0% {
+    transform:
+      translateY(-120px)
+      translateX(0)
+      rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    transform:
+      translateY(270px)
+      translateX(35px)
+      rotate(170deg);
+  }
+
+  100% {
+    transform:
+      translateY(650px)
+      translateX(-20px)
+      rotate(360deg);
+    opacity: .9;
+  }
+}
+
+
+/* ======================================================
+   RAIN
+====================================================== */
+
+.rain-line {
+  animation: rainDrop 1.1s linear infinite;
+}
+
+@keyframes rainDrop {
   from {
-    transform: translateY(-60px) rotate(0);
+    transform: translateY(-120px);
   }
+
   to {
-    transform: translateY(680px) translateX(80px) rotate(420deg);
+    transform: translateY(600px);
   }
 }
 
-/* ------------------ SPRING ------------------ */
 
-.scene-spring {
-  background: linear-gradient(#c5e4f5 0 70%,#a9d48c 70%);
+/* ======================================================
+   SNOW
+====================================================== */
+
+.snowflake {
+  animation: snowFall 7s linear infinite;
 }
 
-.spring-tree {
-  position: absolute;
-  left: 18%;
-  bottom: 7%;
-  width: 290px;
-  height: 460px;
-}
-
-.spring-trunk {
-  position: absolute;
-  left: 120px;
-  bottom: 0;
-  width: 52px;
-  height: 280px;
-  background: #745841;
-  border-radius: 35% 35% 10% 10%;
-}
-
-.blossom-crown {
-  position: absolute;
-  top: 0;
-  left: 10px;
-  width: 270px;
-  height: 230px;
-
-  background:
-    radial-gradient(circle at 18% 52%,#eda8b9 0 50px,transparent 51px),
-    radial-gradient(circle at 43% 27%,#f3b4c2 0 60px,transparent 61px),
-    radial-gradient(circle at 73% 48%,#e99bae 0 59px,transparent 60px),
-    radial-gradient(circle at 52% 69%,#efacbb 0 65px,transparent 66px);
-}
-
-.petal {
-  position: absolute;
-  width: 10px;
-  height: 15px;
-  background: #f3b2c2;
-  border-radius: 65% 35% 60% 40%;
-
-  animation: petalFall linear infinite;
-}
-
-@keyframes petalFall {
+@keyframes snowFall {
   from {
-    transform: translateY(-50px) translateX(0) rotate(0);
+    transform: translateY(-90px);
   }
+
   to {
-    transform: translateY(720px) translateX(80px) rotate(380deg);
+    transform: translateY(620px);
   }
 }
 
-/* ------------------ FIREPLACE ------------------ */
 
-.scene-fire {
-  background: linear-gradient(#4b4140,#6c5850);
+/* ======================================================
+   OCEAN
+====================================================== */
+
+.wave {
+  animation: waveMove 5s ease-in-out infinite alternate;
 }
 
-.fireplace {
-  position: absolute;
-  left: 13%;
-  bottom: 0;
-  width: 380px;
-  height: 430px;
+@keyframes waveMove {
+  from {
+    transform: translateX(-15px);
+  }
 
-  background: #8c7365;
-  border-radius: 7px 7px 0 0;
-  box-shadow: inset 0 0 0 8px rgba(255,255,255,.04);
+  to {
+    transform: translateX(20px);
+  }
 }
 
-.fire-opening {
-  position: absolute;
-  left: 60px;
-  bottom: 0;
-  width: 260px;
-  height: 280px;
 
-  background: #2f2929;
-  border-radius: 130px 130px 0 0;
-}
-
-.logs {
-  position: absolute;
-  left: 70px;
-  bottom: 28px;
-  width: 125px;
-  height: 28px;
-  border-radius: 20px;
-  background: #735039;
-  transform: rotate(7deg);
-  box-shadow: 0 -8px #886047;
-}
+/* ======================================================
+   FIRE
+====================================================== */
 
 .flame {
-  position: absolute;
-  bottom: 45px;
-  width: 60px;
-  height: 145px;
-
-  background: linear-gradient(#f8dd70,#ec9854,#d95f42);
-
-  clip-path: polygon(50% 0,85% 45%,70% 100%,28% 100%,13% 47%);
-  border-radius: 50%;
-
-  animation: fireFlicker .35s infinite alternate;
+  transform-origin: bottom center;
+  animation: flameMove .85s ease-in-out infinite alternate;
 }
 
-.flame1 { left: 85px; }
-.flame2 { left: 130px; height: 175px; animation-delay: -.2s; }
-.flame3 { left: 165px; height: 125px; animation-delay: -.1s; }
-
-@keyframes fireFlicker {
+@keyframes flameMove {
   from {
-    transform: scaleX(.86) scaleY(.9) rotate(-3deg);
+    transform: scaleY(.92) rotate(-2deg);
   }
+
   to {
-    transform: scaleX(1.05) scaleY(1.05) rotate(3deg);
+    transform: scaleY(1.08) rotate(2deg);
   }
 }
 
-/* ------------------ NIGHT ------------------ */
 
-.scene-night {
-  background: linear-gradient(#0e1830,#293c61 62%,#17253d);
-}
-
-.moon {
-  position: absolute;
-  left: 16%;
-  top: 13%;
-
-  width: 125px;
-  height: 125px;
-
-  border-radius: 50%;
-  background: #eee9cf;
-
-  box-shadow: 0 0 35px rgba(245,241,210,.25);
-}
-
-.star-dot {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: white;
-
-  animation: twinkle 2s ease-in-out infinite alternate;
-}
-
-@keyframes twinkle {
-  from { opacity: .25; }
-  to { opacity: 1; }
-}
-
-/* =========================================================
-   TIME-UP SCREEN
-   ========================================================= */
-
-.time-up {
-  position: fixed;
-  z-index: 500;
-  inset: 0;
-
-  display: none;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(24,34,49,.72);
-  backdrop-filter: blur(7px);
-}
-
-.time-up.show {
-  display: flex;
-}
-
-.time-up-card {
-  width: min(520px, 88vw);
-  background: white;
-  border-radius: 30px;
-  padding: 45px;
-  text-align: center;
-
-  box-shadow: 0 25px 70px rgba(0,0,0,.25);
-}
-
-.time-up-title {
-  font-size: 54px;
-  font-weight: 900;
-}
-
-.time-up-sub {
-  margin: 10px 0 25px;
-  color: var(--muted);
-  font-size: 18px;
-}
-
-.done-btn {
-  border: 0;
-  background: var(--green);
-  color: white;
-
-  padding: 14px 30px;
-  border-radius: 999px;
-
-  font-size: 18px;
-  font-weight: 900;
-
-  cursor: pointer;
-}
-
-/* =========================================================
+/* ======================================================
    RESPONSIVE
-   ========================================================= */
+====================================================== */
 
-@media(max-width: 1050px) {
-  .topbar {
-    grid-template-columns: 150px 1fr 220px;
-  }
+@media(max-width: 1000px) {
 
-  .main-grid {
-    grid-template-columns: 205px minmax(0,1fr);
-  }
-
-  .theme-panel {
-    min-height: 600px;
-  }
-
-  .timer-overlay {
-    min-width: 280px;
-  }
-
-  .controls-area {
+  .main-layout {
     grid-template-columns: 1fr;
   }
-}
 
-@media(max-width: 760px) {
-  .app {
-    padding: 12px;
+  .sidebar {
+    order: 2;
   }
 
-  .topbar {
-    grid-template-columns: auto 1fr auto;
-  }
-
-  .subtitle {
-    display: none;
-  }
-
-  .top-control span.label {
-    display: none;
-  }
-
-  .main-grid {
-    display: block;
-  }
-
-  .theme-panel {
-    height: auto;
-    min-height: 0;
-    margin-bottom: 12px;
-  }
-
-  .theme-scroll {
-    display: flex;
-    overflow-x: auto;
+  .theme-list {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    max-height: none;
   }
 
   .theme-button {
-    min-width: 140px;
-    grid-template-columns: 45px 1fr;
-    margin-right: 8px;
+    grid-template-columns: 50px 1fr;
   }
 
-  .thumb {
-    width: 42px;
-    height: 42px;
+  .controls {
+    grid-template-columns: 1fr;
   }
 
-  .scene-card {
-    min-height: 430px;
+}
+
+@media(max-width: 700px) {
+
+  .header {
+    grid-template-columns: 1fr;
   }
 
-  .timer-overlay {
-    right: 50%;
-    transform: translate(50%,-50%);
+  .tools-button {
+    justify-self: center;
   }
 
-  .quick-buttons {
+  .header-actions {
+    justify-content: center;
+  }
+
+  .theme-list {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .scene-wrapper {
+    min-height: 500px;
+  }
+
+  .timer-display-card {
+    width: 80%;
+    right: 10%;
+    top: 48%;
+  }
+
+  .quick-grid {
     grid-template-columns: repeat(4,1fr);
   }
+
+}
+
+@media(prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+  }
+
 }
 </style>
 </head>
@@ -1690,479 +848,376 @@ button {
 
 <body>
 
-<div class="app">
+<div class="page">
 
-  <!-- =====================================================
-       TOP BAR
-       ===================================================== -->
 
-  <header class="topbar">
+<header class="header">
 
-    <a href="index.html" class="home-btn">
-      <span>⌂</span>
-      <span>Tools</span>
-    </a>
+  <button
+    class="header-button tools-button"
+    id="toolsButton">
+    ⌂ Tools
+  </button>
 
-    <div class="title-wrap">
-      <h1 class="title">Timer</h1>
-      <div class="subtitle">
-        Pick a time, pick a theme, and let's go.
-      </div>
-    </div>
 
-    <div class="top-actions">
+  <div class="header-center">
 
-      <button
-        id="soundBtn"
-        class="top-control"
-        type="button"
-        onclick="toggleSound()">
+    <h1>Timer</h1>
 
-        <span>🔊</span>
-        <span class="label">Sound</span>
-
-      </button>
-
-      <button
-        class="top-control"
-        type="button"
-        onclick="toggleSettings()">
-
-        <span>⚙</span>
-        <span class="label">Settings</span>
-
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <!-- =====================================================
-       MAIN
-       ===================================================== -->
-
-  <div class="main-grid">
-
-
-    <!-- ===================================================
-         THEMES
-         =================================================== -->
-
-    <aside class="theme-panel">
-
-      <div class="panel-label">
-        THEMES
-      </div>
-
-      <div class="theme-scroll">
-
-        <button class="theme-button active" data-theme="sand">
-          <div class="thumb thumb-sand"></div>
-          <div class="theme-name">Sand Timer</div>
-        </button>
-
-        <button class="theme-button" data-theme="coaster">
-          <div class="thumb thumb-coaster"></div>
-          <div class="theme-name">Roller Coaster</div>
-        </button>
-
-        <button class="theme-button" data-theme="bubbles">
-          <div class="thumb thumb-bubbles"></div>
-          <div class="theme-name">Bubbles</div>
-        </button>
-
-        <button class="theme-button" data-theme="balloon">
-          <div class="thumb thumb-balloon"></div>
-          <div class="theme-name">Balloon</div>
-        </button>
-
-        <button class="theme-button" data-theme="rocket">
-          <div class="thumb thumb-rocket"></div>
-          <div class="theme-name">Rocket</div>
-        </button>
-
-        <button class="theme-button" data-theme="ocean">
-          <div class="thumb thumb-ocean"></div>
-          <div class="theme-name">Ocean</div>
-        </button>
-
-        <button class="theme-button" data-theme="rain">
-          <div class="thumb thumb-rain"></div>
-          <div class="theme-name">Rain</div>
-        </button>
-
-        <button class="theme-button" data-theme="storm">
-          <div class="thumb thumb-storm"></div>
-          <div class="theme-name">Thunderstorm</div>
-        </button>
-
-        <button class="theme-button" data-theme="snow">
-          <div class="thumb thumb-snow"></div>
-          <div class="theme-name">Snow</div>
-        </button>
-
-        <button class="theme-button" data-theme="fall">
-          <div class="thumb thumb-fall"></div>
-          <div class="theme-name">Fall Leaves</div>
-        </button>
-
-        <button class="theme-button" data-theme="spring">
-          <div class="thumb thumb-spring"></div>
-          <div class="theme-name">Spring Garden</div>
-        </button>
-
-        <button class="theme-button" data-theme="beach">
-          <div class="thumb thumb-beach"></div>
-          <div class="theme-name">Beach</div>
-        </button>
-
-        <button class="theme-button" data-theme="fire">
-          <div class="thumb thumb-fire"></div>
-          <div class="theme-name">Fireplace</div>
-        </button>
-
-        <button class="theme-button" data-theme="night">
-          <div class="thumb thumb-night"></div>
-          <div class="theme-name">Night Sky</div>
-        </button>
-
-      </div>
-
-    </aside>
-
-
-    <!-- ===================================================
-         TIMER
-         =================================================== -->
-
-    <main class="content">
-
-      <section class="scene-card">
-
-        <div id="scene" class="scene"></div>
-
-
-        <div class="timer-overlay">
-
-          <div
-            id="timeDisplay"
-            class="time-display">
-            05:00
-          </div>
-
-          <div
-            id="timeCaption"
-            class="time-caption">
-            5 minutes
-          </div>
-
-          <div class="progress-track">
-            <div
-              id="progressFill"
-              class="progress-fill">
-            </div>
-          </div>
-
-        </div>
-
-
-        <button
-          class="fullscreen-btn"
-          onclick="toggleFullscreen()"
-          title="Fullscreen">
-
-          ⛶
-
-        </button>
-
-      </section>
-
-
-      <!-- =================================================
-           TIME CONTROLS
-           ================================================= -->
-
-      <div class="controls-area">
-
-        <section class="control-card">
-
-          <div class="control-title">
-            QUICK SET
-          </div>
-
-          <div class="quick-buttons">
-
-            <button class="quick-btn" data-minutes="1">
-              1
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn" data-minutes="3">
-              3
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn selected" data-minutes="5">
-              5
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn" data-minutes="10">
-              10
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn" data-minutes="15">
-              15
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn" data-minutes="20">
-              20
-              <span>min</span>
-            </button>
-
-            <button class="quick-btn" data-minutes="30">
-              30
-              <span>min</span>
-            </button>
-
-          </div>
-
-        </section>
-
-
-        <section class="control-card">
-
-          <div class="control-title">
-            SET YOUR OWN TIME
-          </div>
-
-          <div class="custom-set">
-
-            <button
-              class="adjust-btn"
-              onclick="adjustTime(-60)">
-              −
-            </button>
-
-            <div class="custom-display">
-
-              <span id="customDisplay">
-                05:00
-              </span>
-
-              <small>MM:SS</small>
-
-            </div>
-
-            <button
-              class="adjust-btn"
-              onclick="adjustTime(60)">
-              +
-            </button>
-
-          </div>
-
-        </section>
-
-      </div>
-
-
-      <!-- =================================================
-           BUTTONS
-           ================================================= -->
-
-      <div class="action-row">
-
-        <button
-          id="startBtn"
-          class="action-btn start"
-          onclick="startTimer()">
-
-          ▶ START
-
-        </button>
-
-        <button
-          id="pauseBtn"
-          class="action-btn pause"
-          onclick="pauseTimer()">
-
-          ‖ PAUSE
-
-        </button>
-
-        <button
-          class="action-btn reset"
-          onclick="resetTimer()">
-
-          ↻ RESET
-
-        </button>
-
-      </div>
-
-
-      <div class="footer-note">
-
-        <span>💡</span>
-
-        <div>
-          <strong>Visual timer:</strong>
-          the scene changes as the time counts down.
-        </div>
-
-      </div>
-
-    </main>
+    <p>
+      Pick a time, pick a theme, and let's go.
+    </p>
 
   </div>
+
+
+  <div class="header-actions">
+
+    <button
+      class="header-button"
+      id="soundButton">
+      🔊 Sound
+    </button>
+
+    <button
+      class="header-button"
+      id="settingsButton">
+      ⚙ Settings
+    </button>
+
+  </div>
+
+</header>
+
+
+
+<div class="main-layout">
+
+
+<!-- ==================================================
+     SIDEBAR
+=================================================== -->
+
+<aside class="sidebar">
+
+  <div class="sidebar-title">
+    THEMES
+  </div>
+
+
+  <div class="theme-list">
+
+
+    <button
+      class="theme-button"
+      data-theme="ocean">
+
+      <div class="thumbnail thumb-ocean"></div>
+
+      Ocean
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="rain">
+
+      <div class="thumbnail thumb-rain"></div>
+
+      Rain
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="storm">
+
+      <div class="thumbnail thumb-storm"></div>
+
+      Thunderstorm
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="snow">
+
+      <div class="thumbnail thumb-snow"></div>
+
+      Snow
+
+    </button>
+
+
+    <button
+      class="theme-button active"
+      data-theme="fall">
+
+      <div class="thumbnail thumb-fall"></div>
+
+      Fall Leaves
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="spring">
+
+      <div class="thumbnail thumb-spring"></div>
+
+      Spring Garden
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="beach">
+
+      <div class="thumbnail thumb-beach"></div>
+
+      Beach
+
+    </button>
+
+
+    <button
+      class="theme-button"
+      data-theme="fireplace">
+
+      <div class="thumbnail thumb-fire"></div>
+
+      Fireplace
+
+    </button>
+
+
+  </div>
+
+</aside>
+
+
+
+<!-- ==================================================
+     MAIN
+=================================================== -->
+
+<main class="content">
+
+
+<div
+  id="sceneWrapper"
+  class="scene-wrapper">
+
+
+  <div
+    id="scene"
+    class="scene">
+  </div>
+
+
+  <div class="timer-display-card">
+
+    <div
+      id="timerNumber"
+      class="timer-number">
+      05:00
+    </div>
+
+    <div
+      id="timerLabel"
+      class="timer-label">
+      5 minutes
+    </div>
+
+
+    <div class="progress-track">
+
+      <div
+        id="progressFill"
+        class="progress-fill">
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button
+    id="fullscreenButton"
+    class="fullscreen-button">
+    ⛶
+  </button>
+
 
 </div>
 
 
-<!-- =======================================================
-     SETTINGS
-     ======================================================= -->
 
-<div
-  id="settingsDrawer"
-  class="settings-drawer">
+<!-- ==================================================
+     CONTROLS
+=================================================== -->
 
-  <div class="drawer-head">
+<div class="controls">
 
-    <div class="drawer-title">
-      Timer Settings
-    </div>
+
+<section class="control-card">
+
+  <div class="control-title">
+    QUICK SET
+  </div>
+
+
+  <div class="quick-grid">
+
+    <button class="quick-button" data-minutes="1">
+      1
+      <span>min</span>
+    </button>
+
+    <button class="quick-button" data-minutes="3">
+      3
+      <span>min</span>
+    </button>
+
+    <button class="quick-button active" data-minutes="5">
+      5
+      <span>min</span>
+    </button>
+
+    <button class="quick-button" data-minutes="10">
+      10
+      <span>min</span>
+    </button>
+
+    <button class="quick-button" data-minutes="15">
+      15
+      <span>min</span>
+    </button>
+
+    <button class="quick-button" data-minutes="20">
+      20
+      <span>min</span>
+    </button>
+
+    <button class="quick-button" data-minutes="30">
+      30
+      <span>min</span>
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<section class="control-card">
+
+  <div class="control-title">
+    SET YOUR OWN TIME
+  </div>
+
+
+  <div class="custom-row">
 
     <button
-      class="close-btn"
-      onclick="toggleSettings()">
-      ×
+      id="minusButton"
+      class="circle-button">
+      −
+    </button>
+
+
+    <div
+      id="customDisplay"
+      class="custom-display">
+      05:00
+    </div>
+
+
+    <button
+      id="plusButton"
+      class="circle-button">
+      +
     </button>
 
   </div>
 
 
-  <div class="setting-block">
-
-    <div class="toggle-row">
-
-      <div>
-        <div class="setting-label">
-          End Sound
-        </div>
-
-        <div class="setting-help">
-          Plays a gentle chime when time is up.
-        </div>
-      </div>
-
-      <button
-        id="soundToggle"
-        class="toggle on"
-        onclick="toggleSound()">
-
-        <div class="toggle-dot"></div>
-
-      </button>
-
-    </div>
-
+  <div class="custom-caption">
+    MM:SS
   </div>
 
+</section>
 
-  <div class="setting-block">
-
-    <div class="toggle-row">
-
-      <div>
-        <div class="setting-label">
-          Keep Screen Awake
-        </div>
-
-        <div class="setting-help">
-          Tries to prevent the display from sleeping while the timer runs.
-        </div>
-      </div>
-
-      <button
-        id="wakeToggle"
-        class="toggle"
-        onclick="toggleWakeLockSetting()">
-
-        <div class="toggle-dot"></div>
-
-      </button>
-
-    </div>
-
-  </div>
 
 </div>
 
 
-<!-- =======================================================
-     TIME UP
-     ======================================================= -->
 
-<div
-  id="timeUp"
-  class="time-up">
+<div class="timer-actions">
 
-  <div class="time-up-card">
+  <button
+    id="startButton"
+    class="action-button start-button">
+    ▶ Start
+  </button>
 
-    <div class="time-up-title">
-      Time's Up
-    </div>
+  <button
+    id="pauseButton"
+    class="action-button pause-button">
+    ❚❚ Pause
+  </button>
 
-    <div class="time-up-sub">
-      The timer has finished.
-    </div>
+  <button
+    id="resetButton"
+    class="action-button reset-button">
+    ↺ Reset
+  </button>
 
-    <button
-      class="done-btn"
-      onclick="closeTimeUp()">
+</div>
 
-      Done
 
-    </button>
+</main>
 
-  </div>
+</div>
 
 </div>
 
 
 
 <script>
-/* =========================================================
-   CLASSROOM TIMER
-   ========================================================= */
 
-let selectedSeconds = 300;
+/* =====================================================
+   TIMER STATE
+===================================================== */
+
+let selectedMinutes = 5;
+
+let totalSeconds = 300;
+
 let remainingSeconds = 300;
-let originalSeconds = 300;
 
 let timerInterval = null;
+
 let running = false;
 
 let soundEnabled = true;
-let wakeEnabled = false;
-let wakeLock = null;
 
-let currentTheme = "sand";
+let currentTheme = "fall";
 
 
-const timeDisplay =
-  document.getElementById("timeDisplay");
+const timerNumber =
+  document.getElementById("timerNumber");
+
+const timerLabel =
+  document.getElementById("timerLabel");
 
 const customDisplay =
   document.getElementById("customDisplay");
-
-const timeCaption =
-  document.getElementById("timeCaption");
 
 const progressFill =
   document.getElementById("progressFill");
@@ -2171,65 +1226,1457 @@ const scene =
   document.getElementById("scene");
 
 
+/* =====================================================
+   SCENES
+===================================================== */
 
-/* =========================================================
-   FORMAT
-   ========================================================= */
+const scenes = {
+
+
+/* -----------------------------------------------------
+   FALL
+----------------------------------------------------- */
+
+fall: `
+<svg
+viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+  <linearGradient id="fallSky"
+    x1="0" y1="0"
+    x2="0" y2="1">
+
+    <stop offset="0%"
+      stop-color="#ecd0ac"/>
+
+    <stop offset="100%"
+      stop-color="#f5e2ca"/>
+
+  </linearGradient>
+
+
+  <linearGradient id="fallGrass"
+    x1="0" y1="0"
+    x2="0" y2="1">
+
+    <stop offset="0%"
+      stop-color="#9a8461"/>
+
+    <stop offset="100%"
+      stop-color="#756346"/>
+
+  </linearGradient>
+
+
+  <linearGradient id="trunkGradient"
+    x1="0" y1="0"
+    x2="1" y2="0">
+
+    <stop offset="0%"
+      stop-color="#4b3328"/>
+
+    <stop offset="45%"
+      stop-color="#795442"/>
+
+    <stop offset="100%"
+      stop-color="#4f362d"/>
+
+  </linearGradient>
+
+</defs>
+
+
+<!-- sky -->
+
+<rect
+  width="1400"
+  height="570"
+  fill="url(#fallSky)"/>
+
+
+<!-- distant hills -->
+
+<path
+  d="
+    M0 325
+    C180 260 330 280 490 325
+    C650 275 830 270 1010 325
+    C1160 285 1270 290 1400 320
+    L1400 570
+    L0 570 Z"
+  fill="#c3aa82"
+  opacity=".55"/>
+
+
+<path
+  d="
+    M0 365
+    C180 320 380 335 540 370
+    C720 320 900 325 1060 375
+    C1190 340 1300 345 1400 365
+    L1400 570
+    L0 570 Z"
+  fill="#aa926c"
+  opacity=".65"/>
+
+
+<!-- ground -->
+
+<rect
+  y="390"
+  width="1400"
+  height="180"
+  fill="url(#fallGrass)"/>
+
+
+<!-- distant trees -->
+
+<g opacity=".55">
+
+  <g transform="translate(80 215) scale(.55)">
+
+    <rect
+      x="82"
+      y="125"
+      width="22"
+      height="150"
+      rx="10"
+      fill="#6f5141"/>
+
+    <circle
+      cx="72"
+      cy="105"
+      r="65"
+      fill="#b95737"/>
+
+    <circle
+      cx="120"
+      cy="80"
+      r="58"
+      fill="#cf7436"/>
+
+    <circle
+      cx="135"
+      cy="125"
+      r="55"
+      fill="#d69742"/>
+
+  </g>
+
+
+  <g transform="translate(1160 215) scale(.6)">
+
+    <rect
+      x="82"
+      y="125"
+      width="22"
+      height="150"
+      rx="10"
+      fill="#6f5141"/>
+
+    <circle
+      cx="72"
+      cy="105"
+      r="65"
+      fill="#c25c37"/>
+
+    <circle
+      cx="120"
+      cy="80"
+      r="58"
+      fill="#dc8e39"/>
+
+    <circle
+      cx="135"
+      cy="125"
+      r="55"
+      fill="#c26b32"/>
+
+  </g>
+
+</g>
+
+
+<!-- main tree -->
+
+<g transform="translate(185 20)">
+
+  <!-- trunk -->
+
+  <path
+    d="
+      M265 535
+      C245 470 258 405 255 335
+      C250 270 242 224 252 172
+      C265 147 293 147 309 173
+      C320 225 311 280 314 340
+      C318 420 325 475 306 535 Z"
+    fill="url(#trunkGradient)"/>
+
+
+  <!-- branches -->
+
+  <path
+    d="
+      M278 250
+      C245 225 205 198 172 160"
+    fill="none"
+    stroke="#5b4032"
+    stroke-width="20"
+    stroke-linecap="round"/>
+
+
+  <path
+    d="
+      M290 230
+      C325 195 355 168 395 132"
+    fill="none"
+    stroke="#5b4032"
+    stroke-width="18"
+    stroke-linecap="round"/>
+
+
+  <path
+    d="
+      M280 285
+      C235 270 202 262 165 235"
+    fill="none"
+    stroke="#634535"
+    stroke-width="14"
+    stroke-linecap="round"/>
+
+
+  <!-- foliage back -->
+
+  <circle
+    cx="185"
+    cy="145"
+    r="88"
+    fill="#b94f3d"/>
+
+  <circle
+    cx="255"
+    cy="95"
+    r="95"
+    fill="#db8438"/>
+
+  <circle
+    cx="335"
+    cy="125"
+    r="90"
+    fill="#cb6036"/>
+
+  <circle
+    cx="385"
+    cy="190"
+    r="82"
+    fill="#d58d3c"/>
+
+  <circle
+    cx="275"
+    cy="185"
+    r="106"
+    fill="#d57b35"/>
+
+
+  <!-- foliage highlights -->
+
+  <circle
+    cx="230"
+    cy="120"
+    r="45"
+    fill="#e6a146"
+    opacity=".7"/>
+
+  <circle
+    cx="330"
+    cy="90"
+    r="42"
+    fill="#e4933c"
+    opacity=".6"/>
+
+  <circle
+    cx="165"
+    cy="175"
+    r="38"
+    fill="#c46040"
+    opacity=".7"/>
+
+</g>
+
+
+<!-- foreground grass texture -->
+
+<g
+stroke="#6e6248"
+stroke-width="3"
+opacity=".5">
+
+  <path d="M80 570 L90 535"/>
+  <path d="M150 570 L157 540"/>
+  <path d="M260 570 L268 532"/>
+  <path d="M390 570 L397 537"/>
+  <path d="M520 570 L530 530"/>
+  <path d="M690 570 L698 538"/>
+  <path d="M830 570 L840 530"/>
+  <path d="M1010 570 L1020 535"/>
+  <path d="M1180 570 L1190 530"/>
+  <path d="M1320 570 L1330 540"/>
+
+</g>
+
+
+<!-- falling leaves -->
+
+<g>
+
+  <path
+    class="falling-leaf"
+    d="M530 0
+       C548 -8 558 8 546 22
+       C533 33 517 22 520 9 Z"
+    fill="#cf5c38"/>
+
+
+  <path
+    class="falling-leaf"
+    d="M800 -30
+       C820 -38 830 -18 816 -3
+       C801 8 787 -5 790 -18 Z"
+    fill="#e69a3d"/>
+
+
+  <path
+    class="falling-leaf"
+    d="M1020 -55
+       C1040 -65 1054 -44 1040 -30
+       C1025 -18 1010 -31 1012 -44 Z"
+    fill="#b94e3b"/>
+
+
+  <path
+    class="falling-leaf"
+    d="M1210 -10
+       C1231 -18 1240 2 1226 17
+       C1211 27 1198 15 1200 2 Z"
+    fill="#df8337"/>
+
+
+  <path
+    class="falling-leaf"
+    d="M670 -60
+       C690 -68 701 -48 688 -33
+       C673 -22 660 -35 662 -48 Z"
+    fill="#c8613c"/>
+
+</g>
+
+
+<!-- leaves on ground -->
+
+<g opacity=".9">
+
+  <ellipse
+    cx="470"
+    cy="525"
+    rx="13"
+    ry="6"
+    fill="#ce5c3a"
+    transform="rotate(18 470 525)"/>
+
+  <ellipse
+    cx="610"
+    cy="508"
+    rx="12"
+    ry="5"
+    fill="#e4a044"
+    transform="rotate(25 610 508)"/>
+
+  <ellipse
+    cx="790"
+    cy="535"
+    rx="13"
+    ry="6"
+    fill="#bb553a"
+    transform="rotate(-20 790 535)"/>
+
+  <ellipse
+    cx="1040"
+    cy="510"
+    rx="14"
+    ry="6"
+    fill="#d46c37"
+    transform="rotate(17 1040 510)"/>
+
+  <ellipse
+    cx="1230"
+    cy="540"
+    rx="12"
+    ry="5"
+    fill="#e29a3d"
+    transform="rotate(-12 1230 540)"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   OCEAN
+----------------------------------------------------- */
+
+ocean: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+  <linearGradient id="oceanSky"
+  x1="0" y1="0"
+  x2="0" y2="1">
+
+    <stop offset="0%"
+      stop-color="#8bd2ed"/>
+
+    <stop offset="100%"
+      stop-color="#d9f2f7"/>
+
+  </linearGradient>
+
+
+  <linearGradient id="oceanWater"
+  x1="0" y1="0"
+  x2="0" y2="1">
+
+    <stop offset="0%"
+      stop-color="#2c9fc5"/>
+
+    <stop offset="100%"
+      stop-color="#125c86"/>
+
+  </linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#oceanSky)"/>
+
+
+<!-- clouds -->
+
+<g fill="#ffffff"
+opacity=".75">
+
+  <ellipse cx="210" cy="110"
+  rx="80" ry="28"/>
+
+  <ellipse cx="170" cy="105"
+  rx="43" ry="35"/>
+
+  <ellipse cx="245" cy="98"
+  rx="50" ry="39"/>
+
+
+  <ellipse cx="1040" cy="125"
+  rx="85" ry="27"/>
+
+  <ellipse cx="1000" cy="116"
+  rx="44" ry="34"/>
+
+</g>
+
+
+<!-- distant horizon -->
+
+<path
+d="M0 275
+L1400 275
+L1400 570
+L0 570Z"
+fill="url(#oceanWater)"/>
+
+
+<!-- distant sailboat -->
+
+<g transform="translate(410 210)">
+
+  <path
+  d="M0 55 L80 55 L67 70 L13 70 Z"
+  fill="#53483f"/>
+
+  <line
+  x1="40" y1="0"
+  x2="40" y2="57"
+  stroke="#50483f"
+  stroke-width="4"/>
+
+  <path
+  d="M42 3
+  L42 48
+  L78 48Z"
+  fill="#f3eee4"/>
+
+  <path
+  d="M37 10
+  L37 47
+  L8 47Z"
+  fill="#df7b57"/>
+
+</g>
+
+
+<!-- waves -->
+
+<g
+class="wave"
+fill="none"
+stroke="#93e2ef"
+stroke-width="8"
+opacity=".8">
+
+  <path
+  d="M-50 340
+  Q70 300 190 340
+  T430 340
+  T670 340
+  T910 340
+  T1150 340
+  T1390 340
+  T1630 340"/>
+
+  <path
+  d="M-70 415
+  Q60 375 190 415
+  T450 415
+  T710 415
+  T970 415
+  T1230 415
+  T1490 415"/>
+
+</g>
+
+
+<g
+fill="none"
+stroke="rgba(255,255,255,.65)"
+stroke-width="5">
+
+  <path
+  d="M80 365 Q150 345 220 365"/>
+
+  <path
+  d="M620 450 Q700 430 780 450"/>
+
+  <path
+  d="M1020 350 Q1100 330 1180 350"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   RAIN
+----------------------------------------------------- */
+
+rain: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+  <linearGradient id="rainSky"
+  x1="0" y1="0"
+  x2="0" y2="1">
+
+    <stop offset="0%"
+      stop-color="#72879c"/>
+
+    <stop offset="100%"
+      stop-color="#c8d4dc"/>
+
+  </linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#rainSky)"/>
+
+
+<!-- distant landscape -->
+
+<path
+d="
+M0 380
+C200 310 390 330 560 390
+C720 330 900 330 1080 390
+C1230 345 1320 350 1400 375
+L1400 570
+L0 570Z"
+fill="#667c72"
+opacity=".6"/>
+
+
+<path
+d="
+M0 430
+C250 375 470 390 650 440
+C870 390 1110 395 1400 430
+L1400 570
+L0 570Z"
+fill="#53695e"/>
+
+
+<!-- clouds -->
+
+<g
+fill="#5a6979"
+opacity=".95">
+
+  <ellipse cx="220" cy="105"
+  rx="180" ry="65"/>
+
+  <ellipse cx="100" cy="100"
+  rx="100" ry="80"/>
+
+  <ellipse cx="330" cy="85"
+  rx="115" ry="83"/>
+
+  <ellipse cx="760" cy="92"
+  rx="190" ry="72"/>
+
+  <ellipse cx="1120" cy="95"
+  rx="220" ry="80"/>
+
+</g>
+
+
+<!-- rain -->
+
+<g
+stroke="#dbeaf2"
+stroke-width="4"
+opacity=".75">
+
+  <line class="rain-line"
+  x1="100" y1="-80"
+  x2="65" y2="10"/>
+
+  <line class="rain-line"
+  x1="250" y1="-120"
+  x2="215" y2="-30"/>
+
+  <line class="rain-line"
+  x1="400" y1="-40"
+  x2="365" y2="50"/>
+
+  <line class="rain-line"
+  x1="570" y1="-100"
+  x2="535" y2="-10"/>
+
+  <line class="rain-line"
+  x1="760" y1="-50"
+  x2="725" y2="40"/>
+
+  <line class="rain-line"
+  x1="930" y1="-110"
+  x2="895" y2="-20"/>
+
+  <line class="rain-line"
+  x1="1100" y1="-45"
+  x2="1065" y2="45"/>
+
+  <line class="rain-line"
+  x1="1280" y1="-100"
+  x2="1245" y2="-10"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   STORM
+----------------------------------------------------- */
+
+storm: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+<linearGradient id="stormSky"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#26384c"/>
+
+<stop offset="100%"
+stop-color="#68798a"/>
+
+</linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#stormSky)"/>
+
+
+<path
+d="
+M0 430
+C180 370 420 385 600 430
+C800 375 1020 380 1400 425
+L1400 570
+L0 570 Z"
+fill="#32483f"/>
+
+
+<g
+fill="#2d3946">
+
+<ellipse cx="280" cy="110"
+rx="210" ry="80"/>
+
+<ellipse cx="620" cy="80"
+rx="240" ry="90"/>
+
+<ellipse cx="1030" cy="105"
+rx="280" ry="100"/>
+
+</g>
+
+
+<path
+d="
+M690 130
+L625 270
+L690 250
+L640 390
+L785 205
+L710 225
+L770 130Z"
+fill="#f4c95c"
+opacity=".95"/>
+
+
+<g
+stroke="#a8bfd1"
+stroke-width="4"
+opacity=".55">
+
+<line class="rain-line"
+x1="160" y1="-80"
+x2="120" y2="25"/>
+
+<line class="rain-line"
+x1="390" y1="-120"
+x2="350" y2="-15"/>
+
+<line class="rain-line"
+x1="900" y1="-80"
+x2="860" y2="25"/>
+
+<line class="rain-line"
+x1="1170" y1="-120"
+x2="1130" y2="-15"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   SNOW
+----------------------------------------------------- */
+
+snow: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+<linearGradient id="snowSky"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#9ccce4"/>
+
+<stop offset="100%"
+stop-color="#e7f3f7"/>
+
+</linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#snowSky)"/>
+
+
+<!-- hills -->
+
+<path
+d="
+M0 370
+C250 300 450 320 620 380
+C850 300 1080 320 1400 370
+L1400 570
+L0 570Z"
+fill="#edf6f8"/>
+
+
+<path
+d="
+M0 430
+C230 370 450 385 690 440
+C920 375 1180 390 1400 420
+L1400 570
+L0 570Z"
+fill="#ffffff"/>
+
+
+<!-- pine trees -->
+
+<g transform="translate(150 175)">
+
+<rect
+x="45"
+y="160"
+width="18"
+height="100"
+fill="#675848"/>
+
+<path
+d="M55 0
+L0 110
+L35 100
+L5 165
+L105 165
+L75 100
+L110 110Z"
+fill="#54766d"/>
+
+<path
+d="M55 20
+L15 105
+L45 98
+L25 145
+L88 145
+L65 98
+L95 105Z"
+fill="#f5fbfc"
+opacity=".6"/>
+
+</g>
+
+
+<g transform="translate(1080 205) scale(.75)">
+
+<rect
+x="45"
+y="160"
+width="18"
+height="100"
+fill="#675848"/>
+
+<path
+d="M55 0
+L0 110
+L35 100
+L5 165
+L105 165
+L75 100
+L110 110Z"
+fill="#52776d"/>
+
+</g>
+
+
+<!-- snow -->
+
+<g fill="white">
+
+<circle class="snowflake"
+cx="140" cy="-40"
+r="7"/>
+
+<circle class="snowflake"
+cx="330" cy="-90"
+r="5"/>
+
+<circle class="snowflake"
+cx="520" cy="-35"
+r="8"/>
+
+<circle class="snowflake"
+cx="710" cy="-100"
+r="6"/>
+
+<circle class="snowflake"
+cx="900" cy="-55"
+r="7"/>
+
+<circle class="snowflake"
+cx="1090" cy="-85"
+r="5"/>
+
+<circle class="snowflake"
+cx="1270" cy="-45"
+r="8"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   SPRING
+----------------------------------------------------- */
+
+spring: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+<linearGradient id="springSky"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#9edbea"/>
+
+<stop offset="100%"
+stop-color="#ecf7ef"/>
+
+</linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#springSky)"/>
+
+
+<path
+d="
+M0 360
+C240 300 420 325 650 370
+C870 310 1080 320 1400 360
+L1400 570
+L0 570Z"
+fill="#8dbd72"/>
+
+
+<path
+d="
+M0 425
+C220 370 450 390 700 430
+C940 380 1170 390 1400 420
+L1400 570
+L0 570Z"
+fill="#76ad67"/>
+
+
+<!-- flowering tree -->
+
+<g transform="translate(135 45)">
+
+<path
+d="
+M250 510
+C230 430 250 350 245 285
+C245 220 250 175 270 130"
+stroke="#70523d"
+stroke-width="35"
+fill="none"
+stroke-linecap="round"/>
+
+
+<path
+d="M258 270
+C210 225 170 195 130 155"
+stroke="#70523d"
+stroke-width="17"
+fill="none"
+stroke-linecap="round"/>
+
+
+<path
+d="M262 240
+C310 200 350 175 395 145"
+stroke="#70523d"
+stroke-width="17"
+fill="none"
+stroke-linecap="round"/>
+
+
+<circle cx="160" cy="150"
+r="75"
+fill="#f3b0c1"/>
+
+<circle cx="230" cy="105"
+r="85"
+fill="#efa0b7"/>
+
+<circle cx="320" cy="125"
+r="82"
+fill="#f3b0c1"/>
+
+<circle cx="370" cy="185"
+r="70"
+fill="#ee9eb4"/>
+
+<circle cx="245" cy="195"
+r="90"
+fill="#f6bdca"/>
+
+</g>
+
+
+<!-- flowers -->
+
+<g>
+
+<g transform="translate(700 455)">
+<circle cx="0" cy="0" r="8" fill="#f7d965"/>
+<circle cx="-10" cy="0" r="8" fill="#ffffff"/>
+<circle cx="10" cy="0" r="8" fill="#ffffff"/>
+<circle cx="0" cy="-10" r="8" fill="#ffffff"/>
+<circle cx="0" cy="10" r="8" fill="#ffffff"/>
+</g>
+
+
+<g transform="translate(850 490)">
+<circle cx="0" cy="0" r="8" fill="#f5cd63"/>
+<circle cx="-10" cy="0" r="8" fill="#eaa3ba"/>
+<circle cx="10" cy="0" r="8" fill="#eaa3ba"/>
+<circle cx="0" cy="-10" r="8" fill="#eaa3ba"/>
+<circle cx="0" cy="10" r="8" fill="#eaa3ba"/>
+</g>
+
+
+<g transform="translate(1050 445)">
+<circle cx="0" cy="0" r="8" fill="#f5cd63"/>
+<circle cx="-10" cy="0" r="8" fill="#ffffff"/>
+<circle cx="10" cy="0" r="8" fill="#ffffff"/>
+<circle cx="0" cy="-10" r="8" fill="#ffffff"/>
+<circle cx="0" cy="10" r="8" fill="#ffffff"/>
+</g>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   BEACH
+----------------------------------------------------- */
+
+beach: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+<linearGradient id="beachSky"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#77cbea"/>
+
+<stop offset="100%"
+stop-color="#d6f2f3"/>
+
+</linearGradient>
+
+
+<linearGradient id="beachWater"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#32afd0"/>
+
+<stop offset="100%"
+stop-color="#197f9e"/>
+
+</linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#beachSky)"/>
+
+
+<!-- sun -->
+
+<circle
+cx="1160"
+cy="100"
+r="55"
+fill="#f5c75d"/>
+
+
+<!-- ocean -->
+
+<path
+d="M0 285
+L1400 285
+L1400 490
+L0 490Z"
+fill="url(#beachWater)"/>
+
+
+<!-- waves -->
+
+<path
+class="wave"
+d="
+M-50 340
+Q80 310 210 340
+T470 340
+T730 340
+T990 340
+T1250 340
+T1510 340"
+fill="none"
+stroke="#8bdde8"
+stroke-width="7"/>
+
+
+<!-- sand -->
+
+<path
+d="
+M0 430
+C260 405 410 450 650 435
+C900 420 1120 430 1400 410
+L1400 570
+L0 570Z"
+fill="#e8c77d"/>
+
+
+<!-- palm -->
+
+<g transform="translate(180 110)">
+
+<path
+d="
+M125 410
+C95 320 110 235 135 150"
+fill="none"
+stroke="#7d563a"
+stroke-width="32"
+stroke-linecap="round"/>
+
+
+<path
+d="M135 155
+C80 115 38 115 5 135"
+fill="none"
+stroke="#4d9364"
+stroke-width="22"
+stroke-linecap="round"/>
+
+
+<path
+d="M135 155
+C80 150 40 165 10 200"
+fill="none"
+stroke="#4e9865"
+stroke-width="22"
+stroke-linecap="round"/>
+
+
+<path
+d="M135 155
+C180 110 235 100 275 115"
+fill="none"
+stroke="#4d9364"
+stroke-width="22"
+stroke-linecap="round"/>
+
+
+<path
+d="M135 155
+C185 150 230 170 260 210"
+fill="none"
+stroke="#4e9865"
+stroke-width="22"
+stroke-linecap="round"/>
+
+</g>
+
+</svg>
+`,
+
+
+/* -----------------------------------------------------
+   FIREPLACE
+----------------------------------------------------- */
+
+fireplace: `
+<svg viewBox="0 0 1400 570"
+preserveAspectRatio="xMidYMid slice">
+
+<defs>
+
+<linearGradient id="wall"
+x1="0" y1="0"
+x2="0" y2="1">
+
+<stop offset="0%"
+stop-color="#755c52"/>
+
+<stop offset="100%"
+stop-color="#4e403d"/>
+
+</linearGradient>
+
+</defs>
+
+
+<rect
+width="1400"
+height="570"
+fill="url(#wall)"/>
+
+
+<!-- floor -->
+
+<rect
+y="445"
+width="1400"
+height="125"
+fill="#594239"/>
+
+
+<!-- mantle -->
+
+<rect
+x="180"
+y="115"
+width="670"
+height="55"
+rx="7"
+fill="#8c6950"/>
+
+
+<rect
+x="215"
+y="170"
+width="600"
+height="335"
+rx="7"
+fill="#846453"/>
+
+
+<!-- brick detailing -->
+
+<g
+stroke="#725548"
+stroke-width="4"
+opacity=".55">
+
+<line x1="215" y1="230"
+x2="815" y2="230"/>
+
+<line x1="215" y1="290"
+x2="815" y2="290"/>
+
+<line x1="215" y1="350"
+x2="815" y2="350"/>
+
+<line x1="215" y1="410"
+x2="815" y2="410"/>
+
+</g>
+
+
+<!-- firebox -->
+
+<rect
+x="320"
+y="250"
+width="390"
+height="255"
+rx="14"
+fill="#2b2424"/>
+
+
+<!-- logs -->
+
+<g
+stroke="#5e392d"
+stroke-width="26"
+stroke-linecap="round">
+
+<line x1="395" y1="455"
+x2="570" y2="425"/>
+
+<line x1="470" y1="430"
+x2="625" y2="460"/>
+
+</g>
+
+
+<!-- flames -->
+
+<g transform="translate(515 425)">
+
+<path
+class="flame"
+d="
+M0 15
+C-55 -20 -45 -85 -10 -120
+C-5 -75 25 -65 28 -120
+C70 -70 70 -15 25 22
+Z"
+fill="#e46c34"/>
+
+
+<path
+class="flame"
+d="
+M5 18
+C-20 -10 -10 -55 12 -78
+C15 -47 35 -35 38 -75
+C60 -43 55 -4 25 22
+Z"
+fill="#f4b344"/>
+
+
+<path
+class="flame"
+d="
+M15 20
+C2 -3 8 -28 22 -42
+C26 -25 36 -18 40 -38
+C51 -17 45 7 28 22
+Z"
+fill="#f6df79"/>
+
+</g>
+
+
+<!-- rug -->
+
+<ellipse
+cx="1050"
+cy="485"
+rx="250"
+ry="55"
+fill="#82705f"
+opacity=".7"/>
+
+</svg>
+`
+
+};
+
+
+/* =====================================================
+   LOAD SCENE
+===================================================== */
+
+function loadScene(theme) {
+
+  currentTheme = theme;
+
+  scene.innerHTML =
+    scenes[theme];
+
+  document
+    .querySelectorAll(".theme-button")
+    .forEach(button => {
+
+      button
+        .classList
+        .toggle(
+          "active",
+          button.dataset.theme === theme
+        );
+
+    });
+
+}
+
+
+document
+  .querySelectorAll(".theme-button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        loadScene(
+          button.dataset.theme
+        );
+
+      }
+    );
+
+  });
+
+
+/* =====================================================
+   TIME FORMAT
+===================================================== */
 
 function formatTime(seconds) {
 
-  seconds =
-    Math.max(0, seconds);
-
-  const mins =
+  const minutes =
     Math.floor(seconds / 60);
 
   const secs =
     seconds % 60;
 
   return (
-    String(mins).padStart(2, "0")
+    String(minutes)
+      .padStart(2,"0")
     +
     ":"
     +
-    String(secs).padStart(2, "0")
+    String(secs)
+      .padStart(2,"0")
   );
 
 }
 
 
-function getCaption(seconds) {
-
-  if (seconds < 60) {
-
-    return (
-      seconds
-      +
-      (seconds === 1
-        ? " second"
-        : " seconds")
-    );
-
-  }
-
-  const mins =
-    Math.ceil(seconds / 60);
-
-  return (
-    mins
-    +
-    (mins === 1
-      ? " minute"
-      : " minutes")
-  );
-
-}
-
-
-
-/* =========================================================
+/* =====================================================
    UPDATE DISPLAY
-   ========================================================= */
+===================================================== */
 
 function updateDisplay() {
 
@@ -2238,150 +2685,78 @@ function updateDisplay() {
       remainingSeconds
     );
 
-  timeDisplay.textContent =
+  timerNumber.textContent =
     formatted;
 
   customDisplay.textContent =
-    formatted;
-
-  timeCaption.textContent =
-    getCaption(
-      remainingSeconds
+    formatTime(
+      totalSeconds
     );
 
 
-  let percentage = 0;
+  const minutes =
+    Math.ceil(
+      remainingSeconds / 60
+    );
 
-  if (
-    originalSeconds > 0
-  ) {
 
-    percentage =
-      (
+  timerLabel.textContent =
+    minutes === 1
+      ? "1 minute"
+      : minutes + " minutes";
+
+
+  const percentage =
+    totalSeconds > 0
+      ? (
         remainingSeconds /
-        originalSeconds
-      )
-      *
-      100;
-
-  }
+        totalSeconds
+      ) * 100
+      : 0;
 
 
   progressFill.style.width =
     percentage + "%";
 
-
-  updateSceneProgress(
-    percentage / 100
-  );
-
 }
 
 
+/* =====================================================
+   SET TIME
+===================================================== */
 
-/* =========================================================
-   QUICK BUTTONS
-   ========================================================= */
+function setMinutes(minutes) {
 
-document
-  .querySelectorAll(
-    ".quick-btn"
-  )
-  .forEach(
-    button => {
+  stopTimer();
 
-      button.addEventListener(
-        "click",
-        () => {
+  selectedMinutes =
+    Math.max(
+      1,
+      minutes
+    );
 
-          stopInterval();
+  totalSeconds =
+    selectedMinutes * 60;
 
-          document
-            .querySelectorAll(
-              ".quick-btn"
-            )
-            .forEach(
-              b =>
-                b.classList
-                  .remove(
-                    "selected"
-                  )
-            );
-
-          button
-            .classList
-            .add(
-              "selected"
-            );
-
-
-          const minutes =
-            Number(
-              button.dataset.minutes
-            );
-
-
-          selectedSeconds =
-            minutes * 60;
-
-          remainingSeconds =
-            selectedSeconds;
-
-          originalSeconds =
-            selectedSeconds;
-
-
-          updateDisplay();
-
-        }
-      );
-
-    }
-  );
-
-
-
-/* =========================================================
-   CUSTOM TIME
-   ========================================================= */
-
-function adjustTime(amount) {
-
-  stopInterval();
+  remainingSeconds =
+    totalSeconds;
 
 
   document
-    .querySelectorAll(
-      ".quick-btn"
-    )
-    .forEach(
-      b =>
-        b.classList
-          .remove(
-            "selected"
-          )
-    );
+    .querySelectorAll(".quick-button")
+    .forEach(button => {
 
+      button
+        .classList
+        .toggle(
+          "active",
+          Number(
+            button.dataset.minutes
+          ) ===
+          selectedMinutes
+        );
 
-  remainingSeconds +=
-    amount;
-
-
-  remainingSeconds =
-    Math.max(
-      10,
-      Math.min(
-        remainingSeconds,
-        60 * 120
-      )
-    );
-
-
-  selectedSeconds =
-    remainingSeconds;
-
-  originalSeconds =
-    remainingSeconds;
+    });
 
 
   updateDisplay();
@@ -2389,10 +2764,76 @@ function adjustTime(amount) {
 }
 
 
+/* =====================================================
+   QUICK SET
+===================================================== */
 
-/* =========================================================
-   TIMER
-   ========================================================= */
+document
+  .querySelectorAll(".quick-button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        setMinutes(
+          Number(
+            button.dataset.minutes
+          )
+        );
+
+      }
+    );
+
+  });
+
+
+/* =====================================================
+   +/- BUTTONS
+===================================================== */
+
+document
+  .getElementById("plusButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      setMinutes(
+        selectedMinutes + 1
+      );
+
+    }
+  );
+
+
+document
+  .getElementById("minusButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      setMinutes(
+        Math.max(
+          1,
+          selectedMinutes - 1
+        )
+      );
+
+    }
+  );
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document
+  .getElementById("startButton")
+  .addEventListener(
+    "click",
+    startTimer
+  );
+
 
 function startTimer() {
 
@@ -2408,21 +2849,12 @@ function startTimer() {
   ) {
 
     remainingSeconds =
-      originalSeconds;
+      totalSeconds;
 
   }
 
 
   running = true;
-
-
-  if (
-    wakeEnabled
-  ) {
-
-    requestWakeLock();
-
-  }
 
 
   timerInterval =
@@ -2440,7 +2872,9 @@ function startTimer() {
 
           updateDisplay();
 
-          finishTimer();
+          stopTimer();
+
+          timerFinished();
 
           return;
 
@@ -2456,1255 +2890,293 @@ function startTimer() {
 }
 
 
-function pauseTimer() {
+/* =====================================================
+   PAUSE
+===================================================== */
 
-  stopInterval();
-
-}
-
-
-function resetTimer() {
-
-  stopInterval();
-
-  remainingSeconds =
-    originalSeconds;
-
-  updateDisplay();
-
-}
+document
+  .getElementById("pauseButton")
+  .addEventListener(
+    "click",
+    stopTimer
+  );
 
 
-function stopInterval() {
+function stopTimer() {
 
-  if (
-    timerInterval
-  ) {
-
-    clearInterval(
-      timerInterval
-    );
-
-  }
-
-  timerInterval = null;
   running = false;
 
+  clearInterval(
+    timerInterval
+  );
+
+  timerInterval = null;
+
 }
 
 
-function finishTimer() {
+/* =====================================================
+   RESET
+===================================================== */
 
-  stopInterval();
+document
+  .getElementById("resetButton")
+  .addEventListener(
+    "click",
+    () => {
 
-  releaseWakeLock();
+      stopTimer();
+
+      remainingSeconds =
+        totalSeconds;
+
+      updateDisplay();
+
+    }
+  );
+
+
+/* =====================================================
+   FINISHED SOUND
+===================================================== */
+
+function timerFinished() {
+
+  timerLabel.textContent =
+    "Time's up!";
+
 
   if (
     soundEnabled
   ) {
 
-    playChime();
+    playFinishedChime();
 
   }
 
-  document
-    .getElementById(
-      "timeUp"
-    )
-    .classList
-    .add(
-      "show"
-    );
-
 }
 
 
+function playFinishedChime() {
 
-/* =========================================================
-   SOUND
-   ========================================================= */
-
-function toggleSound() {
-
-  soundEnabled =
-    !soundEnabled;
+  const AudioCtx =
+    window.AudioContext ||
+    window.webkitAudioContext;
 
 
-  document
-    .getElementById(
-      "soundToggle"
-    )
-    .classList
-    .toggle(
-      "on",
-      soundEnabled
-    );
+  if (
+    !AudioCtx
+  ) {
+    return;
+  }
 
 
-  document
-    .getElementById(
-      "soundBtn"
-    )
-    .innerHTML =
-      soundEnabled
-        ? '<span>🔊</span><span class="label">Sound</span>'
-        : '<span>🔇</span><span class="label">Sound</span>';
-
-}
+  const ctx =
+    new AudioCtx();
 
 
-function playChime() {
-
-  try {
-
-    const audioContext =
-      new (
-        window.AudioContext ||
-        window.webkitAudioContext
-      )();
-
-
-    const notes = [
-      523.25,
-      659.25,
-      783.99
+  const notes =
+    [
+      523,
+      659,
+      784
     ];
 
 
-    notes.forEach(
-      (frequency, index) => {
+  notes.forEach(
+    (frequency,index) => {
 
-        const oscillator =
-          audioContext
-            .createOscillator();
+      const oscillator =
+        ctx.createOscillator();
 
-        const gain =
-          audioContext
-            .createGain();
+      const gain =
+        ctx.createGain();
 
 
-        oscillator.frequency.value =
-          frequency;
+      oscillator.type =
+        "sine";
 
-        oscillator.type =
-          "sine";
+      oscillator.frequency.value =
+        frequency;
 
 
-        gain.gain.setValueAtTime(
-          0,
-          audioContext.currentTime
-        );
+      const start =
+        ctx.currentTime +
+        index * .25;
 
-        gain.gain.linearRampToValueAtTime(
-          .16,
-          audioContext.currentTime +
-          .03 +
-          index * .18
-        );
 
-        gain.gain.exponentialRampToValueAtTime(
+      gain.gain
+        .setValueAtTime(
           .001,
-          audioContext.currentTime +
-          .65 +
-          index * .18
+          start
         );
 
 
-        oscillator.connect(
-          gain
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .14,
+          start + .03
         );
 
-        gain.connect(
-          audioContext.destination
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .001,
+          start + .65
         );
 
 
-        oscillator.start(
-          audioContext.currentTime +
-          index * .18
-        );
+      oscillator.connect(
+        gain
+      );
 
-        oscillator.stop(
-          audioContext.currentTime +
-          .8 +
-          index * .18
-        );
+      gain.connect(
+        ctx.destination
+      );
 
-      }
-    );
 
-  }
+      oscillator.start(
+        start
+      );
 
-  catch (error) {
 
-    console.log(
-      "Sound unavailable",
-      error
-    );
+      oscillator.stop(
+        start + .7
+      );
 
-  }
+    }
+  );
+
+
+  setTimeout(
+    () => {
+
+      ctx.close();
+
+    },
+    2000
+  );
 
 }
 
 
+/* =====================================================
+   SOUND TOGGLE
+===================================================== */
 
-/* =========================================================
+const soundButton =
+  document.getElementById(
+    "soundButton"
+  );
+
+
+soundButton.addEventListener(
+  "click",
+  () => {
+
+    soundEnabled =
+      !soundEnabled;
+
+
+    soundButton.textContent =
+      soundEnabled
+        ? "🔊 Sound"
+        : "🔇 Sound";
+
+  }
+);
+
+
+/* =====================================================
    SETTINGS
-   ========================================================= */
-
-function toggleSettings() {
-
-  document
-    .getElementById(
-      "settingsDrawer"
-    )
-    .classList
-    .toggle(
-      "open"
-    );
-
-}
-
-
-function toggleWakeLockSetting() {
-
-  wakeEnabled =
-    !wakeEnabled;
-
-  document
-    .getElementById(
-      "wakeToggle"
-    )
-    .classList
-    .toggle(
-      "on",
-      wakeEnabled
-    );
-
-
-  if (
-    !wakeEnabled
-  ) {
-
-    releaseWakeLock();
-
-  }
-
-}
-
-
-async function requestWakeLock() {
-
-  try {
-
-    if (
-      "wakeLock" in navigator
-    ) {
-
-      wakeLock =
-        await navigator
-          .wakeLock
-          .request(
-            "screen"
-          );
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.log(
-      "Wake lock unavailable",
-      error
-    );
-
-  }
-
-}
-
-
-async function releaseWakeLock() {
-
-  try {
-
-    if (
-      wakeLock
-    ) {
-
-      await wakeLock.release();
-
-      wakeLock = null;
-
-    }
-
-  }
-
-  catch (error) {
-
-  }
-
-}
-
-
-
-/* =========================================================
-   FULLSCREEN
-   ========================================================= */
-
-function toggleFullscreen() {
-
-  const card =
-    document.querySelector(
-      ".scene-card"
-    );
-
-
-  if (
-    !document.fullscreenElement
-  ) {
-
-    card
-      .requestFullscreen()
-      .catch(() => {});
-
-  }
-
-  else {
-
-    document
-      .exitFullscreen();
-
-  }
-
-}
-
-
-
-/* =========================================================
-   TIME UP
-   ========================================================= */
-
-function closeTimeUp() {
-
-  document
-    .getElementById(
-      "timeUp"
-    )
-    .classList
-    .remove(
-      "show"
-    );
-
-}
-
-
-
-/* =========================================================
-   THEMES
-   ========================================================= */
+===================================================== */
 
 document
-  .querySelectorAll(
-    ".theme-button"
+  .getElementById("settingsButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      alert(
+        "Timer settings are ready. We can add additional options here later."
+      );
+
+    }
+  );
+
+
+/* =====================================================
+   FULLSCREEN
+===================================================== */
+
+document
+  .getElementById(
+    "fullscreenButton"
   )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(
-              ".theme-button"
-            )
-            .forEach(
-              b =>
-                b.classList
-                  .remove(
-                    "active"
-                  )
-            );
-
-
-          button
-            .classList
-            .add(
-              "active"
-            );
-
-
-          currentTheme =
-            button.dataset.theme;
-
-
-          renderTheme();
-
-          updateDisplay();
-
-        }
-      );
-
-    }
-  );
-
-
-
-/* =========================================================
-   RENDER THEME
-   ========================================================= */
-
-function renderTheme() {
-
-  scene.className =
-    "scene scene-" +
-    currentTheme;
-
-
-  if (
-    currentTheme === "sand"
-  ) {
-
-    scene.innerHTML = `
-      <div class="sand-table"></div>
-
-      <div class="hourglass">
-
-        <div class="hg-top"></div>
-
-        <div
-          id="topSand"
-          class="top-sand">
-        </div>
-
-        <div
-          id="sandStream"
-          class="sand-stream">
-        </div>
-
-        <div
-          id="bottomSand"
-          class="bottom-sand">
-        </div>
-
-        <div class="hg-glass"></div>
-
-        <div class="hg-bottom"></div>
-
-      </div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "coaster"
-  ) {
-
-    scene.innerHTML = `
-      <div class="coaster-cloud"></div>
-
-      <div class="coaster-track">
-
-        <svg
-          viewBox="0 0 1000 350"
-          preserveAspectRatio="none">
-
-          <path
-            d="
-              M 0 290
-              C 125 270,
-                120 35,
-                260 80
-              C 395 125,
-                350 310,
-                500 245
-              C 650 175,
-                610 65,
-                755 100
-              C 855 125,
-                885 250,
-                1000 220
-            "
-            fill="none"
-            stroke="#665f8d"
-            stroke-width="13"
-            stroke-linecap="round"
-          />
-
-          <path
-            d="
-              M 0 305
-              C 125 285,
-                120 50,
-                260 95
-              C 395 140,
-                350 325,
-                500 260
-              C 650 190,
-                610 80,
-                755 115
-              C 855 140,
-                885 265,
-                1000 235
-            "
-            fill="none"
-            stroke="#8c83af"
-            stroke-width="5"
-          />
-
-        </svg>
-
-      </div>
-
-      <div
-        id="coasterCar"
-        class="coaster-car">
-      </div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "bubbles"
-  ) {
-
-    scene.innerHTML =
-      createBubbles();
-
-  }
-
-
-  else if (
-    currentTheme === "balloon"
-  ) {
-
-    scene.innerHTML = `
-      <div
-        id="balloonWrap"
-        class="balloon-wrap">
-
-        <div class="balloon"></div>
-        <div class="balloon-lines"></div>
-        <div class="balloon-basket"></div>
-
-      </div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "rocket"
-  ) {
-
-    scene.innerHTML = `
-      <div
-        id="rocketWrap"
-        class="rocket-wrap">
-
-        <div class="rocket-fin-left"></div>
-        <div class="rocket-fin-right"></div>
-
-        <div class="rocket-body">
-          <div class="rocket-window"></div>
-        </div>
-
-        <div class="rocket-flame"></div>
-
-      </div>
-    `;
-
-    addStars();
-
-  }
-
-
-  else if (
-    currentTheme === "ocean"
-  ) {
-
-    scene.innerHTML = `
-      <div class="wave wave1"></div>
-      <div class="wave wave2"></div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "rain"
-  ) {
-
-    scene.innerHTML = "";
-
-    addRain(
-      55
-    );
-
-  }
-
-
-  else if (
-    currentTheme === "storm"
-  ) {
-
-    scene.innerHTML = `
-      <div class="lightning"></div>
-    `;
-
-    addRain(
-      70
-    );
-
-  }
-
-
-  else if (
-    currentTheme === "snow"
-  ) {
-
-    scene.innerHTML = `
-      <div class="snow-ground"></div>
-    `;
-
-    addSnow(
-      48
-    );
-
-  }
-
-
-  else if (
-    currentTheme === "fall"
-  ) {
-
-    scene.innerHTML = `
-      <div class="fall-tree">
-        <div class="trunk"></div>
-        <div class="tree-crown"></div>
-      </div>
-    `;
-
-    addLeaves(
-      25
-    );
-
-  }
-
-
-  else if (
-    currentTheme === "spring"
-  ) {
-
-    scene.innerHTML = `
-      <div class="spring-tree">
-        <div class="spring-trunk"></div>
-        <div class="blossom-crown"></div>
-      </div>
-    `;
-
-    addPetals(
-      24
-    );
-
-  }
-
-
-  else if (
-    currentTheme === "beach"
-  ) {
-
-    scene.innerHTML = `
-      <div class="beach-sun"></div>
-      <div class="wave wave1"></div>
-      <div class="wave wave2"></div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "fire"
-  ) {
-
-    scene.innerHTML = `
-      <div class="fireplace">
-
-        <div class="fire-opening">
-
-          <div class="logs"></div>
-
-          <div class="flame flame1"></div>
-          <div class="flame flame2"></div>
-          <div class="flame flame3"></div>
-
-        </div>
-
-      </div>
-    `;
-
-  }
-
-
-  else if (
-    currentTheme === "night"
-  ) {
-
-    scene.innerHTML = `
-      <div class="moon"></div>
-    `;
-
-    addStars();
-
-  }
-
-}
-
-
-
-/* =========================================================
-   GENERATED SCENE OBJECTS
-   ========================================================= */
-
-function createBubbles() {
-
-  let html = "";
-
-  for (
-    let i = 0;
-    i < 28;
-    i++
-  ) {
-
-    const size =
-      random(
-        22,
-        90
-      );
-
-
-    html += `
-      <div
-        class="bubble"
-        style="
-          width:${size}px;
-          height:${size}px;
-          left:${random(2,92)}%;
-          bottom:${random(-5,45)}%;
-          animation-duration:${random(6,13)}s;
-          animation-delay:-${random(0,8)}s;
-        ">
-      </div>
-    `;
-
-  }
-
-  return html;
-
-}
-
-
-function addRain(count) {
-
-  for (
-    let i = 0;
-    i < count;
-    i++
-  ) {
-
-    const drop =
-      document.createElement(
-        "div"
-      );
-
-    drop.className =
-      "raindrop";
-
-    drop.style.left =
-      random(0,100) +
-      "%";
-
-    drop.style.top =
-      random(-80,80) +
-      "px";
-
-    drop.style.animationDelay =
-      -Math.random() +
-      "s";
-
-    drop.style.animationDuration =
-      (
-        .65 +
-        Math.random() * .65
-      )
-      +
-      "s";
-
-    scene.appendChild(
-      drop
-    );
-
-  }
-
-}
-
-
-function addSnow(count) {
-
-  for (
-    let i = 0;
-    i < count;
-    i++
-  ) {
-
-    const flake =
-      document.createElement(
-        "div"
-      );
-
-    flake.className =
-      "snowflake";
-
-    flake.textContent =
-      "•";
-
-    flake.style.left =
-      random(0,100) +
-      "%";
-
-    flake.style.top =
-      random(-70,100) +
-      "px";
-
-    flake.style.fontSize =
-      random(15,33) +
-      "px";
-
-    flake.style.animationDuration =
-      random(5,12) +
-      "s";
-
-    flake.style.animationDelay =
-      -random(0,10) +
-      "s";
-
-    scene.appendChild(
-      flake
-    );
-
-  }
-
-}
-
-
-function addLeaves(count) {
-
-  for (
-    let i = 0;
-    i < count;
-    i++
-  ) {
-
-    const leaf =
-      document.createElement(
-        "div"
-      );
-
-    leaf.className =
-      "leaf";
-
-    leaf.style.left =
-      random(5,90) +
-      "%";
-
-    leaf.style.top =
-      random(-40,110) +
-      "px";
-
-    leaf.style.background =
-      [
-        "#cc6741",
-        "#dc8a43",
-        "#b75342",
-        "#e3a04c"
-      ][
-        random(
-          0,
-          3
-        )
-      ];
-
-    leaf.style.animationDuration =
-      random(6,13) +
-      "s";
-
-    leaf.style.animationDelay =
-      -random(0,10) +
-      "s";
-
-    scene.appendChild(
-      leaf
-    );
-
-  }
-
-}
-
-
-function addPetals(count) {
-
-  for (
-    let i = 0;
-    i < count;
-    i++
-  ) {
-
-    const petal =
-      document.createElement(
-        "div"
-      );
-
-    petal.className =
-      "petal";
-
-    petal.style.left =
-      random(5,90) +
-      "%";
-
-    petal.style.top =
-      random(-50,100) +
-      "px";
-
-    petal.style.animationDuration =
-      random(7,14) +
-      "s";
-
-    petal.style.animationDelay =
-      -random(0,10) +
-      "s";
-
-    scene.appendChild(
-      petal
-    );
-
-  }
-
-}
-
-
-function addStars() {
-
-  for (
-    let i = 0;
-    i < 46;
-    i++
-  ) {
-
-    const star =
-      document.createElement(
-        "div"
-      );
-
-    star.className =
-      "star-dot";
-
-    star.style.left =
-      random(3,97) +
-      "%";
-
-    star.style.top =
-      random(3,82) +
-      "%";
-
-    const size =
-      random(2,5);
-
-    star.style.width =
-      size + "px";
-
-    star.style.height =
-      size + "px";
-
-    star.style.animationDelay =
-      -Math.random() * 2 +
-      "s";
-
-    scene.appendChild(
-      star
-    );
-
-  }
-
-}
-
-
-function random(
-  min,
-  max
-) {
-
-  return Math.floor(
-    Math.random()
-    *
-    (
-      max -
-      min +
-      1
-    )
-    +
-    min
-  );
-
-}
-
-
-
-/* =========================================================
-   PROGRESS-BASED VISUALS
-   progressRemaining:
-   1 = timer beginning
-   0 = finished
-   ========================================================= */
-
-function updateSceneProgress(
-  progressRemaining
-) {
-
-  const elapsed =
-    1 -
-    progressRemaining;
-
-
-  /* SAND TIMER */
-
-  if (
-    currentTheme === "sand"
-  ) {
-
-    const topSand =
-      document.getElementById(
-        "topSand"
-      );
-
-    const bottomSand =
-      document.getElementById(
-        "bottomSand"
-      );
-
-    const stream =
-      document.getElementById(
-        "sandStream"
-      );
-
-
-    if (
-      topSand
-    ) {
-
-      topSand.style.transform =
-        "scaleY("
-        +
-        Math.max(
-          .03,
-          progressRemaining
-        )
-        +
-        ")";
-
-    }
-
-
-    if (
-      bottomSand
-    ) {
-
-      bottomSand.style.transform =
-        "scaleY("
-        +
-        Math.max(
-          .04,
-          elapsed
-        )
-        +
-        ")";
-
-    }
-
-
-    if (
-      stream
-    ) {
-
-      stream.style.display =
-        (
-          progressRemaining <= .01
-        )
-        ?
-        "none"
-        :
-        "block";
-
-    }
-
-  }
-
-
-  /* ROLLER COASTER */
-
-  if (
-    currentTheme === "coaster"
-  ) {
-
-    const car =
-      document.getElementById(
-        "coasterCar"
-      );
-
-
-    if (
-      car
-    ) {
-
-      const x =
-        8 +
-        elapsed * 64;
-
-      const wave =
-        Math.sin(
-          elapsed *
-          Math.PI *
-          5
+  .addEventListener(
+    "click",
+    async () => {
+
+      const wrapper =
+        document.getElementById(
+          "sceneWrapper"
         );
 
-      const y =
-        46 -
-        wave * 20;
 
+      try {
 
-      car.style.left =
-        x + "%";
+        if (
+          !document.fullscreenElement
+        ) {
 
-      car.style.top =
-        y + "%";
+          await wrapper
+            .requestFullscreen();
 
-    }
+        }
 
-  }
+        else {
 
+          await document
+            .exitFullscreen();
 
-  /* BALLOON */
-
-  if (
-    currentTheme === "balloon"
-  ) {
-
-    const balloon =
-      document.getElementById(
-        "balloonWrap"
-      );
-
-
-    if (
-      balloon
-    ) {
-
-      balloon.style.top =
-        (
-          3 +
-          elapsed * 37
-        )
-        +
-        "%";
-
-    }
-
-  }
-
-
-  /* ROCKET */
-
-  if (
-    currentTheme === "rocket"
-  ) {
-
-    const rocket =
-      document.getElementById(
-        "rocketWrap"
-      );
-
-
-    if (
-      rocket
-    ) {
-
-      rocket.style.bottom =
-        (
-          5 +
-          elapsed * 62
-        )
-        +
-        "%";
-
-    }
-
-  }
-
-
-  /* BUBBLES */
-
-  if (
-    currentTheme === "bubbles"
-  ) {
-
-    const bubbles =
-      document.querySelectorAll(
-        ".bubble"
-      );
-
-
-    const visible =
-      Math.ceil(
-        bubbles.length *
-        progressRemaining
-      );
-
-
-    bubbles.forEach(
-      (bubble,index) => {
-
-        bubble.style.opacity =
-          index < visible
-          ?
-          "1"
-          :
-          "0";
+        }
 
       }
-    );
 
-  }
+      catch {
 
-}
+        /* browser may block fullscreen */
+
+      }
+
+    }
+  );
 
 
+/* =====================================================
+   TOOLS
+===================================================== */
 
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
+document
+  .getElementById("toolsButton")
+  .addEventListener(
+    "click",
+    () => {
 
-renderTheme();
+      window.location.href =
+        "index.html";
+
+    }
+  );
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+loadScene("fall");
+
 updateDisplay();
-
-
-/* rerender theme after resize only when needed */
-
-window.addEventListener(
-  "beforeunload",
-  releaseWakeLock
-);
 
 </script>
 
