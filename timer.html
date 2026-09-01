@@ -1,0 +1,3712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Classroom Timer</title>
+
+<style>
+/* =========================================================
+   CLASSROOM TOOLS — VISUAL TIMER
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --ink: #26364b;
+  --muted: #7b8797;
+  --border: #dfe6ee;
+  --panel: rgba(255,255,255,.94);
+
+  --green: #59bd8a;
+  --green-dark: #409f72;
+
+  --blue: #739add;
+  --purple: #8d82dc;
+
+  --pause: #f2b84b;
+  --reset: #df7885;
+
+  --shadow: 0 14px 38px rgba(56,75,98,.11);
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family:
+    "Trebuchet MS",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  color: var(--ink);
+
+  background:
+    radial-gradient(circle at 0% 0%, #edf4ff 0, transparent 34%),
+    radial-gradient(circle at 100% 100%, #edf9f5 0, transparent 34%),
+    #f7f9fc;
+
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+}
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.app {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 20px 24px 30px;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: 180px 1fr 290px;
+  align-items: center;
+  min-height: 92px;
+  gap: 16px;
+}
+
+.home-btn,
+.top-control {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 5px 15px rgba(55,75,100,.08);
+
+  height: 54px;
+  padding: 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 800;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.home-btn {
+  justify-self: start;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.title-wrap {
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(38px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: -.8px;
+}
+
+.subtitle {
+  margin-top: 9px;
+  font-size: 17px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 20px;
+}
+
+/* =========================================================
+   THEME PANEL
+   ========================================================= */
+
+.theme-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  box-shadow: var(--shadow);
+
+  padding: 16px;
+  height: calc(100vh - 140px);
+  min-height: 650px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-label {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .8px;
+  margin: 2px 4px 13px;
+}
+
+.theme-scroll {
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.theme-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+.theme-scroll::-webkit-scrollbar-thumb {
+  background: #d9e1e9;
+  border-radius: 10px;
+}
+
+.theme-button {
+  width: 100%;
+  min-height: 68px;
+
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  align-items: center;
+  gap: 11px;
+
+  background: white;
+  border: 1px solid #e3e8ee;
+  border-radius: 17px;
+
+  margin-bottom: 9px;
+  padding: 7px 10px;
+
+  cursor: pointer;
+
+  color: var(--ink);
+  text-align: left;
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+.theme-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(50,70,95,.08);
+}
+
+.theme-button.active {
+  border: 2px solid var(--green);
+  box-shadow: 0 6px 15px rgba(89,189,138,.13);
+}
+
+.theme-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+
+  border: 1px solid rgba(35,55,75,.08);
+}
+
+/* mini theme previews */
+
+.thumb-sand {
+  background:
+    linear-gradient(to bottom, #d9edf5 0 48%, #ddbd76 48% 52%, #d9edf5 52%);
+}
+
+.thumb-sand::before,
+.thumb-sand::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  width: 18px;
+  height: 17px;
+  background: #d9a647;
+}
+
+.thumb-sand::before {
+  top: 7px;
+  clip-path: polygon(0 0,100% 0,55% 100%,45% 100%);
+}
+
+.thumb-sand::after {
+  bottom: 7px;
+  clip-path: polygon(45% 0,55% 0,100% 100%,0 100%);
+}
+
+.thumb-coaster {
+  background: linear-gradient(#b9e5ff 0 68%, #a8d68d 68%);
+}
+
+.thumb-coaster::before {
+  content: "";
+  position: absolute;
+  width: 65px;
+  height: 38px;
+  border: 4px solid #625e8e;
+  border-color: #625e8e transparent transparent transparent;
+  border-radius: 50%;
+  left: -7px;
+  top: 22px;
+  transform: rotate(-12deg);
+}
+
+.thumb-coaster::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 8px;
+  border-radius: 5px;
+  background: #de6876;
+  left: 18px;
+  top: 15px;
+  box-shadow: 9px 0 #e69b53;
+}
+
+.thumb-bubbles {
+  background: linear-gradient(145deg,#dcefff,#91c8ef);
+}
+
+.thumb-bubbles::before {
+  content: "";
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255,255,255,.8);
+  border-radius: 50%;
+  left: 8px;
+  top: 21px;
+  box-shadow:
+    21px -12px 0 -3px rgba(255,255,255,.4),
+    26px 13px 0 2px rgba(255,255,255,.25);
+}
+
+.thumb-balloon {
+  background: linear-gradient(#bfe4fb 0 73%, #a8d78e 73%);
+}
+
+.thumb-balloon::before {
+  content: "";
+  position: absolute;
+  width: 19px;
+  height: 25px;
+  border-radius: 50% 50% 46% 46%;
+  background: linear-gradient(90deg,#e88383,#f3c264,#79a7dc);
+  left: 16px;
+  top: 8px;
+}
+
+.thumb-balloon::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 6px;
+  background: #806249;
+  left: 22px;
+  top: 37px;
+}
+
+.thumb-rocket {
+  background: linear-gradient(#14233d,#364d76);
+}
+
+.thumb-rocket::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 8px;
+  width: 14px;
+  height: 29px;
+  background: #f3f4f6;
+  border-radius: 50% 50% 30% 30%;
+  transform: rotate(30deg);
+}
+
+.thumb-rocket::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  background: #ef9461;
+  left: 15px;
+  top: 33px;
+  transform: rotate(30deg);
+  clip-path: polygon(50% 100%,0 0,100% 0);
+}
+
+.thumb-ocean {
+  background:
+    linear-gradient(#bfe8f8 0 42%, #48a9cf 42% 61%, #197da5 61%);
+}
+
+.thumb-rain {
+  background: linear-gradient(#8799ab,#c2ced8);
+}
+
+.thumb-rain::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  background:
+    repeating-linear-gradient(
+      110deg,
+      transparent 0 7px,
+      rgba(255,255,255,.65) 7px 9px,
+      transparent 9px 15px
+    );
+}
+
+.thumb-storm {
+  background: linear-gradient(#354050,#758495);
+}
+
+.thumb-storm::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 33px;
+  left: 20px;
+  top: 8px;
+  background: #f2d76d;
+  clip-path: polygon(55% 0,100% 0,62% 43%,92% 43%,25% 100%,40% 53%,10% 53%);
+}
+
+.thumb-snow {
+  background: linear-gradient(#cce7f3 0 72%,#edf5f8 72%);
+}
+
+.thumb-snow::before {
+  content: "•  •\A   •\A •    •";
+  white-space: pre;
+  position: absolute;
+  color: white;
+  font-size: 20px;
+  line-height: 14px;
+  left: 8px;
+  top: 5px;
+}
+
+.thumb-fall {
+  background: linear-gradient(#e9d3b5 0 72%,#a87d57 72%);
+}
+
+.thumb-fall::before {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 34px;
+  background: #6f513c;
+  left: 24px;
+  top: 15px;
+}
+
+.thumb-fall::after {
+  content: "";
+  position: absolute;
+  width: 39px;
+  height: 28px;
+  background:
+    radial-gradient(circle at 20% 50%,#cb6246 0 8px,transparent 9px),
+    radial-gradient(circle at 45% 25%,#e59649 0 9px,transparent 10px),
+    radial-gradient(circle at 70% 50%,#b95342 0 9px,transparent 10px),
+    radial-gradient(circle at 48% 70%,#d77f3b 0 10px,transparent 11px);
+  left: 6px;
+  top: 4px;
+}
+
+.thumb-spring {
+  background: linear-gradient(#cce7fa 0 72%,#aed894 72%);
+}
+
+.thumb-spring::before {
+  content: "";
+  position: absolute;
+  left: 23px;
+  top: 16px;
+  width: 5px;
+  height: 28px;
+  background: #735b44;
+}
+
+.thumb-spring::after {
+  content: "";
+  position: absolute;
+  width: 35px;
+  height: 28px;
+  left: 8px;
+  top: 4px;
+  background:
+    radial-gradient(circle,#efa5b8 0 5px,transparent 6px) 0 0/14px 13px;
+}
+
+.thumb-beach {
+  background: linear-gradient(#a9def4 0 42%,#4bb4d1 42% 65%,#e9c67e 65%);
+}
+
+.thumb-fire {
+  background: linear-gradient(#342e31,#66504a);
+}
+
+.thumb-fire::before {
+  content: "";
+  position: absolute;
+  width: 27px;
+  height: 33px;
+  left: 13px;
+  top: 11px;
+  background: linear-gradient(#f6dd75,#e98251);
+  clip-path: polygon(50% 0,85% 45%,71% 100%,29% 100%,13% 48%);
+  border-radius: 50%;
+}
+
+.thumb-night {
+  background: linear-gradient(#101b35,#283f65);
+}
+
+.thumb-night::before {
+  content: "·   ✦\A   ·   ·\A ✦";
+  white-space: pre;
+  position: absolute;
+  color: #fff8d7;
+  left: 8px;
+  top: 4px;
+  font-size: 15px;
+  line-height: 16px;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content {
+  min-width: 0;
+}
+
+.scene-card {
+  position: relative;
+  height: min(63vh, 690px);
+  min-height: 470px;
+
+  border-radius: 27px;
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  background: #eaf3f7;
+  box-shadow: var(--shadow);
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.timer-overlay {
+  position: absolute;
+  z-index: 40;
+
+  top: 50%;
+  right: 7%;
+  transform: translateY(-50%);
+
+  text-align: center;
+
+  min-width: 340px;
+
+  padding: 22px 26px;
+
+  border-radius: 26px;
+
+  background: rgba(255,255,255,.72);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  border: 1px solid rgba(255,255,255,.75);
+  box-shadow: 0 9px 28px rgba(35,55,75,.12);
+}
+
+.time-display {
+  font-size: clamp(70px, 8vw, 126px);
+  font-weight: 900;
+  line-height: .95;
+
+  letter-spacing: -5px;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.time-caption {
+  margin-top: 13px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.progress-track {
+  width: 100%;
+  height: 9px;
+  background: rgba(38,54,75,.13);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 19px;
+}
+
+.progress-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--green);
+  transition: width .3s linear;
+}
+
+/* =========================================================
+   LOWER CONTROLS
+   ========================================================= */
+
+.controls-area {
+  display: grid;
+  grid-template-columns: minmax(410px, 1.15fr) minmax(330px, .85fr);
+  gap: 17px;
+  margin-top: 17px;
+}
+
+.control-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  box-shadow: 0 8px 24px rgba(50,70,95,.07);
+
+  padding: 18px;
+}
+
+.control-title {
+  font-size: 14px;
+  letter-spacing: .6px;
+  font-weight: 900;
+  margin-bottom: 13px;
+}
+
+.quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.quick-btn {
+  height: 65px;
+  border: 1px solid #e0e5eb;
+  background: white;
+  border-radius: 15px;
+
+  cursor: pointer;
+  color: var(--ink);
+
+  font-size: 20px;
+  font-weight: 900;
+
+  box-shadow: 0 3px 8px rgba(40,60,80,.05);
+
+  transition: .15s ease;
+}
+
+.quick-btn span {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.quick-btn:hover {
+  transform: translateY(-1px);
+}
+
+.quick-btn.selected {
+  background: #e8f7ef;
+  border: 2px solid var(--green);
+  color: #338560;
+}
+
+.custom-set {
+  display: grid;
+  grid-template-columns: 52px 1fr 52px;
+  align-items: center;
+  gap: 12px;
+}
+
+.adjust-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  border: 1px solid #dce2e9;
+  background: white;
+
+  font-size: 28px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.custom-display {
+  background: #f7f8fb;
+  border: 1px solid #e5e8ed;
+  border-radius: 18px;
+  padding: 14px;
+
+  text-align: center;
+
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -1px;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-display small {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .4px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 13px;
+  margin-top: 15px;
+}
+
+.action-btn {
+  min-height: 72px;
+
+  border: 0;
+  border-radius: 22px;
+
+  color: white;
+
+  font-size: 20px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 16px rgba(45,65,90,.1);
+
+  transition: transform .15s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.start {
+  background: linear-gradient(135deg,var(--green),var(--green-dark));
+}
+
+.pause {
+  background: linear-gradient(135deg,#f3c45c,#e9a932);
+}
+
+.reset {
+  background: linear-gradient(135deg,#e88994,#d86c7b);
+}
+
+.footer-note {
+  margin-top: 15px;
+  background: #f1f7f4;
+  border: 1px solid #dcece4;
+  border-radius: 18px;
+  padding: 12px 17px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #536578;
+  font-size: 14px;
+}
+
+.footer-note strong {
+  color: var(--ink);
+}
+
+/* =========================================================
+   SETTINGS DRAWER
+   ========================================================= */
+
+.settings-drawer {
+  position: fixed;
+  z-index: 150;
+  top: 0;
+  right: -370px;
+
+  width: min(360px, 92vw);
+  height: 100vh;
+
+  background: white;
+
+  box-shadow: -12px 0 35px rgba(35,55,75,.15);
+
+  padding: 23px;
+
+  transition: right .25s ease;
+}
+
+.settings-drawer.open {
+  right: 0;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.drawer-title {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 50%;
+  background: #f0f3f6;
+
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.setting-block {
+  border-top: 1px solid #edf0f3;
+  padding: 18px 0;
+}
+
+.setting-label {
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.setting-help {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle {
+  width: 54px;
+  height: 30px;
+  border-radius: 30px;
+  border: 0;
+  background: #d9dfe6;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.toggle-dot {
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform .2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,.14);
+}
+
+.toggle.on {
+  background: var(--green);
+}
+
+.toggle.on .toggle-dot {
+  transform: translateX(24px);
+}
+
+/* =========================================================
+   FULLSCREEN
+   ========================================================= */
+
+.fullscreen-btn {
+  position: absolute;
+  z-index: 50;
+  right: 18px;
+  bottom: 18px;
+
+  width: 48px;
+  height: 48px;
+
+  border: 1px solid rgba(255,255,255,.6);
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.78);
+
+  font-size: 21px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   GENERIC SCENE ITEMS
+   ========================================================= */
+
+.hidden {
+  display: none !important;
+}
+
+/* ------------------ SAND ------------------ */
+
+.scene-sand {
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.62),transparent 45%),
+    linear-gradient(#dcebef,#eee2d1);
+}
+
+.sand-table {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28%;
+  background: linear-gradient(#bd9167,#9b7150);
+}
+
+.hourglass {
+  position: absolute;
+  left: 16%;
+  top: 8%;
+
+  width: min(33vw, 350px);
+  height: 79%;
+}
+
+.hg-top,
+.hg-bottom {
+  position: absolute;
+  left: 6%;
+  width: 88%;
+  height: 8%;
+  border-radius: 18px;
+  background: linear-gradient(#805330,#b77b45,#7a4c2d);
+  box-shadow: 0 6px 9px rgba(35,25,20,.2);
+  z-index: 5;
+}
+
+.hg-top { top: 0; }
+.hg-bottom { bottom: 0; }
+
+.hg-glass {
+  position: absolute;
+  left: 17%;
+  top: 7%;
+  width: 66%;
+  height: 86%;
+
+  background: rgba(220,243,250,.32);
+  border: 6px solid rgba(235,250,255,.77);
+
+  clip-path: polygon(
+    5% 0,
+    95% 0,
+    78% 38%,
+    56% 50%,
+    78% 62%,
+    95% 100%,
+    5% 100%,
+    22% 62%,
+    44% 50%,
+    22% 38%
+  );
+
+  filter: drop-shadow(0 3px 5px rgba(40,60,70,.2));
+  z-index: 3;
+}
+
+.top-sand {
+  position: absolute;
+  z-index: 2;
+
+  left: 25%;
+  top: 19%;
+
+  width: 50%;
+  height: 28%;
+
+  background: #daa94f;
+
+  clip-path: polygon(0 0,100% 0,62% 100%,38% 100%);
+  transform-origin: bottom;
+}
+
+.bottom-sand {
+  position: absolute;
+  z-index: 2;
+
+  left: 25%;
+  bottom: 17%;
+
+  width: 50%;
+  height: 28%;
+
+  background: #daa94f;
+
+  clip-path: polygon(38% 0,62% 0,100% 100%,0 100%);
+  transform-origin: bottom;
+}
+
+.sand-stream {
+  position: absolute;
+  z-index: 4;
+  left: 49%;
+  top: 46%;
+  width: 4px;
+  height: 19%;
+  background: #daa94f;
+}
+
+/* ------------------ BUBBLES ------------------ */
+
+.scene-bubbles {
+  background:
+    radial-gradient(circle at 20% 25%,rgba(255,255,255,.8),transparent 2%),
+    linear-gradient(145deg,#dbefff,#8ac5ed);
+}
+
+.bubble {
+  position: absolute;
+  border: 2px solid rgba(255,255,255,.78);
+  background:
+    radial-gradient(circle at 30% 25%,rgba(255,255,255,.85),transparent 20%),
+    linear-gradient(145deg,rgba(147,211,245,.2),rgba(212,168,232,.24));
+
+  border-radius: 50%;
+  animation: floatBubble 8s linear infinite;
+}
+
+@keyframes floatBubble {
+  from { transform: translateY(80px) translateX(0); }
+  50% { transform: translateY(-240px) translateX(35px); }
+  to { transform: translateY(-620px) translateX(-25px); }
+}
+
+/* ------------------ COASTER ------------------ */
+
+.scene-coaster {
+  background:
+    linear-gradient(#bce4f5 0 67%, #a9ce8f 67% 82%, #8db470 82%);
+}
+
+.coaster-cloud {
+  position: absolute;
+  width: 110px;
+  height: 40px;
+  border-radius: 40px;
+  background: rgba(255,255,255,.8);
+  top: 15%;
+  left: 15%;
+  box-shadow:
+    45px 8px 0 -7px rgba(255,255,255,.7),
+    22px -15px 0 -5px rgba(255,255,255,.85);
+}
+
+.coaster-track {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 22%;
+  height: 57%;
+}
+
+.coaster-track svg {
+  width: 100%;
+  height: 100%;
+}
+
+.coaster-car {
+  position: absolute;
+  width: 66px;
+  height: 30px;
+  border-radius: 10px 10px 5px 5px;
+  background: #d76470;
+
+  z-index: 7;
+  transition: left .8s linear, top .8s linear;
+
+  box-shadow:
+    inset -18px 0 #e89c53,
+    0 6px 9px rgba(50,50,50,.18);
+}
+
+.coaster-car::before,
+.coaster-car::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #4c5661;
+}
+
+.coaster-car::before { left: 9px; }
+.coaster-car::after { right: 9px; }
+
+/* ------------------ BALLOON ------------------ */
+
+.scene-balloon {
+  background: linear-gradient(#b7def3 0 69%,#abc98c 69%);
+}
+
+.balloon-wrap {
+  position: absolute;
+  left: 23%;
+  top: 8%;
+  width: 230px;
+  height: 430px;
+  transition: top .5s linear;
+}
+
+.balloon {
+  width: 190px;
+  height: 235px;
+  margin: auto;
+
+  border-radius: 50% 50% 45% 45%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #db7880 0 20%,
+      #e3ad5e 20% 40%,
+      #6c9ed2 40% 60%,
+      #76b79e 60% 80%,
+      #a27fc4 80%
+    );
+
+  box-shadow:
+    inset 20px 0 rgba(255,255,255,.08),
+    inset -20px 0 rgba(0,0,0,.05);
+}
+
+.balloon-lines {
+  width: 100px;
+  height: 95px;
+  margin: -3px auto 0;
+
+  border-left: 2px solid #765d46;
+  border-right: 2px solid #765d46;
+
+  transform: perspective(100px) rotateX(-15deg);
+}
+
+.balloon-basket {
+  width: 62px;
+  height: 49px;
+  background: #987250;
+  margin: -4px auto;
+  border-radius: 5px 5px 12px 12px;
+}
+
+/* ------------------ ROCKET ------------------ */
+
+.scene-rocket {
+  background:
+    radial-gradient(circle at 70% 23%,#ffffff 0 1px,transparent 2px),
+    radial-gradient(circle at 20% 38%,#ffffff 0 1px,transparent 2px),
+    radial-gradient(circle at 30% 13%,#ffffff 0 2px,transparent 3px),
+    radial-gradient(circle at 82% 69%,#ffffff 0 1px,transparent 2px),
+    linear-gradient(#101c34,#263a62);
+}
+
+.rocket-wrap {
+  position: absolute;
+  left: 22%;
+  bottom: 5%;
+  width: 180px;
+  height: 350px;
+  transition: bottom .5s linear;
+}
+
+.rocket-body {
+  position: absolute;
+  left: 38px;
+  top: 0;
+  width: 104px;
+  height: 245px;
+
+  background: linear-gradient(90deg,#dce4ec,#ffffff,#bbc8d5);
+  border-radius: 55% 55% 32% 32%;
+}
+
+.rocket-window {
+  position: absolute;
+  top: 68px;
+  left: 29px;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 50%;
+
+  background: #71add0;
+  border: 6px solid #768698;
+}
+
+.rocket-fin-left,
+.rocket-fin-right {
+  position: absolute;
+  top: 165px;
+  width: 45px;
+  height: 95px;
+  background: #ce6872;
+}
+
+.rocket-fin-left {
+  left: 10px;
+  clip-path: polygon(100% 0,100% 100%,0 100%);
+}
+
+.rocket-fin-right {
+  right: 10px;
+  clip-path: polygon(0 0,100% 100%,0 100%);
+}
+
+.rocket-flame {
+  position: absolute;
+  left: 67px;
+  top: 235px;
+
+  width: 48px;
+  height: 100px;
+
+  background: linear-gradient(#f9de72,#ed8152,transparent);
+  clip-path: polygon(50% 100%,0 0,100% 0);
+
+  animation: flame .25s infinite alternate;
+}
+
+@keyframes flame {
+  from { transform: scaleY(.83); }
+  to { transform: scaleY(1.05); }
+}
+
+/* ------------------ OCEAN / BEACH ------------------ */
+
+.scene-ocean {
+  background: linear-gradient(#acdff2 0 42%,#57b6d2 42% 62%,#258cae 62%);
+}
+
+.wave {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 60px;
+
+  border-radius: 50%;
+  border-top: 5px solid rgba(255,255,255,.7);
+
+  animation: waveMove 5s ease-in-out infinite alternate;
+}
+
+.wave1 { top: 44%; }
+.wave2 { top: 53%; animation-delay: -1.6s; }
+
+@keyframes waveMove {
+  from { transform: translateX(-2%) rotate(-1deg); }
+  to { transform: translateX(2%) rotate(1deg); }
+}
+
+.scene-beach {
+  background: linear-gradient(#addff0 0 40%,#4db5cf 40% 60%,#e7c680 60%);
+}
+
+.beach-sun {
+  position: absolute;
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  background: #edc867;
+  left: 13%;
+  top: 14%;
+}
+
+/* ------------------ WEATHER ------------------ */
+
+.scene-rain {
+  background: linear-gradient(#8498aa,#c4d0da);
+}
+
+.scene-storm {
+  background: linear-gradient(#303a49,#758396);
+}
+
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 25px;
+  background: rgba(255,255,255,.65);
+  transform: rotate(15deg);
+  animation: rainfall 1s linear infinite;
+}
+
+@keyframes rainfall {
+  from { transform: translateY(-80px) rotate(15deg); }
+  to { transform: translateY(780px) rotate(15deg); }
+}
+
+.lightning {
+  position: absolute;
+  left: 25%;
+  top: 20%;
+  width: 75px;
+  height: 190px;
+  background: #f7df76;
+  clip-path: polygon(55% 0,100% 0,62% 42%,92% 42%,20% 100%,38% 53%,7% 53%);
+  opacity: 0;
+
+  animation: lightning 5s infinite;
+}
+
+@keyframes lightning {
+  0%,90%,100% { opacity: 0; }
+  91%,93%,95% { opacity: 1; }
+  92%,94% { opacity: .2; }
+}
+
+/* ------------------ SNOW ------------------ */
+
+.scene-snow {
+  background: linear-gradient(#c5dfeb 0 72%,#edf3f5 72%);
+}
+
+.snowflake {
+  position: absolute;
+  color: rgba(255,255,255,.95);
+  font-size: 18px;
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  from {
+    transform: translateY(-80px) rotate(0);
+  }
+  to {
+    transform: translateY(780px) rotate(250deg);
+  }
+}
+
+.snow-ground {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 15%;
+  background: #f5f8fa;
+  border-radius: 50% 50% 0 0;
+}
+
+/* ------------------ FALL ------------------ */
+
+.scene-fall {
+  background: linear-gradient(#edd7bd 0 70%,#b18b65 70%);
+}
+
+.fall-tree {
+  position: absolute;
+  left: 18%;
+  bottom: 8%;
+  width: 280px;
+  height: 450px;
+}
+
+.trunk {
+  position: absolute;
+  width: 55px;
+  height: 255px;
+  background: linear-gradient(90deg,#6d4c39,#8e664d,#604332);
+  left: 112px;
+  bottom: 0;
+  border-radius: 35% 35% 10% 10%;
+}
+
+.tree-crown {
+  position: absolute;
+  width: 260px;
+  height: 220px;
+  top: 0;
+  left: 10px;
+
+  background:
+    radial-gradient(circle at 20% 50%,#b95745 0 52px,transparent 53px),
+    radial-gradient(circle at 43% 28%,#e09347 0 62px,transparent 63px),
+    radial-gradient(circle at 70% 42%,#cc6940 0 60px,transparent 61px),
+    radial-gradient(circle at 53% 70%,#d27c3e 0 66px,transparent 67px);
+}
+
+.leaf {
+  position: absolute;
+  width: 16px;
+  height: 11px;
+  border-radius: 70% 15% 70% 15%;
+  background: #d2733f;
+  animation: leafFall linear infinite;
+}
+
+@keyframes leafFall {
+  from {
+    transform: translateY(-60px) rotate(0);
+  }
+  to {
+    transform: translateY(680px) translateX(80px) rotate(420deg);
+  }
+}
+
+/* ------------------ SPRING ------------------ */
+
+.scene-spring {
+  background: linear-gradient(#c5e4f5 0 70%,#a9d48c 70%);
+}
+
+.spring-tree {
+  position: absolute;
+  left: 18%;
+  bottom: 7%;
+  width: 290px;
+  height: 460px;
+}
+
+.spring-trunk {
+  position: absolute;
+  left: 120px;
+  bottom: 0;
+  width: 52px;
+  height: 280px;
+  background: #745841;
+  border-radius: 35% 35% 10% 10%;
+}
+
+.blossom-crown {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 270px;
+  height: 230px;
+
+  background:
+    radial-gradient(circle at 18% 52%,#eda8b9 0 50px,transparent 51px),
+    radial-gradient(circle at 43% 27%,#f3b4c2 0 60px,transparent 61px),
+    radial-gradient(circle at 73% 48%,#e99bae 0 59px,transparent 60px),
+    radial-gradient(circle at 52% 69%,#efacbb 0 65px,transparent 66px);
+}
+
+.petal {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  background: #f3b2c2;
+  border-radius: 65% 35% 60% 40%;
+
+  animation: petalFall linear infinite;
+}
+
+@keyframes petalFall {
+  from {
+    transform: translateY(-50px) translateX(0) rotate(0);
+  }
+  to {
+    transform: translateY(720px) translateX(80px) rotate(380deg);
+  }
+}
+
+/* ------------------ FIREPLACE ------------------ */
+
+.scene-fire {
+  background: linear-gradient(#4b4140,#6c5850);
+}
+
+.fireplace {
+  position: absolute;
+  left: 13%;
+  bottom: 0;
+  width: 380px;
+  height: 430px;
+
+  background: #8c7365;
+  border-radius: 7px 7px 0 0;
+  box-shadow: inset 0 0 0 8px rgba(255,255,255,.04);
+}
+
+.fire-opening {
+  position: absolute;
+  left: 60px;
+  bottom: 0;
+  width: 260px;
+  height: 280px;
+
+  background: #2f2929;
+  border-radius: 130px 130px 0 0;
+}
+
+.logs {
+  position: absolute;
+  left: 70px;
+  bottom: 28px;
+  width: 125px;
+  height: 28px;
+  border-radius: 20px;
+  background: #735039;
+  transform: rotate(7deg);
+  box-shadow: 0 -8px #886047;
+}
+
+.flame {
+  position: absolute;
+  bottom: 45px;
+  width: 60px;
+  height: 145px;
+
+  background: linear-gradient(#f8dd70,#ec9854,#d95f42);
+
+  clip-path: polygon(50% 0,85% 45%,70% 100%,28% 100%,13% 47%);
+  border-radius: 50%;
+
+  animation: fireFlicker .35s infinite alternate;
+}
+
+.flame1 { left: 85px; }
+.flame2 { left: 130px; height: 175px; animation-delay: -.2s; }
+.flame3 { left: 165px; height: 125px; animation-delay: -.1s; }
+
+@keyframes fireFlicker {
+  from {
+    transform: scaleX(.86) scaleY(.9) rotate(-3deg);
+  }
+  to {
+    transform: scaleX(1.05) scaleY(1.05) rotate(3deg);
+  }
+}
+
+/* ------------------ NIGHT ------------------ */
+
+.scene-night {
+  background: linear-gradient(#0e1830,#293c61 62%,#17253d);
+}
+
+.moon {
+  position: absolute;
+  left: 16%;
+  top: 13%;
+
+  width: 125px;
+  height: 125px;
+
+  border-radius: 50%;
+  background: #eee9cf;
+
+  box-shadow: 0 0 35px rgba(245,241,210,.25);
+}
+
+.star-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+
+  animation: twinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: .25; }
+  to { opacity: 1; }
+}
+
+/* =========================================================
+   TIME-UP SCREEN
+   ========================================================= */
+
+.time-up {
+  position: fixed;
+  z-index: 500;
+  inset: 0;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(24,34,49,.72);
+  backdrop-filter: blur(7px);
+}
+
+.time-up.show {
+  display: flex;
+}
+
+.time-up-card {
+  width: min(520px, 88vw);
+  background: white;
+  border-radius: 30px;
+  padding: 45px;
+  text-align: center;
+
+  box-shadow: 0 25px 70px rgba(0,0,0,.25);
+}
+
+.time-up-title {
+  font-size: 54px;
+  font-weight: 900;
+}
+
+.time-up-sub {
+  margin: 10px 0 25px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.done-btn {
+  border: 0;
+  background: var(--green);
+  color: white;
+
+  padding: 14px 30px;
+  border-radius: 999px;
+
+  font-size: 18px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width: 1050px) {
+  .topbar {
+    grid-template-columns: 150px 1fr 220px;
+  }
+
+  .main-grid {
+    grid-template-columns: 205px minmax(0,1fr);
+  }
+
+  .theme-panel {
+    min-height: 600px;
+  }
+
+  .timer-overlay {
+    min-width: 280px;
+  }
+
+  .controls-area {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width: 760px) {
+  .app {
+    padding: 12px;
+  }
+
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .top-control span.label {
+    display: none;
+  }
+
+  .main-grid {
+    display: block;
+  }
+
+  .theme-panel {
+    height: auto;
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+
+  .theme-scroll {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .theme-button {
+    min-width: 140px;
+    grid-template-columns: 45px 1fr;
+    margin-right: 8px;
+  }
+
+  .thumb {
+    width: 42px;
+    height: 42px;
+  }
+
+  .scene-card {
+    min-height: 430px;
+  }
+
+  .timer-overlay {
+    right: 50%;
+    transform: translate(50%,-50%);
+  }
+
+  .quick-buttons {
+    grid-template-columns: repeat(4,1fr);
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+  <!-- =====================================================
+       TOP BAR
+       ===================================================== -->
+
+  <header class="topbar">
+
+    <a href="index.html" class="home-btn">
+      <span>⌂</span>
+      <span>Tools</span>
+    </a>
+
+    <div class="title-wrap">
+      <h1 class="title">Timer</h1>
+      <div class="subtitle">
+        Pick a time, pick a theme, and let's go.
+      </div>
+    </div>
+
+    <div class="top-actions">
+
+      <button
+        id="soundBtn"
+        class="top-control"
+        type="button"
+        onclick="toggleSound()">
+
+        <span>🔊</span>
+        <span class="label">Sound</span>
+
+      </button>
+
+      <button
+        class="top-control"
+        type="button"
+        onclick="toggleSettings()">
+
+        <span>⚙</span>
+        <span class="label">Settings</span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =====================================================
+       MAIN
+       ===================================================== -->
+
+  <div class="main-grid">
+
+
+    <!-- ===================================================
+         THEMES
+         =================================================== -->
+
+    <aside class="theme-panel">
+
+      <div class="panel-label">
+        THEMES
+      </div>
+
+      <div class="theme-scroll">
+
+        <button class="theme-button active" data-theme="sand">
+          <div class="thumb thumb-sand"></div>
+          <div class="theme-name">Sand Timer</div>
+        </button>
+
+        <button class="theme-button" data-theme="coaster">
+          <div class="thumb thumb-coaster"></div>
+          <div class="theme-name">Roller Coaster</div>
+        </button>
+
+        <button class="theme-button" data-theme="bubbles">
+          <div class="thumb thumb-bubbles"></div>
+          <div class="theme-name">Bubbles</div>
+        </button>
+
+        <button class="theme-button" data-theme="balloon">
+          <div class="thumb thumb-balloon"></div>
+          <div class="theme-name">Balloon</div>
+        </button>
+
+        <button class="theme-button" data-theme="rocket">
+          <div class="thumb thumb-rocket"></div>
+          <div class="theme-name">Rocket</div>
+        </button>
+
+        <button class="theme-button" data-theme="ocean">
+          <div class="thumb thumb-ocean"></div>
+          <div class="theme-name">Ocean</div>
+        </button>
+
+        <button class="theme-button" data-theme="rain">
+          <div class="thumb thumb-rain"></div>
+          <div class="theme-name">Rain</div>
+        </button>
+
+        <button class="theme-button" data-theme="storm">
+          <div class="thumb thumb-storm"></div>
+          <div class="theme-name">Thunderstorm</div>
+        </button>
+
+        <button class="theme-button" data-theme="snow">
+          <div class="thumb thumb-snow"></div>
+          <div class="theme-name">Snow</div>
+        </button>
+
+        <button class="theme-button" data-theme="fall">
+          <div class="thumb thumb-fall"></div>
+          <div class="theme-name">Fall Leaves</div>
+        </button>
+
+        <button class="theme-button" data-theme="spring">
+          <div class="thumb thumb-spring"></div>
+          <div class="theme-name">Spring Garden</div>
+        </button>
+
+        <button class="theme-button" data-theme="beach">
+          <div class="thumb thumb-beach"></div>
+          <div class="theme-name">Beach</div>
+        </button>
+
+        <button class="theme-button" data-theme="fire">
+          <div class="thumb thumb-fire"></div>
+          <div class="theme-name">Fireplace</div>
+        </button>
+
+        <button class="theme-button" data-theme="night">
+          <div class="thumb thumb-night"></div>
+          <div class="theme-name">Night Sky</div>
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ===================================================
+         TIMER
+         =================================================== -->
+
+    <main class="content">
+
+      <section class="scene-card">
+
+        <div id="scene" class="scene"></div>
+
+
+        <div class="timer-overlay">
+
+          <div
+            id="timeDisplay"
+            class="time-display">
+            05:00
+          </div>
+
+          <div
+            id="timeCaption"
+            class="time-caption">
+            5 minutes
+          </div>
+
+          <div class="progress-track">
+            <div
+              id="progressFill"
+              class="progress-fill">
+            </div>
+          </div>
+
+        </div>
+
+
+        <button
+          class="fullscreen-btn"
+          onclick="toggleFullscreen()"
+          title="Fullscreen">
+
+          ⛶
+
+        </button>
+
+      </section>
+
+
+      <!-- =================================================
+           TIME CONTROLS
+           ================================================= -->
+
+      <div class="controls-area">
+
+        <section class="control-card">
+
+          <div class="control-title">
+            QUICK SET
+          </div>
+
+          <div class="quick-buttons">
+
+            <button class="quick-btn" data-minutes="1">
+              1
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn" data-minutes="3">
+              3
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn selected" data-minutes="5">
+              5
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn" data-minutes="10">
+              10
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn" data-minutes="15">
+              15
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn" data-minutes="20">
+              20
+              <span>min</span>
+            </button>
+
+            <button class="quick-btn" data-minutes="30">
+              30
+              <span>min</span>
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <section class="control-card">
+
+          <div class="control-title">
+            SET YOUR OWN TIME
+          </div>
+
+          <div class="custom-set">
+
+            <button
+              class="adjust-btn"
+              onclick="adjustTime(-60)">
+              −
+            </button>
+
+            <div class="custom-display">
+
+              <span id="customDisplay">
+                05:00
+              </span>
+
+              <small>MM:SS</small>
+
+            </div>
+
+            <button
+              class="adjust-btn"
+              onclick="adjustTime(60)">
+              +
+            </button>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- =================================================
+           BUTTONS
+           ================================================= -->
+
+      <div class="action-row">
+
+        <button
+          id="startBtn"
+          class="action-btn start"
+          onclick="startTimer()">
+
+          ▶ START
+
+        </button>
+
+        <button
+          id="pauseBtn"
+          class="action-btn pause"
+          onclick="pauseTimer()">
+
+          ‖ PAUSE
+
+        </button>
+
+        <button
+          class="action-btn reset"
+          onclick="resetTimer()">
+
+          ↻ RESET
+
+        </button>
+
+      </div>
+
+
+      <div class="footer-note">
+
+        <span>💡</span>
+
+        <div>
+          <strong>Visual timer:</strong>
+          the scene changes as the time counts down.
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     SETTINGS
+     ======================================================= -->
+
+<div
+  id="settingsDrawer"
+  class="settings-drawer">
+
+  <div class="drawer-head">
+
+    <div class="drawer-title">
+      Timer Settings
+    </div>
+
+    <button
+      class="close-btn"
+      onclick="toggleSettings()">
+      ×
+    </button>
+
+  </div>
+
+
+  <div class="setting-block">
+
+    <div class="toggle-row">
+
+      <div>
+        <div class="setting-label">
+          End Sound
+        </div>
+
+        <div class="setting-help">
+          Plays a gentle chime when time is up.
+        </div>
+      </div>
+
+      <button
+        id="soundToggle"
+        class="toggle on"
+        onclick="toggleSound()">
+
+        <div class="toggle-dot"></div>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="setting-block">
+
+    <div class="toggle-row">
+
+      <div>
+        <div class="setting-label">
+          Keep Screen Awake
+        </div>
+
+        <div class="setting-help">
+          Tries to prevent the display from sleeping while the timer runs.
+        </div>
+      </div>
+
+      <button
+        id="wakeToggle"
+        class="toggle"
+        onclick="toggleWakeLockSetting()">
+
+        <div class="toggle-dot"></div>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     TIME UP
+     ======================================================= -->
+
+<div
+  id="timeUp"
+  class="time-up">
+
+  <div class="time-up-card">
+
+    <div class="time-up-title">
+      Time's Up
+    </div>
+
+    <div class="time-up-sub">
+      The timer has finished.
+    </div>
+
+    <button
+      class="done-btn"
+      onclick="closeTimeUp()">
+
+      Done
+
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+/* =========================================================
+   CLASSROOM TIMER
+   ========================================================= */
+
+let selectedSeconds = 300;
+let remainingSeconds = 300;
+let originalSeconds = 300;
+
+let timerInterval = null;
+let running = false;
+
+let soundEnabled = true;
+let wakeEnabled = false;
+let wakeLock = null;
+
+let currentTheme = "sand";
+
+
+const timeDisplay =
+  document.getElementById("timeDisplay");
+
+const customDisplay =
+  document.getElementById("customDisplay");
+
+const timeCaption =
+  document.getElementById("timeCaption");
+
+const progressFill =
+  document.getElementById("progressFill");
+
+const scene =
+  document.getElementById("scene");
+
+
+
+/* =========================================================
+   FORMAT
+   ========================================================= */
+
+function formatTime(seconds) {
+
+  seconds =
+    Math.max(0, seconds);
+
+  const mins =
+    Math.floor(seconds / 60);
+
+  const secs =
+    seconds % 60;
+
+  return (
+    String(mins).padStart(2, "0")
+    +
+    ":"
+    +
+    String(secs).padStart(2, "0")
+  );
+
+}
+
+
+function getCaption(seconds) {
+
+  if (seconds < 60) {
+
+    return (
+      seconds
+      +
+      (seconds === 1
+        ? " second"
+        : " seconds")
+    );
+
+  }
+
+  const mins =
+    Math.ceil(seconds / 60);
+
+  return (
+    mins
+    +
+    (mins === 1
+      ? " minute"
+      : " minutes")
+  );
+
+}
+
+
+
+/* =========================================================
+   UPDATE DISPLAY
+   ========================================================= */
+
+function updateDisplay() {
+
+  const formatted =
+    formatTime(
+      remainingSeconds
+    );
+
+  timeDisplay.textContent =
+    formatted;
+
+  customDisplay.textContent =
+    formatted;
+
+  timeCaption.textContent =
+    getCaption(
+      remainingSeconds
+    );
+
+
+  let percentage = 0;
+
+  if (
+    originalSeconds > 0
+  ) {
+
+    percentage =
+      (
+        remainingSeconds /
+        originalSeconds
+      )
+      *
+      100;
+
+  }
+
+
+  progressFill.style.width =
+    percentage + "%";
+
+
+  updateSceneProgress(
+    percentage / 100
+  );
+
+}
+
+
+
+/* =========================================================
+   QUICK BUTTONS
+   ========================================================= */
+
+document
+  .querySelectorAll(
+    ".quick-btn"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          stopInterval();
+
+          document
+            .querySelectorAll(
+              ".quick-btn"
+            )
+            .forEach(
+              b =>
+                b.classList
+                  .remove(
+                    "selected"
+                  )
+            );
+
+          button
+            .classList
+            .add(
+              "selected"
+            );
+
+
+          const minutes =
+            Number(
+              button.dataset.minutes
+            );
+
+
+          selectedSeconds =
+            minutes * 60;
+
+          remainingSeconds =
+            selectedSeconds;
+
+          originalSeconds =
+            selectedSeconds;
+
+
+          updateDisplay();
+
+        }
+      );
+
+    }
+  );
+
+
+
+/* =========================================================
+   CUSTOM TIME
+   ========================================================= */
+
+function adjustTime(amount) {
+
+  stopInterval();
+
+
+  document
+    .querySelectorAll(
+      ".quick-btn"
+    )
+    .forEach(
+      b =>
+        b.classList
+          .remove(
+            "selected"
+          )
+    );
+
+
+  remainingSeconds +=
+    amount;
+
+
+  remainingSeconds =
+    Math.max(
+      10,
+      Math.min(
+        remainingSeconds,
+        60 * 120
+      )
+    );
+
+
+  selectedSeconds =
+    remainingSeconds;
+
+  originalSeconds =
+    remainingSeconds;
+
+
+  updateDisplay();
+
+}
+
+
+
+/* =========================================================
+   TIMER
+   ========================================================= */
+
+function startTimer() {
+
+  if (
+    running
+  ) {
+    return;
+  }
+
+
+  if (
+    remainingSeconds <= 0
+  ) {
+
+    remainingSeconds =
+      originalSeconds;
+
+  }
+
+
+  running = true;
+
+
+  if (
+    wakeEnabled
+  ) {
+
+    requestWakeLock();
+
+  }
+
+
+  timerInterval =
+    setInterval(
+      () => {
+
+        remainingSeconds--;
+
+
+        if (
+          remainingSeconds <= 0
+        ) {
+
+          remainingSeconds = 0;
+
+          updateDisplay();
+
+          finishTimer();
+
+          return;
+
+        }
+
+
+        updateDisplay();
+
+      },
+      1000
+    );
+
+}
+
+
+function pauseTimer() {
+
+  stopInterval();
+
+}
+
+
+function resetTimer() {
+
+  stopInterval();
+
+  remainingSeconds =
+    originalSeconds;
+
+  updateDisplay();
+
+}
+
+
+function stopInterval() {
+
+  if (
+    timerInterval
+  ) {
+
+    clearInterval(
+      timerInterval
+    );
+
+  }
+
+  timerInterval = null;
+  running = false;
+
+}
+
+
+function finishTimer() {
+
+  stopInterval();
+
+  releaseWakeLock();
+
+  if (
+    soundEnabled
+  ) {
+
+    playChime();
+
+  }
+
+  document
+    .getElementById(
+      "timeUp"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
+
+
+/* =========================================================
+   SOUND
+   ========================================================= */
+
+function toggleSound() {
+
+  soundEnabled =
+    !soundEnabled;
+
+
+  document
+    .getElementById(
+      "soundToggle"
+    )
+    .classList
+    .toggle(
+      "on",
+      soundEnabled
+    );
+
+
+  document
+    .getElementById(
+      "soundBtn"
+    )
+    .innerHTML =
+      soundEnabled
+        ? '<span>🔊</span><span class="label">Sound</span>'
+        : '<span>🔇</span><span class="label">Sound</span>';
+
+}
+
+
+function playChime() {
+
+  try {
+
+    const audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+
+    const notes = [
+      523.25,
+      659.25,
+      783.99
+    ];
+
+
+    notes.forEach(
+      (frequency, index) => {
+
+        const oscillator =
+          audioContext
+            .createOscillator();
+
+        const gain =
+          audioContext
+            .createGain();
+
+
+        oscillator.frequency.value =
+          frequency;
+
+        oscillator.type =
+          "sine";
+
+
+        gain.gain.setValueAtTime(
+          0,
+          audioContext.currentTime
+        );
+
+        gain.gain.linearRampToValueAtTime(
+          .16,
+          audioContext.currentTime +
+          .03 +
+          index * .18
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          .001,
+          audioContext.currentTime +
+          .65 +
+          index * .18
+        );
+
+
+        oscillator.connect(
+          gain
+        );
+
+        gain.connect(
+          audioContext.destination
+        );
+
+
+        oscillator.start(
+          audioContext.currentTime +
+          index * .18
+        );
+
+        oscillator.stop(
+          audioContext.currentTime +
+          .8 +
+          index * .18
+        );
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.log(
+      "Sound unavailable",
+      error
+    );
+
+  }
+
+}
+
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+function toggleSettings() {
+
+  document
+    .getElementById(
+      "settingsDrawer"
+    )
+    .classList
+    .toggle(
+      "open"
+    );
+
+}
+
+
+function toggleWakeLockSetting() {
+
+  wakeEnabled =
+    !wakeEnabled;
+
+  document
+    .getElementById(
+      "wakeToggle"
+    )
+    .classList
+    .toggle(
+      "on",
+      wakeEnabled
+    );
+
+
+  if (
+    !wakeEnabled
+  ) {
+
+    releaseWakeLock();
+
+  }
+
+}
+
+
+async function requestWakeLock() {
+
+  try {
+
+    if (
+      "wakeLock" in navigator
+    ) {
+
+      wakeLock =
+        await navigator
+          .wakeLock
+          .request(
+            "screen"
+          );
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.log(
+      "Wake lock unavailable",
+      error
+    );
+
+  }
+
+}
+
+
+async function releaseWakeLock() {
+
+  try {
+
+    if (
+      wakeLock
+    ) {
+
+      await wakeLock.release();
+
+      wakeLock = null;
+
+    }
+
+  }
+
+  catch (error) {
+
+  }
+
+}
+
+
+
+/* =========================================================
+   FULLSCREEN
+   ========================================================= */
+
+function toggleFullscreen() {
+
+  const card =
+    document.querySelector(
+      ".scene-card"
+    );
+
+
+  if (
+    !document.fullscreenElement
+  ) {
+
+    card
+      .requestFullscreen()
+      .catch(() => {});
+
+  }
+
+  else {
+
+    document
+      .exitFullscreen();
+
+  }
+
+}
+
+
+
+/* =========================================================
+   TIME UP
+   ========================================================= */
+
+function closeTimeUp() {
+
+  document
+    .getElementById(
+      "timeUp"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+
+/* =========================================================
+   THEMES
+   ========================================================= */
+
+document
+  .querySelectorAll(
+    ".theme-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".theme-button"
+            )
+            .forEach(
+              b =>
+                b.classList
+                  .remove(
+                    "active"
+                  )
+            );
+
+
+          button
+            .classList
+            .add(
+              "active"
+            );
+
+
+          currentTheme =
+            button.dataset.theme;
+
+
+          renderTheme();
+
+          updateDisplay();
+
+        }
+      );
+
+    }
+  );
+
+
+
+/* =========================================================
+   RENDER THEME
+   ========================================================= */
+
+function renderTheme() {
+
+  scene.className =
+    "scene scene-" +
+    currentTheme;
+
+
+  if (
+    currentTheme === "sand"
+  ) {
+
+    scene.innerHTML = `
+      <div class="sand-table"></div>
+
+      <div class="hourglass">
+
+        <div class="hg-top"></div>
+
+        <div
+          id="topSand"
+          class="top-sand">
+        </div>
+
+        <div
+          id="sandStream"
+          class="sand-stream">
+        </div>
+
+        <div
+          id="bottomSand"
+          class="bottom-sand">
+        </div>
+
+        <div class="hg-glass"></div>
+
+        <div class="hg-bottom"></div>
+
+      </div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "coaster"
+  ) {
+
+    scene.innerHTML = `
+      <div class="coaster-cloud"></div>
+
+      <div class="coaster-track">
+
+        <svg
+          viewBox="0 0 1000 350"
+          preserveAspectRatio="none">
+
+          <path
+            d="
+              M 0 290
+              C 125 270,
+                120 35,
+                260 80
+              C 395 125,
+                350 310,
+                500 245
+              C 650 175,
+                610 65,
+                755 100
+              C 855 125,
+                885 250,
+                1000 220
+            "
+            fill="none"
+            stroke="#665f8d"
+            stroke-width="13"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="
+              M 0 305
+              C 125 285,
+                120 50,
+                260 95
+              C 395 140,
+                350 325,
+                500 260
+              C 650 190,
+                610 80,
+                755 115
+              C 855 140,
+                885 265,
+                1000 235
+            "
+            fill="none"
+            stroke="#8c83af"
+            stroke-width="5"
+          />
+
+        </svg>
+
+      </div>
+
+      <div
+        id="coasterCar"
+        class="coaster-car">
+      </div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "bubbles"
+  ) {
+
+    scene.innerHTML =
+      createBubbles();
+
+  }
+
+
+  else if (
+    currentTheme === "balloon"
+  ) {
+
+    scene.innerHTML = `
+      <div
+        id="balloonWrap"
+        class="balloon-wrap">
+
+        <div class="balloon"></div>
+        <div class="balloon-lines"></div>
+        <div class="balloon-basket"></div>
+
+      </div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "rocket"
+  ) {
+
+    scene.innerHTML = `
+      <div
+        id="rocketWrap"
+        class="rocket-wrap">
+
+        <div class="rocket-fin-left"></div>
+        <div class="rocket-fin-right"></div>
+
+        <div class="rocket-body">
+          <div class="rocket-window"></div>
+        </div>
+
+        <div class="rocket-flame"></div>
+
+      </div>
+    `;
+
+    addStars();
+
+  }
+
+
+  else if (
+    currentTheme === "ocean"
+  ) {
+
+    scene.innerHTML = `
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "rain"
+  ) {
+
+    scene.innerHTML = "";
+
+    addRain(
+      55
+    );
+
+  }
+
+
+  else if (
+    currentTheme === "storm"
+  ) {
+
+    scene.innerHTML = `
+      <div class="lightning"></div>
+    `;
+
+    addRain(
+      70
+    );
+
+  }
+
+
+  else if (
+    currentTheme === "snow"
+  ) {
+
+    scene.innerHTML = `
+      <div class="snow-ground"></div>
+    `;
+
+    addSnow(
+      48
+    );
+
+  }
+
+
+  else if (
+    currentTheme === "fall"
+  ) {
+
+    scene.innerHTML = `
+      <div class="fall-tree">
+        <div class="trunk"></div>
+        <div class="tree-crown"></div>
+      </div>
+    `;
+
+    addLeaves(
+      25
+    );
+
+  }
+
+
+  else if (
+    currentTheme === "spring"
+  ) {
+
+    scene.innerHTML = `
+      <div class="spring-tree">
+        <div class="spring-trunk"></div>
+        <div class="blossom-crown"></div>
+      </div>
+    `;
+
+    addPetals(
+      24
+    );
+
+  }
+
+
+  else if (
+    currentTheme === "beach"
+  ) {
+
+    scene.innerHTML = `
+      <div class="beach-sun"></div>
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "fire"
+  ) {
+
+    scene.innerHTML = `
+      <div class="fireplace">
+
+        <div class="fire-opening">
+
+          <div class="logs"></div>
+
+          <div class="flame flame1"></div>
+          <div class="flame flame2"></div>
+          <div class="flame flame3"></div>
+
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  else if (
+    currentTheme === "night"
+  ) {
+
+    scene.innerHTML = `
+      <div class="moon"></div>
+    `;
+
+    addStars();
+
+  }
+
+}
+
+
+
+/* =========================================================
+   GENERATED SCENE OBJECTS
+   ========================================================= */
+
+function createBubbles() {
+
+  let html = "";
+
+  for (
+    let i = 0;
+    i < 28;
+    i++
+  ) {
+
+    const size =
+      random(
+        22,
+        90
+      );
+
+
+    html += `
+      <div
+        class="bubble"
+        style="
+          width:${size}px;
+          height:${size}px;
+          left:${random(2,92)}%;
+          bottom:${random(-5,45)}%;
+          animation-duration:${random(6,13)}s;
+          animation-delay:-${random(0,8)}s;
+        ">
+      </div>
+    `;
+
+  }
+
+  return html;
+
+}
+
+
+function addRain(count) {
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const drop =
+      document.createElement(
+        "div"
+      );
+
+    drop.className =
+      "raindrop";
+
+    drop.style.left =
+      random(0,100) +
+      "%";
+
+    drop.style.top =
+      random(-80,80) +
+      "px";
+
+    drop.style.animationDelay =
+      -Math.random() +
+      "s";
+
+    drop.style.animationDuration =
+      (
+        .65 +
+        Math.random() * .65
+      )
+      +
+      "s";
+
+    scene.appendChild(
+      drop
+    );
+
+  }
+
+}
+
+
+function addSnow(count) {
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const flake =
+      document.createElement(
+        "div"
+      );
+
+    flake.className =
+      "snowflake";
+
+    flake.textContent =
+      "•";
+
+    flake.style.left =
+      random(0,100) +
+      "%";
+
+    flake.style.top =
+      random(-70,100) +
+      "px";
+
+    flake.style.fontSize =
+      random(15,33) +
+      "px";
+
+    flake.style.animationDuration =
+      random(5,12) +
+      "s";
+
+    flake.style.animationDelay =
+      -random(0,10) +
+      "s";
+
+    scene.appendChild(
+      flake
+    );
+
+  }
+
+}
+
+
+function addLeaves(count) {
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const leaf =
+      document.createElement(
+        "div"
+      );
+
+    leaf.className =
+      "leaf";
+
+    leaf.style.left =
+      random(5,90) +
+      "%";
+
+    leaf.style.top =
+      random(-40,110) +
+      "px";
+
+    leaf.style.background =
+      [
+        "#cc6741",
+        "#dc8a43",
+        "#b75342",
+        "#e3a04c"
+      ][
+        random(
+          0,
+          3
+        )
+      ];
+
+    leaf.style.animationDuration =
+      random(6,13) +
+      "s";
+
+    leaf.style.animationDelay =
+      -random(0,10) +
+      "s";
+
+    scene.appendChild(
+      leaf
+    );
+
+  }
+
+}
+
+
+function addPetals(count) {
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const petal =
+      document.createElement(
+        "div"
+      );
+
+    petal.className =
+      "petal";
+
+    petal.style.left =
+      random(5,90) +
+      "%";
+
+    petal.style.top =
+      random(-50,100) +
+      "px";
+
+    petal.style.animationDuration =
+      random(7,14) +
+      "s";
+
+    petal.style.animationDelay =
+      -random(0,10) +
+      "s";
+
+    scene.appendChild(
+      petal
+    );
+
+  }
+
+}
+
+
+function addStars() {
+
+  for (
+    let i = 0;
+    i < 46;
+    i++
+  ) {
+
+    const star =
+      document.createElement(
+        "div"
+      );
+
+    star.className =
+      "star-dot";
+
+    star.style.left =
+      random(3,97) +
+      "%";
+
+    star.style.top =
+      random(3,82) +
+      "%";
+
+    const size =
+      random(2,5);
+
+    star.style.width =
+      size + "px";
+
+    star.style.height =
+      size + "px";
+
+    star.style.animationDelay =
+      -Math.random() * 2 +
+      "s";
+
+    scene.appendChild(
+      star
+    );
+
+  }
+
+}
+
+
+function random(
+  min,
+  max
+) {
+
+  return Math.floor(
+    Math.random()
+    *
+    (
+      max -
+      min +
+      1
+    )
+    +
+    min
+  );
+
+}
+
+
+
+/* =========================================================
+   PROGRESS-BASED VISUALS
+   progressRemaining:
+   1 = timer beginning
+   0 = finished
+   ========================================================= */
+
+function updateSceneProgress(
+  progressRemaining
+) {
+
+  const elapsed =
+    1 -
+    progressRemaining;
+
+
+  /* SAND TIMER */
+
+  if (
+    currentTheme === "sand"
+  ) {
+
+    const topSand =
+      document.getElementById(
+        "topSand"
+      );
+
+    const bottomSand =
+      document.getElementById(
+        "bottomSand"
+      );
+
+    const stream =
+      document.getElementById(
+        "sandStream"
+      );
+
+
+    if (
+      topSand
+    ) {
+
+      topSand.style.transform =
+        "scaleY("
+        +
+        Math.max(
+          .03,
+          progressRemaining
+        )
+        +
+        ")";
+
+    }
+
+
+    if (
+      bottomSand
+    ) {
+
+      bottomSand.style.transform =
+        "scaleY("
+        +
+        Math.max(
+          .04,
+          elapsed
+        )
+        +
+        ")";
+
+    }
+
+
+    if (
+      stream
+    ) {
+
+      stream.style.display =
+        (
+          progressRemaining <= .01
+        )
+        ?
+        "none"
+        :
+        "block";
+
+    }
+
+  }
+
+
+  /* ROLLER COASTER */
+
+  if (
+    currentTheme === "coaster"
+  ) {
+
+    const car =
+      document.getElementById(
+        "coasterCar"
+      );
+
+
+    if (
+      car
+    ) {
+
+      const x =
+        8 +
+        elapsed * 64;
+
+      const wave =
+        Math.sin(
+          elapsed *
+          Math.PI *
+          5
+        );
+
+      const y =
+        46 -
+        wave * 20;
+
+
+      car.style.left =
+        x + "%";
+
+      car.style.top =
+        y + "%";
+
+    }
+
+  }
+
+
+  /* BALLOON */
+
+  if (
+    currentTheme === "balloon"
+  ) {
+
+    const balloon =
+      document.getElementById(
+        "balloonWrap"
+      );
+
+
+    if (
+      balloon
+    ) {
+
+      balloon.style.top =
+        (
+          3 +
+          elapsed * 37
+        )
+        +
+        "%";
+
+    }
+
+  }
+
+
+  /* ROCKET */
+
+  if (
+    currentTheme === "rocket"
+  ) {
+
+    const rocket =
+      document.getElementById(
+        "rocketWrap"
+      );
+
+
+    if (
+      rocket
+    ) {
+
+      rocket.style.bottom =
+        (
+          5 +
+          elapsed * 62
+        )
+        +
+        "%";
+
+    }
+
+  }
+
+
+  /* BUBBLES */
+
+  if (
+    currentTheme === "bubbles"
+  ) {
+
+    const bubbles =
+      document.querySelectorAll(
+        ".bubble"
+      );
+
+
+    const visible =
+      Math.ceil(
+        bubbles.length *
+        progressRemaining
+      );
+
+
+    bubbles.forEach(
+      (bubble,index) => {
+
+        bubble.style.opacity =
+          index < visible
+          ?
+          "1"
+          :
+          "0";
+
+      }
+    );
+
+  }
+
+}
+
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+renderTheme();
+updateDisplay();
+
+
+/* rerender theme after resize only when needed */
+
+window.addEventListener(
+  "beforeunload",
+  releaseWakeLock
+);
+
+</script>
+
+</body>
+</html>
