@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Classroom Tools</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #334155;
+      --blue: #89a9e6;
+      --blue-light: #eef4ff;
+
+      --teal: #7ccbb9;
+      --teal-light: #eaf8f4;
+
+      --purple: #a99ae8;
+      --purple-light: #f2efff;
+
+      --pink: #e996aa;
+      --pink-light: #fdeff3;
+
+      --background: #f5f8fc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        "Trebuchet MS",
+        "Arial Rounded MT Bold",
+        Arial,
+        sans-serif;
+
+      color: var(--navy);
+
+      background:
+        radial-gradient(
+          circle at top left,
+          #edf3ff 0,
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          #eaf9f5 0,
+          transparent 35%
+        ),
+        var(--background);
+    }
+
+    .page {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 28px;
+    }
+
+    .shell {
+      width: min(1100px, 100%);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .title {
+      margin: 0;
+
+      font-size: clamp(
+        38px,
+        5vw,
+        58px
+      );
+
+      letter-spacing: -.5px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+
+      color: #7d8999;
+      font-size: 18px;
+    }
+
+    .tool-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 22px;
+    }
+
+    .tool-card {
+      min-height: 210px;
+
+      border-radius: 30px;
+
+      padding: 28px 22px;
+
+      text-decoration: none;
+      color: var(--navy);
+
+      display: flex;
+      flex-direction: column;
+
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+
+      border: 2px solid transparent;
+
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease;
+
+      box-shadow:
+        0 10px 28px rgba(70, 87, 111, .08);
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+
+      box-shadow:
+        0 16px 32px rgba(70, 87, 111, .14);
+    }
+
+    .tool-card:active {
+      transform: translateY(-1px);
+    }
+
+    .tool-icon {
+      font-size: 64px;
+      line-height: 1;
+
+      margin-bottom: 14px;
+    }
+
+    .tool-name {
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .tool-description {
+      margin-top: 6px;
+
+      font-size: 14px;
+      line-height: 1.4;
+
+      opacity: .7;
+    }
+
+    /* VOICE */
+
+    .voice {
+      background: var(--teal-light);
+      border-color: #d3f0e8;
+    }
+
+    .voice:hover {
+      border-color: var(--teal);
+    }
+
+    /* TIMER */
+
+    .timer {
+      background: var(--blue-light);
+      border-color: #dce8fc;
+    }
+
+    .timer:hover {
+      border-color: var(--blue);
+    }
+
+    /* ALARM */
+
+    .alarm {
+      background: var(--pink-light);
+      border-color: #f6dae1;
+    }
+
+    .alarm:hover {
+      border-color: var(--pink);
+    }
+
+    /* RANDOM */
+
+    .random {
+      background: var(--purple-light);
+      border-color: #e1dcfa;
+    }
+
+    .random:hover {
+      border-color: var(--purple);
+    }
+
+    /* MOVEMENT */
+
+    .movement {
+      background: var(--teal-light);
+      border-color: #d3f0e8;
+    }
+
+    .movement:hover {
+      border-color: var(--teal);
+    }
+
+    /* ATTENTION */
+
+    .attention {
+      background: var(--blue-light);
+      border-color: #dce8fc;
+    }
+
+    .attention:hover {
+      border-color: var(--blue);
+    }
+
+    .coming-soon {
+      margin-top: 9px;
+
+      padding: 5px 10px;
+
+      border-radius: 999px;
+
+      background: rgba(255,255,255,.7);
+
+      font-size: 11px;
+      font-weight: 800;
+
+      letter-spacing: .6px;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      text-align: center;
+
+      margin-top: 25px;
+
+      font-size: 13px;
+      color: #98a3b2;
+    }
+
+    @media (max-width: 850px) {
+
+      .tool-grid {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+    @media (max-width: 540px) {
+
+      .page {
+        padding: 18px;
+      }
+
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-card {
+        min-height: 170px;
+      }
+
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <div class="page">
+
+    <div class="shell">
+
+      <div class="header">
+
+        <h1 class="title">
+          ✨ Classroom Tools
+        </h1>
+
+        <div class="subtitle">
+          Pick a tool for our classroom
+        </div>
+
+      </div>
+
+
+      <div class="tool-grid">
+
+
+        <!-- VOICE METER -->
+
+        <a
+          href="voice-meter.html"
+          class="tool-card voice">
+
+          <div class="tool-icon">
+            🎤
+          </div>
+
+          <div class="tool-name">
+            Voice Meter
+          </div>
+
+          <div class="tool-description">
+            Check our classroom volume
+          </div>
+
+        </a>
+
+
+        <!-- TIMER -->
+
+        <a
+          href="#"
+          class="tool-card timer"
+          onclick="comingSoon(event, 'Timer')">
+
+          <div class="tool-icon">
+            ⏱️
+          </div>
+
+          <div class="tool-name">
+            Timer
+          </div>
+
+          <div class="tool-description">
+            Count down our work time
+          </div>
+
+          <div class="coming-soon">
+            Coming Soon
+          </div>
+
+        </a>
+
+
+        <!-- ALARM -->
+
+        <a
+          href="#"
+          class="tool-card alarm"
+          onclick="comingSoon(event, 'Alarm')">
+
+          <div class="tool-icon">
+            ⏰
+          </div>
+
+          <div class="tool-name">
+            Alarm
+          </div>
+
+          <div class="tool-description">
+            Set a classroom reminder
+          </div>
+
+          <div class="coming-soon">
+            Coming Soon
+          </div>
+
+        </a>
+
+
+        <!-- RANDOM STUDENT -->
+
+        <a
+          href="#"
+          class="tool-card random"
+          onclick="comingSoon(event, 'Random Student')">
+
+          <div class="tool-icon">
+            🎲
+          </div>
+
+          <div class="tool-name">
+            Random Student
+          </div>
+
+          <div class="tool-description">
+            Pick a name from the class
+          </div>
+
+          <div class="coming-soon">
+            Coming Soon
+          </div>
+
+        </a>
+
+
+        <!-- MOVEMENT BREAK -->
+
+        <a
+          href="#"
+          class="tool-card movement"
+          onclick="comingSoon(event, 'Movement Break')">
+
+          <div class="tool-icon">
+            🕺
+          </div>
+
+          <div class="tool-name">
+            Movement Break
+          </div>
+
+          <div class="tool-description">
+            Pick a quick movement activity
+          </div>
+
+          <div class="coming-soon">
+            Coming Soon
+          </div>
+
+        </a>
+
+
+        <!-- ATTENTION SIGNAL -->
+
+        <a
+          href="#"
+          class="tool-card attention"
+          onclick="comingSoon(event, 'Attention Signal')">
+
+          <div class="tool-icon">
+            📣
+          </div>
+
+          <div class="tool-name">
+            Attention Signal
+          </div>
+
+          <div class="tool-description">
+            Get everyone's attention
+          </div>
+
+          <div class="coming-soon">
+            Coming Soon
+          </div>
+
+        </a>
+
+      </div>
+
+
+      <div class="footer">
+        Classroom Tools
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    function comingSoon(
+      event,
+      toolName
+    ) {
+
+      event.preventDefault();
+
+      alert(
+        toolName +
+        ' is coming soon!'
+      );
+
+    }
+
+  </script>
+
+</body>
+</html>
