@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attention Signals</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --navy: #2f4058;
+  --muted: #788598;
+  --border: #e3e8ef;
+  --background: #f6f8fb;
+  --white: #ffffff;
+
+  --teal: #69bea9;
+  --teal-light: #eaf8f4;
+
+  --blue: #7f9fe0;
+  --blue-light: #eef3ff;
+
+  --purple: #968ad5;
+  --purple-light: #f1effb;
+
+  --pink: #df8ca4;
+  --pink-light: #fceef3;
+
+  --coral: #dc8a7c;
+  --coral-light: #fbefec;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+
+  color: var(--navy);
+
+  background:
+    radial-gradient(circle at top left, #eef4ff, transparent 34%),
+    radial-gradient(circle at bottom right, #eaf8f4, transparent 36%),
+    var(--background);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.page {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 50px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  margin-bottom: 28px;
+}
+
+.tools-button {
+  justify-self: start;
+
+  border: 1px solid var(--border);
+  background: white;
+
+  color: var(--navy);
+
+  padding: 11px 17px;
+
+  border-radius: 15px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px rgba(50,65,85,.06);
+}
+
+.heading {
+  text-align: center;
+}
+
+.heading h1 {
+  margin: 0;
+
+  font-size: clamp(34px,5vw,48px);
+
+  letter-spacing: -1px;
+}
+
+.heading p {
+  margin: 5px 0 0;
+
+  color: var(--muted);
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   FAVORITES
+========================================= */
+
+.favorite-section {
+  margin-bottom: 26px;
+}
+
+.section-title {
+  margin-bottom: 12px;
+
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.favorite-row {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.favorite-button {
+  border: 1px solid var(--border);
+
+  background: white;
+
+  color: var(--navy);
+
+  padding: 11px 16px;
+
+  border-radius: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px rgba(50,65,85,.05);
+}
+
+.favorite-button:hover {
+  background: var(--blue-light);
+}
+
+
+/* =========================================
+   SIGNAL GRID
+========================================= */
+
+.signal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap: 14px;
+}
+
+.signal-card {
+  min-height: 180px;
+
+  border: 0;
+
+  border-radius: 25px;
+
+  padding: 23px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 20px rgba(50,65,85,.06);
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.signal-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 11px 25px rgba(50,65,85,.1);
+}
+
+.signal-icon {
+  font-size: 38px;
+
+  margin-bottom: 16px;
+}
+
+.signal-name {
+  font-size: 21px;
+
+  font-weight: 900;
+}
+
+.signal-help {
+  margin-top: 5px;
+
+  color: #718096;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+}
+
+.card-teal {
+  background:
+    linear-gradient(135deg,#e8f8f3,#f5fcfa);
+}
+
+.card-blue {
+  background:
+    linear-gradient(135deg,#edf2ff,#f7f9ff);
+}
+
+.card-purple {
+  background:
+    linear-gradient(135deg,#f0edfb,#faf9fe);
+}
+
+.card-pink {
+  background:
+    linear-gradient(135deg,#fceef3,#fff8fa);
+}
+
+.card-coral {
+  background:
+    linear-gradient(135deg,#fbeeea,#fff8f6);
+}
+
+.card-mix {
+  background:
+    linear-gradient(
+      135deg,
+      #eef3ff,
+      #ecf9f5,
+      #f3effb
+    );
+}
+
+
+/* =========================================
+   MANAGE ROW
+========================================= */
+
+.manage-row {
+  display: flex;
+
+  justify-content: center;
+
+  margin-top: 24px;
+}
+
+.manage-button {
+  border: 1px solid var(--border);
+
+  background: white;
+
+  color: #66758b;
+
+  padding: 12px 18px;
+
+  border-radius: 15px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   FULL SCREEN SIGNAL
+========================================= */
+
+.signal-overlay {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 400;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(238,243,255,.98),
+      rgba(235,249,245,.98)
+    );
+}
+
+.signal-overlay.show {
+  display: flex;
+}
+
+.signal-display {
+  width: min(850px,100%);
+
+  text-align: center;
+}
+
+.big-icon {
+  font-size: clamp(80px,14vw,130px);
+
+  margin-bottom: 18px;
+}
+
+.big-title {
+  font-size: clamp(48px,8vw,82px);
+
+  font-weight: 900;
+
+  line-height: 1;
+
+  letter-spacing: -2px;
+}
+
+.big-subtitle {
+  margin-top: 18px;
+
+  font-size: clamp(24px,4vw,38px);
+
+  color: #617087;
+
+  font-weight: 800;
+}
+
+.big-response {
+  margin-top: 22px;
+
+  padding: 18px 22px;
+
+  background: white;
+
+  border-radius: 20px;
+
+  font-size: clamp(25px,4vw,40px);
+
+  font-weight: 900;
+
+  box-shadow:
+    0 8px 24px rgba(50,65,85,.08);
+}
+
+.overlay-actions {
+  margin-top: 32px;
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+.done-overlay {
+  border: 0;
+
+  background: var(--teal);
+
+  color: white;
+
+  padding: 15px 30px;
+
+  border-radius: 17px;
+
+  font-size: 19px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.play-again-button {
+  border: 1px solid var(--border);
+
+  background: white;
+
+  color: #66758b;
+
+  padding: 15px 22px;
+
+  border-radius: 17px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   COUNTDOWN
+========================================= */
+
+.countdown-number {
+  font-size: clamp(150px,28vw,290px);
+
+  font-weight: 900;
+
+  line-height: .9;
+
+  letter-spacing: -10px;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 500;
+
+  padding: 20px;
+
+  overflow-y: auto;
+
+  background:
+    rgba(38,51,70,.36);
+
+  backdrop-filter: blur(5px);
+}
+
+.modal-backdrop.open {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: flex-start;
+}
+
+.modal {
+  width: min(700px,100%);
+
+  margin: 30px auto;
+
+  background: white;
+
+  border-radius: 28px;
+
+  padding: 25px;
+
+  box-shadow:
+    0 25px 70px rgba(30,45,65,.24);
+}
+
+.modal-top {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 22px;
+}
+
+.modal-title {
+  font-size: 25px;
+
+  font-weight: 900;
+}
+
+.close-button {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: #f1f4f8;
+
+  color: #697587;
+
+  font-size: 21px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.field {
+  margin-bottom: 15px;
+}
+
+.field-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+.text-input,
+.select-input {
+  width: 100%;
+
+  border: 1px solid var(--border);
+
+  background: #f9fafc;
+
+  color: var(--navy);
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+}
+
+.text-input:focus,
+.select-input:focus {
+  outline:
+    3px solid rgba(127,159,224,.16);
+
+  border-color: var(--blue);
+}
+
+.add-signal-button {
+  width: 100%;
+
+  margin-top: 5px;
+
+  border: 0;
+
+  background: var(--teal);
+
+  color: white;
+
+  padding: 13px 18px;
+
+  border-radius: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   CUSTOM SIGNAL LIST
+========================================= */
+
+.saved-title {
+  margin-top: 24px;
+
+  margin-bottom: 9px;
+
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.saved-list {
+  border-top: 1px solid var(--border);
+
+  max-height: 310px;
+
+  overflow-y: auto;
+}
+
+.saved-item {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px 4px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.saved-name {
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+.saved-response {
+  margin-top: 3px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.saved-actions {
+  display: flex;
+
+  gap: 6px;
+
+  align-items: center;
+}
+
+.favorite-toggle,
+.delete-button {
+  border: 0;
+
+  padding: 8px 10px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 900;
+}
+
+.favorite-toggle {
+  background: var(--blue-light);
+
+  color: #6078b7;
+}
+
+.delete-button {
+  background: var(--pink-light);
+
+  color: #a7687a;
+}
+
+.no-saved {
+  padding: 27px 12px;
+
+  text-align: center;
+
+  color: var(--muted);
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width: 800px) {
+
+  .signal-grid {
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+
+@media(max-width: 620px) {
+
+  .topbar {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+
+    text-align: center;
+  }
+
+  .tools-button {
+    justify-self: center;
+
+    order: 2;
+  }
+
+  .heading {
+    order: 1;
+  }
+
+  .signal-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media(prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <button
+      id="toolsButton"
+      class="tools-button"
+      type="button">
+      ⌂ Tools
+    </button>
+
+    <div class="heading">
+
+      <h1>Attention Signals</h1>
+
+      <p>
+        Quick cues to bring the class back together.
+      </p>
+
+    </div>
+
+    <div></div>
+
+  </header>
+
+
+
+  <!-- FAVORITES -->
+
+  <section
+    id="favoriteSection"
+    class="favorite-section">
+
+    <div class="section-title">
+      ★ Favorites
+    </div>
+
+    <div
+      id="favoriteRow"
+      class="favorite-row">
+    </div>
+
+  </section>
+
+
+
+  <!-- SIGNALS -->
+
+  <div class="section-title">
+    Choose a Signal
+  </div>
+
+
+  <main class="signal-grid">
+
+
+    <button
+      class="signal-card card-teal"
+      type="button"
+      data-built-in="chime">
+
+      <div class="signal-icon">
+        🔔
+      </div>
+
+      <div class="signal-name">
+        Chime
+      </div>
+
+      <div class="signal-help">
+        A gentle sound with a large visual reminder.
+      </div>
+
+    </button>
+
+
+
+    <button
+      class="signal-card card-blue"
+      type="button"
+      data-built-in="clap">
+
+      <div class="signal-icon">
+        👏
+      </div>
+
+      <div class="signal-name">
+        Clap Pattern
+      </div>
+
+      <div class="signal-help">
+        Plays a short rhythm for students to echo.
+      </div>
+
+    </button>
+
+
+
+    <button
+      class="signal-card card-purple"
+      type="button"
+      data-built-in="response">
+
+      <div class="signal-icon">
+        📣
+      </div>
+
+      <div class="signal-name">
+        Call & Response
+      </div>
+
+      <div class="signal-help">
+        Class, class! → Yes, yes!
+      </div>
+
+    </button>
+
+
+
+    <button
+      class="signal-card card-pink"
+      type="button"
+      data-built-in="quiet">
+
+      <div class="signal-icon">
+        🤫
+      </div>
+
+      <div class="signal-name">
+        Quiet Signal
+      </div>
+
+      <div class="signal-help">
+        Voices off. Eyes here. Ready to listen.
+      </div>
+
+    </button>
+
+
+
+    <button
+      class="signal-card card-coral"
+      type="button"
+      data-built-in="countdown">
+
+      <div class="signal-icon">
+        5
+      </div>
+
+      <div class="signal-name">
+        5-Second Countdown
+      </div>
+
+      <div class="signal-help">
+        A large visual countdown with gentle tones.
+      </div>
+
+    </button>
+
+
+
+    <button
+      id="customSignalButton"
+      class="signal-card card-mix"
+      type="button">
+
+      <div class="signal-icon">
+        ✦
+      </div>
+
+      <div class="signal-name">
+        Custom Signals
+      </div>
+
+      <div class="signal-help">
+        Use the signals and call-and-responses you create.
+      </div>
+
+    </button>
+
+
+  </main>
+
+
+
+  <div class="manage-row">
+
+    <button
+      id="manageSignalsButton"
+      class="manage-button"
+      type="button">
+      ⚙ Manage Signals
+    </button>
+
+  </div>
+
+
+</div>
+
+
+
+<!-- =======================================
+     SIGNAL DISPLAY
+======================================= -->
+
+<div
+  id="signalOverlay"
+  class="signal-overlay">
+
+  <div class="signal-display">
+
+    <div
+      id="overlayIcon"
+      class="big-icon">
+      🔔
+    </div>
+
+    <div
+      id="overlayTitle"
+      class="big-title">
+      Eyes Here
+    </div>
+
+    <div
+      id="overlaySubtitle"
+      class="big-subtitle">
+    </div>
+
+    <div
+      id="overlayResponse"
+      class="big-response"
+      style="display:none;">
+    </div>
+
+    <div class="overlay-actions">
+
+      <button
+        id="playAgainButton"
+        class="play-again-button"
+        type="button">
+        Play Again
+      </button>
+
+      <button
+        id="doneOverlayButton"
+        class="done-overlay"
+        type="button">
+        Done
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =======================================
+     MANAGE CUSTOM SIGNALS
+======================================= -->
+
+<div
+  id="signalModal"
+  class="modal-backdrop">
+
+  <div class="modal">
+
+    <div class="modal-top">
+
+      <div class="modal-title">
+        Manage Signals
+      </div>
+
+      <button
+        id="closeModalButton"
+        class="close-button"
+        type="button">
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="field">
+
+      <label
+        class="field-label"
+        for="customTitle">
+        Teacher Signal
+      </label>
+
+      <input
+        id="customTitle"
+        class="text-input"
+        type="text"
+        maxlength="70"
+        placeholder="Example: Hocus Pocus">
+
+    </div>
+
+
+    <div class="field">
+
+      <label
+        class="field-label"
+        for="customResponse">
+        Student Response
+      </label>
+
+      <input
+        id="customResponse"
+        class="text-input"
+        type="text"
+        maxlength="80"
+        placeholder="Example: Everybody Focus">
+
+    </div>
+
+
+    <div class="field">
+
+      <label
+        class="field-label"
+        for="customIcon">
+        Symbol
+      </label>
+
+      <select
+        id="customIcon"
+        class="select-input">
+
+        <option value="📣">
+          📣 Attention
+        </option>
+
+        <option value="👀">
+          👀 Eyes
+        </option>
+
+        <option value="🤫">
+          🤫 Quiet
+        </option>
+
+        <option value="👏">
+          👏 Clap
+        </option>
+
+        <option value="🔔">
+          🔔 Bell
+        </option>
+
+        <option value="✋">
+          ✋ Hand
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="field">
+
+      <label
+        class="field-label"
+        for="customSound">
+        Sound
+      </label>
+
+      <select
+        id="customSound"
+        class="select-input">
+
+        <option value="none">
+          Visual Only
+        </option>
+
+        <option value="chime">
+          Gentle Chime
+        </option>
+
+        <option value="clap">
+          Clap Pattern
+        </option>
+
+        <option value="beep">
+          Soft Beep
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      id="addSignalButton"
+      class="add-signal-button"
+      type="button">
+      + Add Signal
+    </button>
+
+
+    <div class="saved-title">
+      Your Signals
+    </div>
+
+
+    <div
+      id="savedSignalList"
+      class="saved-list">
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   STORAGE
+========================================= */
+
+const SIGNAL_STORAGE_KEY =
+  "classroomAttentionSignalsV1";
+
+let customSignals = [];
+
+let activeSignal = null;
+
+let countdownTimer = null;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const signalOverlay =
+  document.getElementById("signalOverlay");
+
+const overlayIcon =
+  document.getElementById("overlayIcon");
+
+const overlayTitle =
+  document.getElementById("overlayTitle");
+
+const overlaySubtitle =
+  document.getElementById("overlaySubtitle");
+
+const overlayResponse =
+  document.getElementById("overlayResponse");
+
+const signalModal =
+  document.getElementById("signalModal");
+
+const customTitle =
+  document.getElementById("customTitle");
+
+const customResponse =
+  document.getElementById("customResponse");
+
+const customIcon =
+  document.getElementById("customIcon");
+
+const customSound =
+  document.getElementById("customSound");
+
+const savedSignalList =
+  document.getElementById("savedSignalList");
+
+const favoriteRow =
+  document.getElementById("favoriteRow");
+
+
+/* =========================================
+   BUILT-IN SIGNALS
+========================================= */
+
+const builtInSignals = {
+
+  chime: {
+    id: "builtin_chime",
+    title: "Eyes Here",
+    subtitle: "Voices Off • Looking • Listening",
+    response: "",
+    icon: "🔔",
+    sound: "chime"
+  },
+
+  clap: {
+    id: "builtin_clap",
+    title: "Clap It Back",
+    subtitle: "Listen • Copy • Ready",
+    response: "",
+    icon: "👏",
+    sound: "clap"
+  },
+
+  response: {
+    id: "builtin_response",
+    title: "Class, Class!",
+    subtitle: "",
+    response: "Yes, Yes!",
+    icon: "📣",
+    sound: "none"
+  },
+
+  quiet: {
+    id: "builtin_quiet",
+    title: "Voices Off",
+    subtitle: "Eyes Here • Looking • Listening",
+    response: "",
+    icon: "🤫",
+    sound: "none"
+  }
+
+};
+
+
+/* =========================================
+   LOAD / SAVE
+========================================= */
+
+function loadSignals() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        SIGNAL_STORAGE_KEY
+      );
+
+    customSignals =
+      saved
+        ? JSON.parse(saved)
+        : [];
+
+  }
+
+  catch {
+
+    customSignals = [];
+
+  }
+
+}
+
+
+function saveSignals() {
+
+  localStorage.setItem(
+    SIGNAL_STORAGE_KEY,
+    JSON.stringify(customSignals)
+  );
+
+}
+
+
+/* =========================================
+   BUILT-IN BUTTONS
+========================================= */
+
+document
+  .querySelectorAll("[data-built-in]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const type =
+          button.dataset.builtIn;
+
+        if (
+          type === "countdown"
+        ) {
+
+          startCountdown();
+          return;
+
+        }
+
+        showSignal(
+          builtInSignals[type]
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================
+   SHOW SIGNAL
+========================================= */
+
+function showSignal(signal) {
+
+  activeSignal = signal;
+
+  clearInterval(countdownTimer);
+
+  overlayIcon.style.display =
+    "block";
+
+  overlayTitle.style.display =
+    "block";
+
+  overlaySubtitle.style.display =
+    "block";
+
+
+  overlayIcon.textContent =
+    signal.icon || "📣";
+
+  overlayTitle.textContent =
+    signal.title || "Attention";
+
+  overlaySubtitle.textContent =
+    signal.subtitle || "";
+
+
+  if (
+    signal.response
+  ) {
+
+    overlayResponse.style.display =
+      "block";
+
+    overlayResponse.textContent =
+      signal.response;
+
+  }
+
+  else {
+
+    overlayResponse.style.display =
+      "none";
+
+  }
+
+
+  signalOverlay
+    .classList
+    .add("show");
+
+
+  playSignalSound(
+    signal.sound
+  );
+
+}
+
+
+/* =========================================
+   COUNTDOWN
+========================================= */
+
+function startCountdown() {
+
+  activeSignal = {
+    type: "countdown"
+  };
+
+  clearInterval(countdownTimer);
+
+  signalOverlay
+    .classList
+    .add("show");
+
+
+  overlayIcon.style.display =
+    "none";
+
+  overlayResponse.style.display =
+    "none";
+
+  overlaySubtitle.style.display =
+    "block";
+
+
+  overlayTitle.className =
+    "countdown-number";
+
+  overlaySubtitle.textContent =
+    "Get Ready";
+
+
+  let number = 5;
+
+  overlayTitle.textContent =
+    number;
+
+  playBeep();
+
+
+  countdownTimer =
+    setInterval(
+      () => {
+
+        number--;
+
+        if (
+          number > 0
+        ) {
+
+          overlayTitle.textContent =
+            number;
+
+          playBeep();
+
+        }
+
+        else {
+
+          clearInterval(
+            countdownTimer
+          );
+
+          overlayTitle.className =
+            "big-title";
+
+          overlayTitle.textContent =
+            "Ready";
+
+          overlaySubtitle.textContent =
+            "Eyes Here • Voices Off";
+
+          playChime();
+
+        }
+
+      },
+      1000
+    );
+
+}
+
+
+/* =========================================
+   PLAY AGAIN
+========================================= */
+
+document
+  .getElementById("playAgainButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      if (
+        activeSignal &&
+        activeSignal.type === "countdown"
+      ) {
+
+        startCountdown();
+        return;
+
+      }
+
+      if (
+        activeSignal
+      ) {
+
+        playSignalSound(
+          activeSignal.sound
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   CLOSE OVERLAY
+========================================= */
+
+document
+  .getElementById("doneOverlayButton")
+  .addEventListener(
+    "click",
+    closeSignalOverlay
+  );
+
+
+function closeSignalOverlay() {
+
+  clearInterval(
+    countdownTimer
+  );
+
+  overlayTitle.className =
+    "big-title";
+
+  signalOverlay
+    .classList
+    .remove("show");
+
+}
+
+
+/* =========================================
+   SOUND ROUTER
+========================================= */
+
+function playSignalSound(sound) {
+
+  if (
+    sound === "chime"
+  ) {
+
+    playChime();
+
+  }
+
+  else if (
+    sound === "clap"
+  ) {
+
+    playClapPattern();
+
+  }
+
+  else if (
+    sound === "beep"
+  ) {
+
+    playBeep();
+
+  }
+
+}
+
+
+/* =========================================
+   AUDIO
+========================================= */
+
+function createAudioContext() {
+
+  const AudioCtx =
+    window.AudioContext ||
+    window.webkitAudioContext;
+
+  if (
+    !AudioCtx
+  ) {
+
+    return null;
+
+  }
+
+  return new AudioCtx();
+
+}
+
+
+/* =========================================
+   CHIME
+========================================= */
+
+function playChime() {
+
+  const ctx =
+    createAudioContext();
+
+  if (
+    !ctx
+  ) {
+
+    return;
+
+  }
+
+
+  const notes =
+    [523,659,784];
+
+
+  notes.forEach(
+    (frequency,index) => {
+
+      const oscillator =
+        ctx.createOscillator();
+
+      const gain =
+        ctx.createGain();
+
+
+      oscillator.type =
+        "sine";
+
+      oscillator.frequency.value =
+        frequency;
+
+
+      const start =
+        ctx.currentTime +
+        index * .22;
+
+
+      gain.gain.setValueAtTime(
+        .0001,
+        start
+      );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .13,
+          start + .03
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          .0001,
+          start + .55
+        );
+
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        ctx.destination
+      );
+
+
+      oscillator.start(start);
+
+      oscillator.stop(
+        start + .6
+      );
+
+    }
+  );
+
+
+  setTimeout(
+    () => {
+
+      try {
+        ctx.close();
+      }
+      catch {}
+
+    },
+    1800
+  );
+
+}
+
+
+/* =========================================
+   SOFT BEEP
+========================================= */
+
+function playBeep() {
+
+  const ctx =
+    createAudioContext();
+
+  if (
+    !ctx
+  ) {
+
+    return;
+
+  }
+
+
+  const oscillator =
+    ctx.createOscillator();
+
+  const gain =
+    ctx.createGain();
+
+
+  oscillator.type =
+    "sine";
+
+  oscillator.frequency.value =
+    620;
+
+
+  gain.gain.setValueAtTime(
+    .0001,
+    ctx.currentTime
+  );
+
+  gain.gain
+    .exponentialRampToValueAtTime(
+      .09,
+      ctx.currentTime + .02
+    );
+
+  gain.gain
+    .exponentialRampToValueAtTime(
+      .0001,
+      ctx.currentTime + .18
+    );
+
+
+  oscillator.connect(gain);
+
+  gain.connect(
+    ctx.destination
+  );
+
+
+  oscillator.start();
+
+  oscillator.stop(
+    ctx.currentTime + .2
+  );
+
+
+  setTimeout(
+    () => {
+
+      try {
+        ctx.close();
+      }
+      catch {}
+
+    },
+    500
+  );
+
+}
+
+
+/* =========================================
+   CLAP PATTERN
+========================================= */
+
+function playClapPattern() {
+
+  const ctx =
+    createAudioContext();
+
+  if (
+    !ctx
+  ) {
+
+    return;
+
+  }
+
+
+  const times =
+    [0,.28,.52,.82];
+
+
+  times.forEach(
+    time => {
+
+      const bufferSize =
+        Math.floor(
+          ctx.sampleRate *
+          .12
+        );
+
+      const buffer =
+        ctx.createBuffer(
+          1,
+          bufferSize,
+          ctx.sampleRate
+        );
+
+      const data =
+        buffer.getChannelData(0);
+
+
+      for (
+        let i = 0;
+        i < bufferSize;
+        i++
+      ) {
+
+        data[i] =
+          (
+            Math.random() *
+            2 - 1
+          ) *
+          (
+            1 -
+            i /
+            bufferSize
+          );
+
+      }
+
+
+      const source =
+        ctx.createBufferSource();
+
+      const filter =
+        ctx.createBiquadFilter();
+
+      const gain =
+        ctx.createGain();
+
+
+      source.buffer =
+        buffer;
+
+      filter.type =
+        "bandpass";
+
+      filter.frequency.value =
+        1500;
+
+      filter.Q.value =
+        .8;
+
+      gain.gain.value =
+        .22;
+
+
+      source.connect(filter);
+
+      filter.connect(gain);
+
+      gain.connect(
+        ctx.destination
+      );
+
+
+      source.start(
+        ctx.currentTime +
+        time
+      );
+
+    }
+  );
+
+
+  setTimeout(
+    () => {
+
+      try {
+        ctx.close();
+      }
+      catch {}
+
+    },
+    1600
+  );
+
+}
+
+
+/* =========================================
+   MANAGE MODAL
+========================================= */
+
+document
+  .getElementById("manageSignalsButton")
+  .addEventListener(
+    "click",
+    openSignalModal
+  );
+
+
+document
+  .getElementById("customSignalButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      if (
+        customSignals.length === 0
+      ) {
+
+        openSignalModal();
+        return;
+
+      }
+
+      showCustomSignalPicker();
+
+    }
+  );
+
+
+function openSignalModal() {
+
+  renderSavedSignals();
+
+  signalModal
+    .classList
+    .add("open");
+
+
+  setTimeout(
+    () => {
+
+      customTitle.focus();
+
+    },
+    50
+  );
+
+}
+
+
+function closeSignalModal() {
+
+  signalModal
+    .classList
+    .remove("open");
+
+}
+
+
+document
+  .getElementById("closeModalButton")
+  .addEventListener(
+    "click",
+    closeSignalModal
+  );
+
+
+signalModal.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target === signalModal
+    ) {
+
+      closeSignalModal();
+
+    }
+
+  }
+);
+
+
+/* =========================================
+   ADD CUSTOM
+========================================= */
+
+document
+  .getElementById("addSignalButton")
+  .addEventListener(
+    "click",
+    addCustomSignal
+  );
+
+
+function addCustomSignal() {
+
+  const title =
+    customTitle.value.trim();
+
+  const response =
+    customResponse.value.trim();
+
+
+  if (
+    !title
+  ) {
+
+    alert(
+      "Enter the teacher signal."
+    );
+
+    return;
+
+  }
+
+
+  customSignals.push({
+
+    id:
+      "signal_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
+
+    title:
+      title,
+
+    subtitle:
+      "",
+
+    response:
+      response,
+
+    icon:
+      customIcon.value,
+
+    sound:
+      customSound.value,
+
+    favorite:
+      false
+
+  });
+
+
+  saveSignals();
+
+  customTitle.value =
+    "";
+
+  customResponse.value =
+    "";
+
+  customIcon.value =
+    "📣";
+
+  customSound.value =
+    "none";
+
+
+  renderSavedSignals();
+
+  renderFavorites();
+
+
+  customTitle.focus();
+
+}
+
+
+/* =========================================
+   SAVED SIGNALS
+========================================= */
+
+function renderSavedSignals() {
+
+  savedSignalList.innerHTML =
+    "";
+
+
+  if (
+    customSignals.length === 0
+  ) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "no-saved";
+
+    empty.textContent =
+      "No custom signals yet.";
+
+    savedSignalList
+      .appendChild(empty);
+
+    return;
+
+  }
+
+
+  customSignals.forEach(
+    signal => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "saved-item";
+
+
+      const info =
+        document.createElement("div");
+
+
+      const name =
+        document.createElement("div");
+
+      name.className =
+        "saved-name";
+
+      name.textContent =
+        signal.icon +
+        " " +
+        signal.title;
+
+
+      const response =
+        document.createElement("div");
+
+      response.className =
+        "saved-response";
+
+      response.textContent =
+        signal.response
+          ? "Response: " +
+            signal.response
+          : "No student response";
+
+
+      info.appendChild(name);
+
+      info.appendChild(response);
+
+
+      const actions =
+        document.createElement("div");
+
+      actions.className =
+        "saved-actions";
+
+
+      const favoriteButton =
+        document.createElement("button");
+
+      favoriteButton.type =
+        "button";
+
+      favoriteButton.className =
+        "favorite-toggle";
+
+      favoriteButton.textContent =
+        signal.favorite
+          ? "★ Favorite"
+          : "☆ Favorite";
+
+
+      favoriteButton.addEventListener(
+        "click",
+        () => {
+
+          signal.favorite =
+            !signal.favorite;
+
+          saveSignals();
+
+          renderSavedSignals();
+
+          renderFavorites();
+
+        }
+      );
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.type =
+        "button";
+
+      deleteButton.className =
+        "delete-button";
+
+      deleteButton.textContent =
+        "Delete";
+
+
+      deleteButton.addEventListener(
+        "click",
+        () => {
+
+          customSignals =
+            customSignals.filter(
+              item =>
+                item.id !==
+                signal.id
+            );
+
+          saveSignals();
+
+          renderSavedSignals();
+
+          renderFavorites();
+
+        }
+      );
+
+
+      actions.appendChild(
+        favoriteButton
+      );
+
+      actions.appendChild(
+        deleteButton
+      );
+
+
+      row.appendChild(info);
+
+      row.appendChild(actions);
+
+
+      row.addEventListener(
+        "dblclick",
+        () => {
+
+          closeSignalModal();
+
+          showSignal(signal);
+
+        }
+      );
+
+
+      savedSignalList
+        .appendChild(row);
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   FAVORITES
+========================================= */
+
+function renderFavorites() {
+
+  favoriteRow.innerHTML =
+    "";
+
+
+  const favorites =
+    customSignals.filter(
+      signal =>
+        signal.favorite
+    );
+
+
+  if (
+    favorites.length === 0
+  ) {
+
+    const message =
+      document.createElement("div");
+
+    message.style.color =
+      "#788598";
+
+    message.style.fontSize =
+      "14px";
+
+    message.textContent =
+      "Favorite your most-used custom signals and they'll appear here.";
+
+    favoriteRow.appendChild(
+      message
+    );
+
+    return;
+
+  }
+
+
+  favorites.forEach(
+    signal => {
+
+      const button =
+        document.createElement("button");
+
+      button.type =
+        "button";
+
+      button.className =
+        "favorite-button";
+
+      button.textContent =
+        signal.icon +
+        " " +
+        signal.title;
+
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          showSignal(signal);
+
+        }
+      );
+
+
+      favoriteRow.appendChild(
+        button
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   CUSTOM SIGNAL PICKER
+========================================= */
+
+function showCustomSignalPicker() {
+
+  if (
+    customSignals.length === 1
+  ) {
+
+    showSignal(
+      customSignals[0]
+    );
+
+    return;
+
+  }
+
+
+  const names =
+    customSignals
+      .map(
+        (signal,index) =>
+          (
+            index + 1
+          ) +
+          ". " +
+          signal.title
+      )
+      .join("\n");
+
+
+  const choice =
+    prompt(
+      "Choose a signal:\n\n" +
+      names +
+      "\n\nEnter the number:"
+    );
+
+
+  const index =
+    Number(choice) - 1;
+
+
+  if (
+    Number.isInteger(index) &&
+    index >= 0 &&
+    index <
+      customSignals.length
+  ) {
+
+    showSignal(
+      customSignals[index]
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   TOOLS
+========================================= */
+
+document
+  .getElementById("toolsButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      location.href =
+        "index.html";
+
+    }
+  );
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+loadSignals();
+
+renderFavorites();
+
+renderSavedSignals();
+
+</script>
+
+</body>
+</html>
