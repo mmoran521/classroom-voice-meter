@@ -1,617 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Classroom Timer</title>
 
 <style>
-*{box-sizing:border-box}
 
-:root{
-  --navy:#16345c;
-  --muted:#6f7f95;
-  --bg:#f5f9fd;
-  --card:#fff;
-  --border:#dfe8f2;
-  --green:#43b97f;
-  --blue:#5f7dd9;
-  --red:#e45c62;
-  --shadow:0 10px 28px rgba(42,68,98,.10);
+* {
+  box-sizing: border-box;
 }
 
-html,body{
-  margin:0;
-  min-height:100%;
-  font-family:"Trebuchet MS",Arial,sans-serif;
-  color:var(--navy);
-  background:var(--bg);
+:root {
+  --navy: #17385f;
+  --text: #274566;
+  --muted: #71839a;
+
+  --page: #f4f8fc;
+  --white: #ffffff;
+
+  --border: #dde7f0;
+
+  --green: #48b980;
+  --green-light: #eaf8f1;
+
+  --blue: #6b86dc;
+  --blue-light: #edf1ff;
+
+  --pink: #e8899d;
+  --pink-light: #fff0f3;
+
+  --shadow:
+    0 10px 30px rgba(39, 67, 95, 0.10);
 }
 
-button{font:inherit}
 
-.page{
-  width:min(1700px,calc(100% - 24px));
-  margin:auto;
-  padding:14px 0 28px;
+/* =========================
+   PAGE
+========================= */
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--page);
+  color: var(--navy);
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
 }
 
-.topbar{
-  display:grid;
-  grid-template-columns:220px 1fr 320px;
-  gap:14px;
-  align-items:center;
-  margin-bottom:12px;
+
+button {
+  font: inherit;
 }
 
-.brand{text-align:center}
 
-.brand h1{
-  margin:0;
-  font-size:clamp(44px,5vw,72px);
-  line-height:.95;
-  letter-spacing:-3px;
+.page {
+  width: min(1700px, calc(100% - 28px));
+  margin: auto;
+  padding: 14px 0 30px;
 }
 
-.brand p{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:18px;
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  display: grid;
+  grid-template-columns: 220px 1fr 320px;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 14px;
 }
 
-.top-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
+
+.header-center {
+  text-align: center;
 }
 
-.top-btn{
-  min-height:56px;
-  padding:0 18px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  color:var(--navy);
-  font-weight:900;
-  box-shadow:var(--shadow);
-  cursor:pointer;
+
+.header-center h1 {
+  margin: 0;
+
+  font-size: clamp(46px, 5vw, 72px);
+  line-height: 0.95;
+
+  color: var(--navy);
 }
 
-.tools{justify-self:start}
 
-.layout{
-  display:grid;
-  grid-template-columns:280px minmax(0,1fr);
-  gap:18px;
+.header-center p {
+  margin: 8px 0 0;
+
+  color: var(--muted);
+  font-size: 18px;
 }
 
-.sidebar{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:16px;
-  box-shadow:var(--shadow);
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-.sidebar h2{
-  font-size:16px;
-  margin:2px 4px 12px;
+
+.top-button {
+  min-height: 56px;
+
+  padding: 0 19px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: white;
+  color: var(--navy);
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow: var(--shadow);
 }
 
-.theme-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  max-height:820px;
-  overflow:auto;
-  padding-right:3px;
+
+.tools-button {
+  justify-self: start;
 }
 
-.theme{
-  display:grid;
-  grid-template-columns:64px 1fr;
-  gap:12px;
-  align-items:center;
-  min-height:72px;
-  padding:7px 10px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  color:var(--navy);
-  font-weight:900;
-  text-align:left;
-  cursor:pointer;
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.layout {
+  display: grid;
+
+  grid-template-columns:
+    280px
+    minmax(0, 1fr);
+
+  gap: 18px;
 }
 
-.theme.active{
-  border:2px solid #2daa69;
-  background:#fbfffd;
-  color:#19864c;
+
+/* =========================
+   THEME SIDEBAR
+========================= */
+
+.sidebar {
+  background: white;
+
+  border: 1px solid var(--border);
+  border-radius: 28px;
+
+  padding: 16px;
+
+  box-shadow: var(--shadow);
 }
 
-.theme img{
-  width:58px;
-  height:58px;
-  object-fit:cover;
-  border-radius:13px;
-  background:#edf3f8;
+
+.sidebar-title {
+  margin: 3px 5px 13px;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
 }
 
-.scene{
-  position:relative;
-  min-height:610px;
-  border-radius:30px;
-  overflow:hidden;
-  background:#dcecff;
-  box-shadow:var(--shadow);
+
+.theme-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
 }
 
-.scene-bg{
-  position:absolute;
-  inset:0;
-  background-position:center;
-  background-size:cover;
-  transition:background-image .25s ease;
+
+.theme-button {
+  display: grid;
+
+  grid-template-columns:
+    58px
+    1fr;
+
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 70px;
+
+  padding: 7px 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: white;
+
+  color: var(--navy);
+
+  font-weight: 900;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    border 0.15s ease,
+    background 0.15s ease;
 }
 
-.scene-shade{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    90deg,
-    rgba(255,255,255,.02),
-    rgba(255,255,255,.00) 58%,
-    rgba(255,255,255,.08)
-  );
-  pointer-events:none;
+
+.theme-button:hover {
+  transform: translateY(-1px);
 }
 
-.fx{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
+
+.theme-button.active {
+  border: 2px solid #3bae75;
+
+  background: #f2fbf6;
+
+  color: #238a57;
 }
 
-.timer-card{
-  position:absolute;
-  z-index:20;
-  right:5.8%;
-  top:25%;
-  width:min(465px,40%);
-  padding:32px 30px 28px;
-  border-radius:32px;
-  background:rgba(255,255,255,.93);
-  box-shadow:0 18px 45px rgba(31,54,80,.18);
-  text-align:center;
-  backdrop-filter:blur(9px);
+
+.theme-icon {
+  display: grid;
+  place-items: center;
+
+  width: 54px;
+  height: 54px;
+
+  border-radius: 15px;
+
+  font-size: 31px;
 }
 
-.time{
-  font-size:clamp(78px,8vw,142px);
-  font-weight:900;
-  line-height:.92;
-  letter-spacing:-6px;
+
+.theme-icon.ocean {
+  background: #dff5fb;
 }
 
-.time-label{
-  font-size:25px;
-  font-weight:900;
-  margin-top:18px;
+
+.theme-icon.fall {
+  background: #fff0e5;
 }
 
-.progress{
-  height:12px;
-  border-radius:99px;
-  background:#e2e9ee;
-  overflow:hidden;
-  margin-top:24px;
+
+.theme-icon.snow {
+  background: #eaf3fb;
 }
 
-.progress > div{
-  height:100%;
-  width:100%;
-  background:var(--green);
-  border-radius:99px;
-  transition:width .3s linear;
+
+.theme-icon.rain {
+  background: #e7eef7;
 }
 
-.full{
-  position:absolute;
-  z-index:25;
-  right:20px;
-  bottom:18px;
-  width:58px;
-  height:58px;
-  border:0;
-  border-radius:50%;
-  background:#fff;
-  color:var(--navy);
-  font-size:25px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
-  cursor:pointer;
+
+.theme-icon.fire {
+  background: #fff0e7;
 }
 
-.controls{
-  display:grid;
-  grid-template-columns:1.45fr 1fr;
-  gap:16px;
-  margin-top:16px;
+
+.theme-icon.beach {
+  background: #e6f7f6;
 }
 
-.panel{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:18px 20px;
-  box-shadow:var(--shadow);
+
+.theme-icon.bubbles {
+  background: #edf0ff;
 }
 
-.panel-title{
-  font-weight:900;
-  margin-bottom:12px;
+
+/* =========================
+   VIDEO SCENE
+========================= */
+
+.scene {
+  position: relative;
+
+  min-height: 610px;
+
+  overflow: hidden;
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #d9effb,
+      #dfeefa
+    );
+
+  box-shadow: var(--shadow);
 }
 
-.quick{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:9px;
+
+#themeVideo {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  z-index: 1;
 }
 
-.quick button{
-  min-height:82px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  color:var(--navy);
-  font-size:23px;
-  font-weight:900;
-  cursor:pointer;
+
+/* subtle overlay so timer remains readable */
+
+.video-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(9, 34, 58, 0.05),
+      rgba(9, 34, 58, 0.01) 55%,
+      rgba(9, 34, 58, 0.08)
+    );
+
+  pointer-events: none;
 }
 
-.quick button small{
-  display:block;
-  font-size:11px;
-  margin-top:4px;
+
+/* =========================
+   VIDEO FALLBACK
+========================= */
+
+.video-fallback {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #cfeaf8,
+      #eaf5fc
+    );
+
+  color: #54728f;
 }
 
-.quick button.active{
-  border:2px solid #2daa69;
-  background:#eef9f2;
-  color:#187d49;
+
+.fallback-icon {
+  font-size: 110px;
 }
 
-.custom{
-  display:grid;
-  grid-template-columns:60px 1fr 60px;
-  gap:12px;
-  align-items:center;
+
+.fallback-text {
+  font-size: 24px;
+  font-weight: 900;
 }
 
-.round{
-  width:60px;
-  height:60px;
-  border:1px solid var(--border);
-  border-radius:50%;
-  background:#fff;
-  color:var(--navy);
-  font-size:28px;
-  font-weight:900;
-  cursor:pointer;
+
+/* =========================
+   TIMER CARD
+========================= */
+
+.timer-card {
+  position: absolute;
+
+  z-index: 10;
+
+  right: 6%;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: min(470px, 40%);
+
+  padding: 34px 32px 30px;
+
+  text-align: center;
+
+  background:
+    rgba(255, 255, 255, 0.94);
+
+  backdrop-filter: blur(8px);
+
+  border-radius: 32px;
+
+  box-shadow:
+    0 18px 48px
+    rgba(22, 50, 76, 0.22);
 }
 
-.custom-display{
-  display:grid;
-  place-items:center;
-  min-height:82px;
-  border-radius:18px;
-  background:#f2f5f8;
-  border:1px solid var(--border);
-  font-size:38px;
-  font-weight:900;
+
+.timer-number {
+  font-size:
+    clamp(78px, 8vw, 142px);
+
+  line-height: 0.94;
+
+  letter-spacing: -6px;
+
+  font-weight: 900;
+
+  color: var(--navy);
 }
 
-.custom-display small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1;
-  margin-top:-12px;
+
+.timer-label {
+  margin-top: 18px;
+
+  font-size: 25px;
+  font-weight: 900;
 }
 
-.actions{
-  display:flex;
-  justify-content:center;
-  gap:18px;
-  margin-top:16px;
+
+.progress-track {
+  height: 13px;
+
+  margin-top: 25px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #dfe7ed;
 }
 
-.action{
-  min-width:225px;
-  min-height:66px;
-  border:0;
-  border-radius:18px;
-  color:#fff;
-  font-size:22px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 7px 18px rgba(41,64,91,.12);
+
+.progress-fill {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 999px;
+
+  background: var(--green);
+
+  transition:
+    width 0.4s linear;
 }
 
-.start{background:var(--green)}
-.pause{background:var(--blue)}
-.reset{background:var(--red)}
 
+/* =========================
+   FULLSCREEN
+========================= */
 
-/* FALL */
+.fullscreen-button {
+  position: absolute;
 
-.leaf{
-  position:absolute;
-  top:-50px;
-  width:22px;
-  height:14px;
-  border-radius:80% 0 80% 0;
-  background:#ef8b21;
-  animation:fall linear infinite;
+  z-index: 12;
+
+  right: 20px;
+  bottom: 19px;
+
+  width: 58px;
+  height: 58px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: white;
+
+  color: var(--navy);
+
+  font-size: 26px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px
+    rgba(20, 44, 70, 0.16);
 }
 
-.leaf.red{background:#df4b26}
-.leaf.gold{background:#f3b63d}
 
-@keyframes fall{
-  0%{
-    transform:translate(0,-50px) rotate(0);
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+  display: grid;
+
+  grid-template-columns:
+    1.4fr
+    1fr;
+
+  gap: 16px;
+
+  margin-top: 16px;
+}
+
+
+.control-panel {
+  padding: 18px 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 26px;
+
+  background: white;
+
+  box-shadow: var(--shadow);
+}
+
+
+.control-title {
+  margin-bottom: 12px;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.5px;
+}
+
+
+/* =========================
+   QUICK TIMES
+========================= */
+
+.quick-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, 1fr);
+
+  gap: 9px;
+}
+
+
+.quick-button {
+  min-height: 80px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: white;
+
+  color: var(--navy);
+
+  font-size: 24px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+.quick-button small {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 11px;
+}
+
+
+.quick-button.active {
+  border: 2px solid #38ad70;
+
+  background: var(--green-light);
+
+  color: #238a57;
+}
+
+
+/* =========================
+   CUSTOM TIME
+========================= */
+
+.custom-row {
+  display: grid;
+
+  grid-template-columns:
+    60px
+    1fr
+    60px;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.round-button {
+  width: 60px;
+  height: 60px;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  background: white;
+
+  color: var(--navy);
+
+  font-size: 30px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+.custom-display {
+  min-height: 80px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 18px;
+
+  background: #f2f5f8;
+
+  border: 1px solid var(--border);
+
+  font-size: 38px;
+  font-weight: 900;
+}
+
+
+.custom-display small {
+  display: block;
+
+  margin-top: -9px;
+
+  color: var(--muted);
+
+  font-size: 10px;
+}
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 18px;
+
+  margin-top: 17px;
+}
+
+
+.action-button {
+  min-width: 220px;
+  min-height: 66px;
+
+  border: none;
+  border-radius: 19px;
+
+  color: white;
+
+  font-size: 22px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 18px
+    rgba(38, 59, 81, 0.13);
+}
+
+
+.start {
+  background: var(--green);
+}
+
+
+.pause {
+  background: var(--blue);
+}
+
+
+.reset {
+  background: var(--pink);
+}
+
+
+/* =========================
+   FULLSCREEN MODE
+========================= */
+
+.scene:fullscreen {
+
+  width: 100vw;
+  height: 100vh;
+
+  border-radius: 0;
+
+}
+
+
+.scene:fullscreen .timer-card {
+
+  right: 7%;
+
+  width: 460px;
+
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1050px) {
+
+  .layout {
+    grid-template-columns: 1fr;
   }
 
-  50%{
-    transform:translate(35px,320px) rotate(190deg);
+
+  .sidebar {
+    order: 2;
   }
 
-  100%{
-    transform:translate(-10px,700px) rotate(380deg);
-  }
-}
 
+  .theme-list {
+    display: grid;
 
-/* OCEAN */
-
-.fish{
-  position:absolute;
-  width:82px;
-  height:48px;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
-  animation:swim linear infinite;
-}
-
-@keyframes swim{
-  from{
-    transform:translateX(-140px);
+    grid-template-columns:
+      repeat(4, 1fr);
   }
 
-  to{
-    transform:translateX(calc(100vw + 180px));
-  }
-}
 
-.bubble{
-  position:absolute;
-  bottom:-30px;
-  border:2px solid rgba(255,255,255,.8);
-  border-radius:50%;
-  background:rgba(255,255,255,.16);
-  animation:rise linear infinite;
-}
-
-@keyframes rise{
-  to{
-    transform:translateY(-760px);
-    opacity:.1;
-  }
-}
-
-
-/* SNOW */
-
-.snow{
-  position:absolute;
-  top:-20px;
-  background:#fff;
-  border-radius:50%;
-  box-shadow:0 0 8px #fff;
-  animation:snowfall linear infinite;
-}
-
-@keyframes snowfall{
-  to{
-    transform:translateY(720px) translateX(20px);
-  }
-}
-
-
-/* SPRING */
-
-.butterfly{
-  position:absolute;
-  font-size:34px;
-  animation:flutter 9s ease-in-out infinite alternate;
-}
-
-@keyframes flutter{
-  0%{
-    transform:translate(0,0) rotate(-8deg);
+  .theme-button {
+    grid-template-columns:
+      50px
+      1fr;
   }
 
-  25%{
-    transform:translate(100px,-55px) rotate(8deg);
+
+  .theme-icon {
+    width: 46px;
+    height: 46px;
+
+    font-size: 25px;
   }
 
-  50%{
-    transform:translate(210px,25px);
-  }
 
-  75%{
-    transform:translate(330px,-40px);
-  }
-
-  100%{
-    transform:translate(440px,10px) rotate(-8deg);
-  }
-}
-
-
-/* RAIN */
-
-.rain{
-  position:absolute;
-  top:-70px;
-  width:2px;
-  height:62px;
-  background:linear-gradient(
-    transparent,
-    rgba(235,248,255,.9)
-  );
-  transform:rotate(10deg);
-  animation:rain .8s linear infinite;
-}
-
-@keyframes rain{
-  to{
-    transform:translate(-70px,760px) rotate(10deg);
-  }
-}
-
-
-/* FIRE */
-
-.glow{
-  position:absolute;
-  left:20%;
-  bottom:13%;
-  width:260px;
-  height:190px;
-  border-radius:50%;
-  background:radial-gradient(
-    circle,
-    rgba(255,196,78,.48),
-    rgba(255,103,42,.17) 45%,
-    transparent 72%
-  );
-  animation:glow 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes glow{
-  to{
-    transform:scale(1.09);
-    opacity:.7;
-  }
-}
-
-
-/* BALLOON / ROCKET / COASTER */
-
-.traveler{
-  position:absolute;
-  width:110px;
-  height:110px;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
-  transition:transform .8s ease;
-}
-
-.balloon{
-  left:16%;
-  top:10%;
-}
-
-.rocket{
-  left:8%;
-  bottom:12%;
-}
-
-.coaster{
-  left:8%;
-  bottom:17%;
-  width:130px;
-  height:90px;
-}
-
-
-@media(max-width:1050px){
-
-  .layout{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    order:2;
-  }
-
-  .theme-list{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    max-height:none;
-  }
-
-  .theme{
-    grid-template-columns:50px 1fr;
-  }
-
-  .theme img{
-    width:46px;
-    height:46px;
-  }
-
-  .controls{
-    grid-template-columns:1fr;
+  .controls {
+    grid-template-columns: 1fr;
   }
 
 }
 
 
-@media(max-width:720px){
 
-  .topbar{
-    grid-template-columns:1fr;
+@media (max-width: 720px) {
+
+  .header {
+    grid-template-columns: 1fr;
   }
 
-  .tools{
-    justify-self:center;
+
+  .tools-button {
+    justify-self: center;
   }
 
-  .top-actions{
-    justify-content:center;
+
+  .header-actions {
+    justify-content: center;
   }
 
-  .timer-card{
-    left:7%;
-    right:7%;
-    top:auto;
-    bottom:8%;
-    width:86%;
+
+  .theme-list {
+    grid-template-columns:
+      repeat(2, 1fr);
   }
 
-  .theme-list{
-    grid-template-columns:repeat(2,1fr);
+
+  .timer-card {
+    left: 7%;
+    right: 7%;
+
+    top: auto;
+    bottom: 7%;
+
+    transform: none;
+
+    width: 86%;
   }
 
-  .quick{
-    grid-template-columns:repeat(4,1fr);
+
+  .quick-grid {
+    grid-template-columns:
+      repeat(4, 1fr);
   }
 
-  .actions{
-    flex-wrap:wrap;
+
+  .actions {
+    flex-wrap: wrap;
   }
 
-  .action{
-    min-width:170px;
+
+  .action-button {
+    min-width: 170px;
   }
 
 }
+
 </style>
 </head>
+
 
 
 <body>
@@ -619,234 +829,208 @@ button{font:inherit}
 <div class="page">
 
 
-<header class="topbar">
+<!-- ======================
+     HEADER
+====================== -->
 
-  <button
-    class="top-btn tools"
-    id="toolsBtn">
-    ⌂ Tools
-  </button>
+<header class="header">
 
 
-  <div class="brand">
-
-    <h1>
-      Timer
-    </h1>
-
-    <p>
-      Pick a time, pick a theme, and let's go.
-    </p>
-
-  </div>
+<button
+  class="top-button tools-button"
+  id="toolsButton">
+  ⌂ Tools
+</button>
 
 
-  <div class="top-actions">
 
-    <button
-      class="top-btn"
-      id="soundBtn">
-      🔊 Sound
-    </button>
+<div class="header-center">
+
+  <h1>
+    Timer
+  </h1>
+
+  <p>
+    Pick a time, pick a scene, and let's go.
+  </p>
+
+</div>
 
 
-    <button
-      class="top-btn"
-      id="settingsBtn">
-      ⚙ Settings
-    </button>
 
-  </div>
+<div class="header-actions">
+
+
+<button
+  class="top-button"
+  id="soundButton">
+
+  🔊 Sound
+
+</button>
+
+
+<button
+  class="top-button"
+  id="videoButton">
+
+  🎬 Video On
+
+</button>
+
+
+</div>
 
 </header>
 
 
 
+<!-- ======================
+     MAIN AREA
+====================== -->
+
 <div class="layout">
 
 
+
+<!-- ======================
+     THEMES
+====================== -->
+
 <aside class="sidebar">
 
-  <h2>
-    THEMES
-  </h2>
+
+<div class="sidebar-title">
+
+VIDEO THEMES
+
+</div>
 
 
-  <div
-    class="theme-list"
-    id="themeList">
+
+<div class="theme-list">
 
 
-    <button
-      class="theme active"
-      data-theme="fall">
+<button
+  class="theme-button active"
+  data-theme="ocean">
 
-      <img
-        src="timer-images/fall-thumb.png"
-        alt="">
+  <span class="theme-icon ocean">
+    🐠
+  </span>
 
-      <span>
-        Fall Leaves
-      </span>
+  <span>
+    Ocean Fish
+  </span>
 
-    </button>
-
-
-    <button
-      class="theme"
-      data-theme="ocean">
-
-      <img
-        src="timer-images/ocean-thumb.png"
-        alt="">
-
-      <span>
-        Ocean
-      </span>
-
-    </button>
+</button>
 
 
-    <button
-      class="theme"
-      data-theme="snow">
 
-      <img
-        src="timer-images/snow-thumb.png"
-        alt="">
+<button
+  class="theme-button"
+  data-theme="fall">
 
-      <span>
-        Snow
-      </span>
+  <span class="theme-icon fall">
+    🍂
+  </span>
 
-    </button>
+  <span>
+    Falling Leaves
+  </span>
 
-
-    <button
-      class="theme"
-      data-theme="spring">
-
-      <img
-        src="timer-images/spring-thumb.png"
-        alt="">
-
-      <span>
-        Spring Garden
-      </span>
-
-    </button>
+</button>
 
 
-    <button
-      class="theme"
-      data-theme="rain">
 
-      <img
-        src="timer-images/rain-thumb.png"
-        alt="">
+<button
+  class="theme-button"
+  data-theme="snow">
 
-      <span>
-        Rain
-      </span>
+  <span class="theme-icon snow">
+    ❄️
+  </span>
 
-    </button>
+  <span>
+    Snow
+  </span>
 
-
-    <button
-      class="theme"
-      data-theme="fireplace">
-
-      <img
-        src="timer-images/fireplace-thumb.png"
-        alt="">
-
-      <span>
-        Fireplace
-      </span>
-
-    </button>
+</button>
 
 
-    <button
-      class="theme"
-      data-theme="beach">
 
-      <img
-        src="timer-images/beach-thumb.png"
-        alt="">
+<button
+  class="theme-button"
+  data-theme="rain">
 
-      <span>
-        Beach
-      </span>
+  <span class="theme-icon rain">
+    🌧️
+  </span>
 
-    </button>
+  <span>
+    Rain
+  </span>
 
-
-    <button
-      class="theme"
-      data-theme="bubbles">
-
-      <img
-        src="timer-images/bubbles-thumb.png"
-        alt="">
-
-      <span>
-        Bubbles
-      </span>
-
-    </button>
+</button>
 
 
-    <button
-      class="theme"
-      data-theme="balloon">
 
-      <img
-        src="timer-images/balloon-thumb.png"
-        alt="">
+<button
+  class="theme-button"
+  data-theme="fireplace">
 
-      <span>
-        Balloon
-      </span>
+  <span class="theme-icon fire">
+    🔥
+  </span>
 
-    </button>
+  <span>
+    Fireplace
+  </span>
 
-
-    <button
-      class="theme"
-      data-theme="rocket">
-
-      <img
-        src="timer-images/rocket-thumb.png"
-        alt="">
-
-      <span>
-        Rocket
-      </span>
-
-    </button>
+</button>
 
 
-    <button
-      class="theme"
-      data-theme="coaster">
 
-      <img
-        src="timer-images/coaster-thumb.png"
-        alt="">
+<button
+  class="theme-button"
+  data-theme="beach">
 
-      <span>
-        Roller Coaster
-      </span>
+  <span class="theme-icon beach">
+    🌊
+  </span>
 
-    </button>
+  <span>
+    Beach Waves
+  </span>
+
+</button>
 
 
-  </div>
+
+<button
+  class="theme-button"
+  data-theme="bubbles">
+
+  <span class="theme-icon bubbles">
+    🫧
+  </span>
+
+  <span>
+    Bubbles
+  </span>
+
+</button>
+
+
+</div>
 
 </aside>
 
 
+
+<!-- ======================
+     TIMER
+====================== -->
 
 <main>
 
@@ -856,165 +1040,285 @@ button{font:inherit}
   id="scene">
 
 
-  <div
-    class="scene-bg"
-    id="sceneBg">
-  </div>
+<!-- FALLBACK -->
 
-
-  <div class="scene-shade"></div>
-
+<div
+  class="video-fallback"
+  id="videoFallback">
 
   <div
-    class="fx"
-    id="fx">
-  </div>
+    class="fallback-icon"
+    id="fallbackIcon">
 
-
-
-  <div class="timer-card">
-
-    <div
-      class="time"
-      id="timeText">
-      05:00
-    </div>
-
-
-    <div
-      class="time-label"
-      id="timeLabel">
-      5 minutes
-    </div>
-
-
-    <div class="progress">
-
-      <div id="progressFill"></div>
-
-    </div>
+    🐠
 
   </div>
 
 
-  <button
-    class="full"
-    id="fullBtn">
-    ⛶
-  </button>
+  <div
+    class="fallback-text"
+    id="fallbackText">
+
+    Ocean Fish
+
+  </div>
+
+</div>
+
+
+
+<!-- VIDEO -->
+
+<video
+  id="themeVideo"
+  autoplay
+  muted
+  loop
+  playsinline>
+
+  <source
+    id="videoSource"
+    src="timer-videos/ocean.mp4"
+    type="video/mp4">
+
+</video>
+
+
+
+<div class="video-overlay"></div>
+
+
+
+<!-- TIMER CARD -->
+
+<div class="timer-card">
+
+
+<div
+  class="timer-number"
+  id="timerNumber">
+
+  05:00
+
+</div>
+
+
+
+<div
+  class="timer-label"
+  id="timerLabel">
+
+  5 minutes
+
+</div>
+
+
+
+<div class="progress-track">
+
+<div
+  class="progress-fill"
+  id="progressFill">
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<button
+  class="fullscreen-button"
+  id="fullscreenButton">
+
+  ⛶
+
+</button>
 
 
 </section>
 
 
+
+<!-- ======================
+     TIME CONTROLS
+====================== -->
 
 <div class="controls">
 
 
-<section class="panel">
-
-  <div class="panel-title">
-    QUICK SET
-  </div>
+<section class="control-panel">
 
 
-  <div
-    class="quick"
-    id="quickSet">
+<div class="control-title">
+
+QUICK SET
+
+</div>
 
 
-    <button data-min="1">
-      1
-      <small>min</small>
-    </button>
+
+<div
+  class="quick-grid"
+  id="quickGrid">
 
 
-    <button data-min="3">
-      3
-      <small>min</small>
-    </button>
+<button
+  class="quick-button"
+  data-minutes="1">
+
+  1
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-    <button
-      class="active"
-      data-min="5">
-      5
-      <small>min</small>
-    </button>
+
+<button
+  class="quick-button"
+  data-minutes="3">
+
+  3
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-    <button data-min="10">
-      10
-      <small>min</small>
-    </button>
+
+<button
+  class="quick-button active"
+  data-minutes="5">
+
+  5
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-    <button data-min="15">
-      15
-      <small>min</small>
-    </button>
+
+<button
+  class="quick-button"
+  data-minutes="10">
+
+  10
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-    <button data-min="20">
-      20
-      <small>min</small>
-    </button>
+
+<button
+  class="quick-button"
+  data-minutes="15">
+
+  15
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-    <button data-min="30">
-      30
-      <small>min</small>
-    </button>
+
+<button
+  class="quick-button"
+  data-minutes="20">
+
+  20
+
+  <small>
+    min
+  </small>
+
+</button>
 
 
-  </div>
+
+<button
+  class="quick-button"
+  data-minutes="30">
+
+  30
+
+  <small>
+    min
+  </small>
+
+</button>
+
+
+</div>
 
 </section>
 
 
 
-<section class="panel">
-
-  <div class="panel-title">
-    SET YOUR OWN TIME
-  </div>
+<section class="control-panel">
 
 
-  <div class="custom">
+<div class="control-title">
+
+SET YOUR OWN TIME
+
+</div>
 
 
-    <button
-      class="round"
-      id="minusBtn">
-      −
-    </button>
+
+<div class="custom-row">
 
 
-    <div class="custom-display">
+<button
+  class="round-button"
+  id="minusButton">
 
-      <div>
+  −
 
-        <span id="customText">
-          05:00
-        </span>
-
-        <small>
-          MM:SS
-        </small>
-
-      </div>
-
-    </div>
+</button>
 
 
-    <button
-      class="round"
-      id="plusBtn">
-      +
-    </button>
+
+<div class="custom-display">
+
+<div>
+
+<span id="customDisplay">
+05:00
+</span>
+
+<small>
+MM:SS
+</small>
+
+</div>
+
+</div>
 
 
-  </div>
+
+<button
+  class="round-button"
+  id="plusButton">
+
+  +
+
+</button>
+
+
+</div>
 
 </section>
 
@@ -1023,28 +1327,40 @@ button{font:inherit}
 
 
 
+<!-- ======================
+     START / PAUSE / RESET
+====================== -->
+
 <div class="actions">
 
 
-  <button
-    class="action start"
-    id="startBtn">
-    ▶ Start
-  </button>
+<button
+  class="action-button start"
+  id="startButton">
+
+  ▶ Start
+
+</button>
 
 
-  <button
-    class="action pause"
-    id="pauseBtn">
-    ❚❚ Pause
-  </button>
+
+<button
+  class="action-button pause"
+  id="pauseButton">
+
+  ❚❚ Pause
+
+</button>
 
 
-  <button
-    class="action reset"
-    id="resetBtn">
-    ↻ Reset
-  </button>
+
+<button
+  class="action-button reset"
+  id="resetButton">
+
+  ↻ Reset
+
+</button>
 
 
 </div>
@@ -1060,80 +1376,74 @@ button{font:inherit}
 
 <script>
 
-const ASSET =
-  "timer-images/";
-
+/* =========================
+   VIDEO THEMES
+========================= */
 
 const themes = {
 
-  fall:{
-    bg:"fall.png"
+  ocean: {
+    name: "Ocean Fish",
+    icon: "🐠",
+    video: "timer-videos/ocean.mp4"
   },
 
-  ocean:{
-    bg:"ocean.png"
+  fall: {
+    name: "Falling Leaves",
+    icon: "🍂",
+    video: "timer-videos/fall.mp4"
   },
 
-  snow:{
-    bg:"snow.png"
+  snow: {
+    name: "Snow",
+    icon: "❄️",
+    video: "timer-videos/snow.mp4"
   },
 
-  spring:{
-    bg:"spring.png"
+  rain: {
+    name: "Rain",
+    icon: "🌧️",
+    video: "timer-videos/rain.mp4"
   },
 
-  rain:{
-    bg:"rain.png"
+  fireplace: {
+    name: "Fireplace",
+    icon: "🔥",
+    video: "timer-videos/fireplace.mp4"
   },
 
-  fireplace:{
-    bg:"fireplace.png"
+  beach: {
+    name: "Beach Waves",
+    icon: "🌊",
+    video: "timer-videos/beach.mp4"
   },
 
-  beach:{
-    bg:"beach.png"
-  },
-
-  bubbles:{
-    bg:"bubbles.png"
-  },
-
-  balloon:{
-    bg:"balloon.png"
-  },
-
-  rocket:{
-    bg:"rocket.png"
-  },
-
-  coaster:{
-    bg:"coaster.png"
+  bubbles: {
+    name: "Bubbles",
+    icon: "🫧",
+    video: "timer-videos/bubbles.mp4"
   }
 
 };
 
 
 
+/* =========================
+   SAVED SETTINGS
+========================= */
+
 let currentTheme =
   localStorage.getItem(
-    "classroomTimerTheme"
-  ) || "fall";
+    "classroomTimerVideoTheme"
+  ) || "ocean";
 
 
-let totalSeconds =
+let savedMinutes =
   Number(
     localStorage.getItem(
       "classroomTimerMinutes"
-    ) || 5
-  ) * 60;
-
-
-let remainingSeconds =
-  totalSeconds;
-
-
-let timerId =
-  null;
+    )
+  ) || 5;
 
 
 let soundOn =
@@ -1142,34 +1452,49 @@ let soundOn =
   ) !== "off";
 
 
+let videoOn =
+  localStorage.getItem(
+    "classroomTimerVideo"
+  ) !== "off";
 
-const sceneBg =
+
+
+/* =========================
+   TIMER VARIABLES
+========================= */
+
+let totalSeconds =
+  savedMinutes * 60;
+
+
+let remainingSeconds =
+  totalSeconds;
+
+
+let timerInterval =
+  null;
+
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const timerNumber =
   document.getElementById(
-    "sceneBg"
+    "timerNumber"
   );
 
 
-const fx =
+const timerLabel =
   document.getElementById(
-    "fx"
+    "timerLabel"
   );
 
 
-const timeText =
+const customDisplay =
   document.getElementById(
-    "timeText"
-  );
-
-
-const customText =
-  document.getElementById(
-    "customText"
-  );
-
-
-const timeLabel =
-  document.getElementById(
-    "timeLabel"
+    "customDisplay"
   );
 
 
@@ -1179,102 +1504,162 @@ const progressFill =
   );
 
 
-const soundBtn =
+const themeVideo =
   document.getElementById(
-    "soundBtn"
+    "themeVideo"
+  );
+
+
+const videoSource =
+  document.getElementById(
+    "videoSource"
+  );
+
+
+const videoFallback =
+  document.getElementById(
+    "videoFallback"
+  );
+
+
+const fallbackIcon =
+  document.getElementById(
+    "fallbackIcon"
+  );
+
+
+const fallbackText =
+  document.getElementById(
+    "fallbackText"
+  );
+
+
+const soundButton =
+  document.getElementById(
+    "soundButton"
+  );
+
+
+const videoButton =
+  document.getElementById(
+    "videoButton"
   );
 
 
 
-function fmt(sec){
+/* =========================
+   FORMAT TIME
+========================= */
 
-  const m =
+function formatTime(seconds) {
+
+  const minutes =
     Math.floor(
-      sec / 60
+      seconds / 60
     );
 
-  const s =
-    sec % 60;
+
+  const secs =
+    seconds % 60;
 
 
   return (
-    String(m)
-      .padStart(2,"0")
+    String(minutes)
+      .padStart(2, "0")
     +
     ":"
     +
-    String(s)
-      .padStart(2,"0")
+    String(secs)
+      .padStart(2, "0")
   );
 
 }
 
 
 
-function pct(){
+/* =========================
+   DISPLAY
+========================= */
 
-  return totalSeconds
-    ? remainingSeconds /
-      totalSeconds
-    : 0;
+function updateDisplay() {
 
-}
-
-
-
-function updateDisplay(){
-
-  timeText.textContent =
-    fmt(
+  timerNumber.textContent =
+    formatTime(
       remainingSeconds
     );
 
 
-  customText.textContent =
-    fmt(
+  customDisplay.textContent =
+    formatTime(
       totalSeconds
     );
 
 
-  const mins =
-    Math.ceil(
-      remainingSeconds /
-      60
-    );
-
-
-  timeLabel.textContent =
+  if (
     remainingSeconds === 0
-      ? "Time's up!"
-      : `${mins} ${
-          mins === 1
-            ? "minute"
-            : "minutes"
-        }`;
+  ) {
+
+    timerLabel.textContent =
+      "Time's up!";
+
+  }
+
+  else {
+
+    const mins =
+      Math.ceil(
+        remainingSeconds / 60
+      );
+
+
+    timerLabel.textContent =
+      mins +
+      " " +
+      (
+        mins === 1
+          ? "minute"
+          : "minutes"
+      );
+
+  }
+
+
+  const percent =
+    totalSeconds > 0
+      ?
+      (
+        remainingSeconds /
+        totalSeconds
+      ) * 100
+      :
+      0;
 
 
   progressFill.style.width =
-    (
-      pct() * 100
-    ) + "%";
-
-
-  updateTimeBasedVisual();
+    percent + "%";
 
 }
 
 
 
-function setMinutes(m){
+/* =========================
+   SET TIME
+========================= */
 
-  stop();
+function setMinutes(minutes) {
+
+  stopTimer();
+
+
+  minutes =
+    Math.max(
+      1,
+      minutes
+    );
 
 
   totalSeconds =
-    Math.max(
-      60,
-      m * 60
-    );
+    minutes * 60;
 
 
   remainingSeconds =
@@ -1283,24 +1668,27 @@ function setMinutes(m){
 
   localStorage.setItem(
     "classroomTimerMinutes",
-    Math.round(
-      totalSeconds / 60
-    )
+    minutes
   );
 
 
   document
     .querySelectorAll(
-      "#quickSet button"
+      ".quick-button"
     )
     .forEach(
-      b =>
-        b.classList.toggle(
-          "active",
-          Number(
-            b.dataset.min
-          ) === m
-        )
+      button => {
+
+        button
+          .classList
+          .toggle(
+            "active",
+            Number(
+              button.dataset.minutes
+            ) === minutes
+          );
+
+      }
     );
 
 
@@ -1310,30 +1698,22 @@ function setMinutes(m){
 
 
 
-function stop(){
+/* =========================
+   START TIMER
+========================= */
 
-  clearInterval(
-    timerId
-  );
+function startTimer() {
 
-
-  timerId =
-    null;
-
-}
-
-
-
-function start(){
-
-  if(timerId){
+  if (
+    timerInterval
+  ) {
     return;
   }
 
 
-  if(
+  if (
     remainingSeconds <= 0
-  ){
+  ) {
 
     remainingSeconds =
       totalSeconds;
@@ -1341,24 +1721,24 @@ function start(){
   }
 
 
-  timerId =
+  timerInterval =
     setInterval(
       () => {
 
         remainingSeconds--;
 
 
-        if(
+        if (
           remainingSeconds <= 0
-        ){
+        ) {
 
           remainingSeconds = 0;
 
           updateDisplay();
 
-          stop();
+          stopTimer();
 
-          chime();
+          playChime();
 
           return;
 
@@ -1368,6 +1748,7 @@ function start(){
         updateDisplay();
 
       },
+
       1000
     );
 
@@ -1375,36 +1756,36 @@ function start(){
 
 
 
-function loadTheme(name){
+/* =========================
+   PAUSE TIMER
+========================= */
 
-  currentTheme =
-    name;
+function stopTimer() {
 
-
-  localStorage.setItem(
-    "classroomTimerTheme",
-    name
+  clearInterval(
+    timerInterval
   );
 
 
-  sceneBg.style.backgroundImage =
-    `url("${ASSET}${themes[name].bg}")`;
+  timerInterval =
+    null;
+
+}
 
 
-  document
-    .querySelectorAll(
-      ".theme"
-    )
-    .forEach(
-      b =>
-        b.classList.toggle(
-          "active",
-          b.dataset.theme === name
-        )
-    );
+
+/* =========================
+   RESET
+========================= */
+
+function resetTimer() {
+
+  stopTimer();
 
 
-  buildFx();
+  remainingSeconds =
+    totalSeconds;
+
 
   updateDisplay();
 
@@ -1412,468 +1793,83 @@ function loadTheme(name){
 
 
 
-function buildFx(){
+/* =========================
+   LOAD VIDEO THEME
+========================= */
 
-  fx.innerHTML =
-    "";
+function loadTheme(themeKey) {
 
+  if (
+    !themes[themeKey]
+  ) {
 
-  if(
-    currentTheme === "fall"
-  ){
-
-    for(
-      let i = 0;
-      i < 18;
-      i++
-    ){
-
-      const e =
-        document.createElement(
-          "div"
-        );
-
-
-      e.className =
-        "leaf " +
-        (
-          i % 3 === 0
-            ? "red"
-            :
-          i % 3 === 1
-            ? "gold"
-            : ""
-        );
-
-
-      e.style.left =
-        (
-          10 +
-          Math.random() * 72
-        ) + "%";
-
-
-      e.style.animationDuration =
-        (
-          6 +
-          Math.random() * 7
-        ) + "s";
-
-
-      e.style.animationDelay =
-        (
-          -Math.random() * 10
-        ) + "s";
-
-
-      fx.appendChild(e);
-
-    }
+    themeKey =
+      "ocean";
 
   }
 
 
+  currentTheme =
+    themeKey;
 
-  if(
-    currentTheme === "ocean" ||
-    currentTheme === "beach"
-  ){
 
-    for(
-      let i = 0;
-      i < 4;
-      i++
-    ){
+  const theme =
+    themes[themeKey];
 
-      const fish =
-        document.createElement(
-          "div"
-        );
 
+  localStorage.setItem(
+    "classroomTimerVideoTheme",
+    themeKey
+  );
 
-      fish.className =
-        "fish";
 
+  fallbackIcon.textContent =
+    theme.icon;
 
-      fish.style.backgroundImage =
-        `url("${ASSET}fish-${(i % 3) + 1}.png")`;
 
+  fallbackText.textContent =
+    theme.name;
 
-      fish.style.top =
-        (
-          18 +
-          i * 15
-        ) + "%";
 
-
-      fish.style.animationDuration =
-        (
-          12 +
-          i * 4
-        ) + "s";
-
-
-      fish.style.animationDelay =
-        (
-          -i * 5
-        ) + "s";
-
-
-      fx.appendChild(
-        fish
-      );
-
-    }
-
-
-    for(
-      let i = 0;
-      i < 18;
-      i++
-    ){
-
-      const b =
-        document.createElement(
-          "div"
-        );
-
-
-      b.className =
-        "bubble";
-
-
-      const s =
-        8 +
-        Math.random() * 20;
-
-
-      b.style.width =
-        s + "px";
-
-
-      b.style.height =
-        s + "px";
-
-
-      b.style.left =
-        (
-          4 +
-          Math.random() * 88
-        ) + "%";
-
-
-      b.style.animationDuration =
-        (
-          5 +
-          Math.random() * 7
-        ) + "s";
-
-
-      b.style.animationDelay =
-        (
-          -Math.random() * 7
-        ) + "s";
-
-
-      fx.appendChild(
-        b
-      );
-
-    }
-
-  }
-
-
-
-  if(
-    currentTheme === "snow"
-  ){
-
-    for(
-      let i = 0;
-      i < 42;
-      i++
-    ){
-
-      const s =
-        document.createElement(
-          "div"
-        );
-
-
-      s.className =
-        "snow";
-
-
-      const z =
-        4 +
-        Math.random() * 8;
-
-
-      s.style.width =
-        z + "px";
-
-
-      s.style.height =
-        z + "px";
-
-
-      s.style.left =
-        Math.random() *
-        100 +
-        "%";
-
-
-      s.style.animationDuration =
-        (
-          5 +
-          Math.random() * 7
-        ) + "s";
-
-
-      s.style.animationDelay =
-        (
-          -Math.random() * 8
-        ) + "s";
-
-
-      fx.appendChild(
-        s
-      );
-
-    }
-
-  }
-
-
-
-  if(
-    currentTheme === "spring"
-  ){
-
-    [
-      "🦋",
-      "🦋",
-      "🦋"
-    ]
+  document
+    .querySelectorAll(
+      ".theme-button"
+    )
     .forEach(
-      (x,i) => {
+      button => {
 
-        const b =
-          document.createElement(
-            "div"
+        button
+          .classList
+          .toggle(
+            "active",
+            button.dataset.theme ===
+            themeKey
           );
-
-
-        b.className =
-          "butterfly";
-
-
-        b.textContent =
-          x;
-
-
-        b.style.left =
-          (
-            8 +
-            i * 15
-          ) + "%";
-
-
-        b.style.top =
-          (
-            22 +
-            i * 13
-          ) + "%";
-
-
-        b.style.animationDelay =
-          (
-            -i * 2.5
-          ) + "s";
-
-
-        fx.appendChild(
-          b
-        );
 
       }
     );
 
-  }
+
+  videoSource.src =
+    theme.video;
 
 
-
-  if(
-    currentTheme === "rain"
-  ){
-
-    for(
-      let i = 0;
-      i < 38;
-      i++
-    ){
-
-      const r =
-        document.createElement(
-          "div"
-        );
+  themeVideo.load();
 
 
-      r.className =
-        "rain";
+  if (
+    videoOn
+  ) {
+
+    themeVideo.style.display =
+      "block";
 
 
-      r.style.left =
-        Math.random() *
-        110 +
-        "%";
-
-
-      r.style.animationDelay =
-        (
-          -Math.random()
-        ) + "s";
-
-
-      r.style.animationDuration =
-        (
-          .55 +
-          Math.random() * .55
-        ) + "s";
-
-
-      fx.appendChild(
-        r
+    themeVideo
+      .play()
+      .catch(
+        () => {}
       );
-
-    }
-
-  }
-
-
-
-  if(
-    currentTheme ===
-    "fireplace"
-  ){
-
-    const g =
-      document.createElement(
-        "div"
-      );
-
-
-    g.className =
-      "glow";
-
-
-    fx.appendChild(
-      g
-    );
-
-  }
-
-
-
-  if(
-    currentTheme ===
-    "bubbles"
-  ){
-
-    for(
-      let i = 0;
-      i < 28;
-      i++
-    ){
-
-      const b =
-        document.createElement(
-          "div"
-        );
-
-
-      b.className =
-        "bubble timerBubble";
-
-
-      const s =
-        18 +
-        Math.random() * 55;
-
-
-      b.style.width =
-        s + "px";
-
-
-      b.style.height =
-        s + "px";
-
-
-      b.style.left =
-        (
-          3 +
-          Math.random() * 90
-        ) + "%";
-
-
-      b.style.bottom =
-        (
-          Math.random() * 68
-        ) + "%";
-
-
-      b.style.animationDuration =
-        (
-          7 +
-          Math.random() * 8
-        ) + "s";
-
-
-      b.style.animationDelay =
-        (
-          -Math.random() * 8
-        ) + "s";
-
-
-      fx.appendChild(
-        b
-      );
-
-    }
-
-  }
-
-
-
-  if(
-    currentTheme === "balloon" ||
-    currentTheme === "rocket" ||
-    currentTheme === "coaster"
-  ){
-
-    const t =
-      document.createElement(
-        "div"
-      );
-
-
-    t.id =
-      "traveler";
-
-
-    t.className =
-      "traveler " +
-      currentTheme;
-
-
-    t.style.backgroundImage =
-      `url("${ASSET}${currentTheme}-object.png")`;
-
-
-    fx.appendChild(
-      t
-    );
 
   }
 
@@ -1881,103 +1877,43 @@ function buildFx(){
 
 
 
-function updateTimeBasedVisual(){
+/* =========================
+   VIDEO TOGGLE
+========================= */
 
-  const p =
-    pct();
+function updateVideoButton() {
 
+  if (
+    videoOn
+  ) {
 
-  if(
-    currentTheme === "bubbles"
-  ){
-
-    const bubbles =
-      [
-        ...document.querySelectorAll(
-          ".timerBubble"
-        )
-      ];
+    videoButton.textContent =
+      "🎬 Video On";
 
 
-    const keep =
-      Math.ceil(
-        bubbles.length *
-        p
+    themeVideo.style.display =
+      "block";
+
+
+    themeVideo
+      .play()
+      .catch(
+        () => {}
       );
 
-
-    bubbles.forEach(
-      (b,i) =>
-        b.style.opacity =
-          i < keep
-            ? "1"
-            : "0"
-    );
-
   }
 
+  else {
+
+    videoButton.textContent =
+      "🎬 Video Off";
 
 
-  const traveler =
-    document.getElementById(
-      "traveler"
-    );
+    themeVideo.pause();
 
 
-  if(!traveler){
-    return;
-  }
-
-
-  const done =
-    1 - p;
-
-
-
-  if(
-    currentTheme === "balloon"
-  ){
-
-    traveler.style.transform =
-      `translate(
-        ${done * 250}px,
-        ${done * 360}px
-      )`;
-
-  }
-
-  else if(
-    currentTheme === "rocket"
-  ){
-
-    traveler.style.transform =
-      `translate(
-        ${done * 640}px,
-        ${-done * 330}px
-      )
-      rotate(
-        ${done * 10}deg
-      )`;
-
-  }
-
-  else if(
-    currentTheme === "coaster"
-  ){
-
-    traveler.style.transform =
-      `translateX(
-        ${done * 650}px
-      )
-      translateY(
-        ${
-          -Math.sin(
-            done *
-            Math.PI
-          ) *
-          100
-        }px
-      )`;
+    themeVideo.style.display =
+      "none";
 
   }
 
@@ -1985,89 +1921,117 @@ function updateTimeBasedVisual(){
 
 
 
-function chime(){
+/* =========================
+   SOUND
+========================= */
 
-  if(!soundOn){
+function updateSoundButton() {
+
+  soundButton.textContent =
+    soundOn
+      ?
+      "🔊 Sound"
+      :
+      "🔇 Sound";
+
+}
+
+
+
+function playChime() {
+
+  if (
+    !soundOn
+  ) {
     return;
   }
 
 
-  const AC =
+  const AudioContext =
     window.AudioContext ||
     window.webkitAudioContext;
 
 
-  if(!AC){
+  if (
+    !AudioContext
+  ) {
     return;
   }
 
 
-  const ctx =
-    new AC();
+  const context =
+    new AudioContext();
 
 
-  [
+  const notes = [
     523.25,
     659.25,
     783.99
-  ]
-  .forEach(
-    (f,i) => {
-
-      const o =
-        ctx.createOscillator();
+  ];
 
 
-      const g =
-        ctx.createGain();
+  notes.forEach(
+    (frequency, index) => {
+
+      const oscillator =
+        context.createOscillator();
 
 
-      const t =
-        ctx.currentTime +
-        i * .22;
+      const gain =
+        context.createGain();
 
 
-      o.type =
+      const start =
+        context.currentTime +
+        index * 0.22;
+
+
+      oscillator.type =
         "sine";
 
 
-      o.frequency.value =
-        f;
+      oscillator.frequency.value =
+        frequency;
 
 
-      g.gain.setValueAtTime(
-        .001,
-        t
-      );
-
-
-      g.gain
-        .exponentialRampToValueAtTime(
-          .13,
-          t + .03
+      gain.gain
+        .setValueAtTime(
+          0.001,
+          start
         );
 
 
-      g.gain
+      gain.gain
         .exponentialRampToValueAtTime(
-          .001,
-          t + .65
+          0.13,
+          start + 0.03
         );
 
 
-      o.connect(g);
+      gain.gain
+        .exponentialRampToValueAtTime(
+          0.001,
+          start + 0.7
+        );
 
 
-      g.connect(
-        ctx.destination
+      oscillator.connect(
+        gain
       );
 
 
-      o.start(t);
+      gain.connect(
+        context.destination
+      );
 
 
-      o.stop(
-        t + .7
+      oscillator.start(
+        start
+      );
+
+
+      oscillator.stop(
+        start + 0.8
       );
 
     }
@@ -2075,11 +2039,16 @@ function chime(){
 
 
   setTimeout(
-    () =>
-      ctx.close()
+    () => {
+
+      context
+        .close()
         .catch(
           () => {}
-        ),
+        );
+
+    },
+
     1800
   );
 
@@ -2087,157 +2056,236 @@ function chime(){
 
 
 
-document
-  .querySelectorAll(
-    ".theme"
-  )
-  .forEach(
-    b =>
-      b.onclick =
-        () =>
-          loadTheme(
-            b.dataset.theme
-          )
-  );
-
-
+/* =========================
+   QUICK BUTTONS
+========================= */
 
 document
   .querySelectorAll(
-    "#quickSet button"
+    ".quick-button"
   )
   .forEach(
-    b =>
-      b.onclick =
-        () =>
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
           setMinutes(
             Number(
-              b.dataset.min
+              button.dataset.minutes
             )
-          )
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+
+/* =========================
+   THEME BUTTONS
+========================= */
+
+document
+  .querySelectorAll(
+    ".theme-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          loadTheme(
+            button.dataset.theme
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+
+/* =========================
+   PLUS / MINUS
+========================= */
+
+document
+  .getElementById(
+    "plusButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      const minutes =
+        Math.round(
+          totalSeconds / 60
+        );
+
+
+      setMinutes(
+        minutes + 1
+      );
+
+    }
   );
 
 
 
 document
   .getElementById(
-    "plusBtn"
+    "minusButton"
   )
-  .onclick =
-    () =>
-      setMinutes(
+  .addEventListener(
+    "click",
+    () => {
+
+      const minutes =
         Math.round(
           totalSeconds / 60
-        ) + 1
-      );
+        );
 
 
-
-document
-  .getElementById(
-    "minusBtn"
-  )
-  .onclick =
-    () =>
       setMinutes(
         Math.max(
           1,
-          Math.round(
-            totalSeconds / 60
-          ) - 1
+          minutes - 1
         )
       );
 
+    }
+  );
+
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+document
+  .getElementById(
+    "startButton"
+  )
+  .addEventListener(
+    "click",
+    startTimer
+  );
 
 
 document
   .getElementById(
-    "startBtn"
+    "pauseButton"
   )
-  .onclick =
-    start;
-
+  .addEventListener(
+    "click",
+    stopTimer
+  );
 
 
 document
   .getElementById(
-    "pauseBtn"
+    "resetButton"
   )
-  .onclick =
-    stop;
+  .addEventListener(
+    "click",
+    resetTimer
+  );
 
 
 
-document
-  .getElementById(
-    "resetBtn"
-  )
-  .onclick =
+/* =========================
+   SOUND BUTTON
+========================= */
+
+soundButton
+  .addEventListener(
+    "click",
     () => {
 
-      stop();
-
-      remainingSeconds =
-        totalSeconds;
-
-      updateDisplay();
-
-    };
+      soundOn =
+        !soundOn;
 
 
-
-document
-  .getElementById(
-    "toolsBtn"
-  )
-  .onclick =
-    () =>
-      location.href =
-        "index.html";
-
-
-
-soundBtn.onclick =
-  () => {
-
-    soundOn =
-      !soundOn;
-
-
-    localStorage.setItem(
-      "classroomTimerSound",
-      soundOn
-        ? "on"
-        : "off"
-    );
-
-
-    soundBtn.textContent =
-      soundOn
-        ? "🔊 Sound"
-        : "🔇 Sound";
-
-  };
-
-
-
-document
-  .getElementById(
-    "settingsBtn"
-  )
-  .onclick =
-    () =>
-      alert(
-        "Timer settings can be added here later."
+      localStorage.setItem(
+        "classroomTimerSound",
+        soundOn
+          ? "on"
+          : "off"
       );
 
 
+      updateSoundButton();
+
+    }
+  );
+
+
+
+/* =========================
+   VIDEO BUTTON
+========================= */
+
+videoButton
+  .addEventListener(
+    "click",
+    () => {
+
+      videoOn =
+        !videoOn;
+
+
+      localStorage.setItem(
+        "classroomTimerVideo",
+        videoOn
+          ? "on"
+          : "off"
+      );
+
+
+      updateVideoButton();
+
+    }
+  );
+
+
+
+/* =========================
+   TOOLS
+========================= */
 
 document
   .getElementById(
-    "fullBtn"
+    "toolsButton"
   )
-  .onclick =
+  .addEventListener(
+    "click",
+    () => {
+
+      window.location.href =
+        "index.html";
+
+    }
+  );
+
+
+
+/* =========================
+   FULLSCREEN
+========================= */
+
+document
+  .getElementById(
+    "fullscreenButton"
+  )
+  .addEventListener(
+    "click",
     async () => {
 
       const scene =
@@ -2246,18 +2294,18 @@ document
         );
 
 
-      try{
+      try {
 
-        if(
+        if (
           !document.fullscreenElement
-        ){
+        ) {
 
           await scene
             .requestFullscreen();
 
         }
 
-        else{
+        else {
 
           await document
             .exitFullscreen();
@@ -2266,21 +2314,44 @@ document
 
       }
 
-      catch(e){}
+      catch (error) {}
 
-    };
+    }
+  );
 
 
 
-soundBtn.textContent =
-  soundOn
-    ? "🔊 Sound"
-    : "🔇 Sound";
+/* =========================
+   IF VIDEO FILE IS MISSING
+========================= */
 
+themeVideo
+  .addEventListener(
+    "error",
+    () => {
+
+      themeVideo.style.display =
+        "none";
+
+    },
+    true
+  );
+
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+updateSoundButton();
 
 loadTheme(
   currentTheme
 );
+
+updateVideoButton();
+
+updateDisplay();
 
 </script>
 
