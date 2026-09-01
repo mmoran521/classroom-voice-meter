@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Random Student</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --navy: #2d3d55;
+  --muted: #768397;
+  --border: #e3e8ef;
+  --background: #f6f8fb;
+  --card: #ffffff;
+
+  --teal: #69bea9;
+  --teal-light: #eaf8f4;
+
+  --blue: #809fe0;
+  --blue-light: #eef3ff;
+
+  --purple: #9589d5;
+  --purple-light: #f1effb;
+
+  --pink: #df8ca4;
+  --pink-light: #fceef3;
+
+  --red: #d96d75;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+
+  color: var(--navy);
+
+  background:
+    radial-gradient(circle at top left, #eef4ff, transparent 34%),
+    radial-gradient(circle at bottom right, #eaf8f4, transparent 36%),
+    var(--background);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page {
+  width: min(1050px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 50px;
+}
+
+
+/* =========================================
+   TOP
+========================================= */
+
+.topbar {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr;
+
+  align-items: center;
+
+  margin-bottom: 28px;
+}
+
+.tools-button {
+  justify-self: start;
+
+  border: 1px solid var(--border);
+  background: white;
+
+  color: var(--navy);
+
+  padding: 11px 17px;
+
+  border-radius: 15px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px rgba(50,65,85,.06);
+}
+
+.heading {
+  text-align: center;
+}
+
+.heading h1 {
+  margin: 0;
+
+  font-size: clamp(34px, 5vw, 48px);
+
+  letter-spacing: -1px;
+}
+
+.heading p {
+  margin: 5px 0 0;
+
+  color: var(--muted);
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+.main-card {
+  position: relative;
+
+  overflow: hidden;
+
+  background: white;
+
+  border: 1px solid var(--border);
+
+  border-radius: 30px;
+
+  padding: 35px;
+
+  box-shadow:
+    0 10px 30px rgba(45,60,80,.07);
+}
+
+
+/* =========================================
+   MODE BAR
+========================================= */
+
+.mode-bar {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 28px;
+}
+
+.mode-label {
+  font-size: 14px;
+
+  color: var(--muted);
+
+  font-weight: 800;
+}
+
+.mode-options {
+  display: flex;
+
+  gap: 8px;
+
+  background: #f5f7fa;
+
+  padding: 5px;
+
+  border-radius: 15px;
+}
+
+.mode-button {
+  border: 0;
+
+  background: transparent;
+
+  color: #718096;
+
+  padding: 9px 14px;
+
+  border-radius: 11px;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.mode-button.selected {
+  background: white;
+
+  color: #5d72ad;
+
+  box-shadow:
+    0 2px 8px rgba(50,65,85,.08);
+}
+
+
+/* =========================================
+   STUDENT DISPLAY
+========================================= */
+
+.display-area {
+  width: min(720px, 100%);
+
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+.student-window {
+  min-height: 220px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--blue-light),
+      var(--teal-light)
+    );
+
+  border: 2px solid white;
+
+  border-radius: 30px;
+
+  box-shadow:
+    inset 0 0 0 1px #e2e8f1,
+    0 8px 20px rgba(55,70,90,.05);
+}
+
+.student-name {
+  width: 100%;
+
+  font-size: clamp(44px, 8vw, 76px);
+
+  font-weight: 900;
+
+  line-height: 1.05;
+
+  letter-spacing: -2px;
+
+  overflow-wrap: anywhere;
+
+  transition:
+    transform .12s ease,
+    opacity .12s ease;
+}
+
+.student-name.shuffling {
+  opacity: .58;
+
+  transform: scale(.96);
+}
+
+.student-name.winner {
+  animation: winnerPop .45s ease;
+}
+
+@keyframes winnerPop {
+  0% {
+    transform: scale(.93);
+  }
+
+  55% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+/* =========================================
+   PICK BUTTON
+========================================= */
+
+.pick-button {
+  width: min(380px, 100%);
+
+  margin-top: 25px;
+
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--teal),
+      #72abc9
+    );
+
+  color: white;
+
+  padding: 18px 25px;
+
+  border-radius: 20px;
+
+  font-size: 21px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(77,164,151,.20);
+
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+.pick-button:hover {
+  transform: translateY(-2px);
+}
+
+.pick-button:active {
+  transform: translateY(0);
+}
+
+.pick-button:disabled {
+  cursor: not-allowed;
+
+  opacity: .5;
+
+  transform: none;
+}
+
+
+/* =========================================
+   ROUND STATUS
+========================================= */
+
+.round-status {
+  margin-top: 17px;
+
+  color: var(--muted);
+
+  font-size: 15px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================
+   BOTTOM ACTIONS
+========================================= */
+
+.bottom-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 25px;
+
+  flex-wrap: wrap;
+}
+
+.secondary-button {
+  border: 1px solid var(--border);
+
+  background: white;
+
+  color: #68768a;
+
+  padding: 11px 16px;
+
+  border-radius: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #f8fafc;
+}
+
+
+/* =========================================
+   EMPTY NOTICE
+========================================= */
+
+.empty-message {
+  display: none;
+
+  margin-top: 20px;
+
+  padding: 14px 18px;
+
+  background: var(--pink-light);
+
+  color: #9c6173;
+
+  border-radius: 14px;
+
+  font-weight: 800;
+}
+
+.empty-message.show {
+  display: block;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 100;
+
+  padding: 20px;
+
+  overflow-y: auto;
+
+  background:
+    rgba(38,51,70,.36);
+
+  backdrop-filter:
+    blur(5px);
+}
+
+.modal-backdrop.open {
+  display: flex;
+
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.modal {
+  width: min(620px, 100%);
+
+  margin: 30px auto;
+
+  background: white;
+
+  border-radius: 28px;
+
+  padding: 25px;
+
+  box-shadow:
+    0 25px 70px rgba(30,45,65,.24);
+}
+
+.modal-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 25px;
+
+  font-weight: 900;
+}
+
+.close-button {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: #f1f4f8;
+
+  color: #697587;
+
+  font-size: 21px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   ADD STUDENT
+========================================= */
+
+.add-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto;
+
+  gap: 8px;
+
+  margin-bottom: 18px;
+}
+
+.name-input {
+  width: 100%;
+
+  border: 1px solid var(--border);
+
+  background: #f9fafc;
+
+  color: var(--navy);
+
+  padding: 13px 14px;
+
+  border-radius: 14px;
+
+  font-size: 16px;
+}
+
+.name-input:focus,
+.bulk-input:focus {
+  outline: 3px solid rgba(128,159,224,.16);
+
+  border-color: var(--blue);
+}
+
+.add-student-button {
+  border: 0;
+
+  background: var(--teal);
+
+  color: white;
+
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   ROSTER
+========================================= */
+
+.roster-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 8px;
+}
+
+.roster-title {
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.roster-count {
+  color: var(--muted);
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+.roster-list {
+  max-height: 285px;
+
+  overflow-y: auto;
+
+  border-top: 1px solid var(--border);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.roster-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  min-height: 51px;
+
+  padding: 10px 4px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.roster-item:last-child {
+  border-bottom: 0;
+}
+
+.roster-name {
+  font-weight: 800;
+
+  overflow-wrap: anywhere;
+}
+
+.remove-student-button {
+  border: 0;
+
+  background: transparent;
+
+  color: #ad7581;
+
+  padding: 7px 9px;
+
+  border-radius: 9px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.remove-student-button:hover {
+  background: var(--pink-light);
+
+  color: var(--red);
+}
+
+.no-students {
+  padding: 28px 12px;
+
+  text-align: center;
+
+  color: var(--muted);
+}
+
+
+/* =========================================
+   BULK ADD
+========================================= */
+
+.bulk-section {
+  margin-top: 20px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid var(--border);
+}
+
+.bulk-title {
+  margin-bottom: 5px;
+
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.bulk-help {
+  margin-bottom: 9px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+.bulk-input {
+  width: 100%;
+
+  min-height: 100px;
+
+  resize: vertical;
+
+  border: 1px solid var(--border);
+
+  background: #f9fafc;
+
+  color: var(--navy);
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+}
+
+.bulk-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 8px;
+}
+
+.bulk-button {
+  border: 1px solid #dcd9ef;
+
+  background: var(--purple-light);
+
+  color: #7066a8;
+
+  padding: 10px 15px;
+
+  border-radius: 12px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   MODAL FOOT
+========================================= */
+
+.modal-foot {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 20px;
+}
+
+.done-button {
+  border: 0;
+
+  background: var(--blue);
+
+  color: white;
+
+  padding: 12px 20px;
+
+  border-radius: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   CONFETTI
+========================================= */
+
+.confetti-layer {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  z-index: 10;
+}
+
+.confetti {
+  position: absolute;
+
+  top: 42%;
+
+  width: 8px;
+  height: 13px;
+
+  border-radius: 3px;
+
+  opacity: 0;
+
+  animation:
+    confettiFall
+    1.15s ease-out
+    forwards;
+}
+
+@keyframes confettiFall {
+
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(0,0)
+      rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(
+        var(--x),
+        var(--y)
+      )
+      rotate(
+        var(--r)
+      );
+  }
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width: 720px) {
+
+  .topbar {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+
+    text-align: center;
+  }
+
+  .tools-button {
+    justify-self: center;
+
+    order: 2;
+  }
+
+  .heading {
+    order: 1;
+  }
+
+  .main-card {
+    padding: 24px 18px;
+  }
+
+  .mode-bar {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .mode-label {
+    text-align: center;
+  }
+
+  .mode-options {
+    display: grid;
+
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .student-window {
+    min-height: 180px;
+  }
+
+  .add-row {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media(prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+  <!-- =====================================
+       TOP
+  ====================================== -->
+
+  <header class="topbar">
+
+    <button
+      id="toolsButton"
+      class="tools-button"
+      type="button">
+      ⌂ Tools
+    </button>
+
+    <div class="heading">
+
+      <h1>Random Student</h1>
+
+      <p>
+        Pick someone from our class.
+      </p>
+
+    </div>
+
+    <div></div>
+
+  </header>
+
+
+
+  <!-- =====================================
+       MAIN CARD
+  ====================================== -->
+
+  <main class="main-card">
+
+    <div
+      id="confettiLayer"
+      class="confetti-layer">
+    </div>
+
+
+    <div class="mode-bar">
+
+      <div class="mode-label">
+        How should students be picked?
+      </div>
+
+      <div class="mode-options">
+
+        <button
+          id="noRepeatButton"
+          class="mode-button selected"
+          type="button">
+          Everyone Gets a Turn
+        </button>
+
+        <button
+          id="repeatButton"
+          class="mode-button"
+          type="button">
+          Allow Repeats
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="display-area">
+
+      <div class="student-window">
+
+        <div
+          id="studentName"
+          class="student-name">
+          Ready?
+        </div>
+
+      </div>
+
+
+      <button
+        id="pickButton"
+        class="pick-button"
+        type="button">
+        🎲 PICK A STUDENT
+      </button>
+
+
+      <div
+        id="roundStatus"
+        class="round-status">
+        Add students to get started.
+      </div>
+
+
+      <div
+        id="emptyMessage"
+        class="empty-message">
+        Your student list is empty. Add students in Manage Students.
+      </div>
+
+
+      <div class="bottom-actions">
+
+        <button
+          id="resetRoundButton"
+          class="secondary-button"
+          type="button">
+          ↻ Reset Round
+        </button>
+
+        <button
+          id="manageStudentsButton"
+          class="secondary-button"
+          type="button">
+          ⚙ Manage Students
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+
+<!-- =======================================
+     MANAGE STUDENTS MODAL
+======================================= -->
+
+<div
+  id="studentModal"
+  class="modal-backdrop">
+
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="manageTitle">
+
+    <div class="modal-top">
+
+      <div
+        id="manageTitle"
+        class="modal-title">
+        Manage Students
+      </div>
+
+      <button
+        id="closeModalButton"
+        class="close-button"
+        type="button">
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="add-row">
+
+      <input
+        id="studentInput"
+        class="name-input"
+        type="text"
+        maxlength="60"
+        placeholder="Student name">
+
+      <button
+        id="addStudentButton"
+        class="add-student-button"
+        type="button">
+        + Add
+      </button>
+
+    </div>
+
+
+    <div class="roster-header">
+
+      <div class="roster-title">
+        Class List
+      </div>
+
+      <div
+        id="rosterCount"
+        class="roster-count">
+        0 students
+      </div>
+
+    </div>
+
+
+    <div
+      id="rosterList"
+      class="roster-list">
+    </div>
+
+
+
+    <div class="bulk-section">
+
+      <div class="bulk-title">
+        Add Several Students
+      </div>
+
+      <div class="bulk-help">
+        Paste names separated by lines or commas.
+      </div>
+
+      <textarea
+        id="bulkInput"
+        class="bulk-input"
+        placeholder="Aiyana&#10;Caleb&#10;Christian&#10;Lanair">
+      </textarea>
+
+      <div class="bulk-actions">
+
+        <button
+          id="bulkAddButton"
+          class="bulk-button"
+          type="button">
+          Add Names
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-foot">
+
+      <button
+        id="doneButton"
+        class="done-button"
+        type="button">
+        Done
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   STORAGE
+========================================= */
+
+const STUDENT_STORAGE_KEY =
+  "classroomRandomStudentsV1";
+
+const MODE_STORAGE_KEY =
+  "classroomRandomStudentModeV1";
+
+const ROUND_STORAGE_KEY =
+  "classroomRandomStudentRoundV1";
+
+
+let students = [];
+
+let remainingStudents = [];
+
+let mode = "no-repeat";
+
+let isPicking = false;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const studentName =
+  document.getElementById(
+    "studentName"
+  );
+
+const pickButton =
+  document.getElementById(
+    "pickButton"
+  );
+
+const roundStatus =
+  document.getElementById(
+    "roundStatus"
+  );
+
+const emptyMessage =
+  document.getElementById(
+    "emptyMessage"
+  );
+
+const noRepeatButton =
+  document.getElementById(
+    "noRepeatButton"
+  );
+
+const repeatButton =
+  document.getElementById(
+    "repeatButton"
+  );
+
+const resetRoundButton =
+  document.getElementById(
+    "resetRoundButton"
+  );
+
+const studentModal =
+  document.getElementById(
+    "studentModal"
+  );
+
+const studentInput =
+  document.getElementById(
+    "studentInput"
+  );
+
+const rosterList =
+  document.getElementById(
+    "rosterList"
+  );
+
+const rosterCount =
+  document.getElementById(
+    "rosterCount"
+  );
+
+const bulkInput =
+  document.getElementById(
+    "bulkInput"
+  );
+
+const confettiLayer =
+  document.getElementById(
+    "confettiLayer"
+  );
+
+
+/* =========================================
+   LOAD
+========================================= */
+
+function loadData() {
+
+  try {
+
+    const savedStudents =
+      localStorage.getItem(
+        STUDENT_STORAGE_KEY
+      );
+
+    students =
+      savedStudents
+        ? JSON.parse(savedStudents)
+        : [];
+
+  }
+  catch {
+
+    students = [];
+
+  }
+
+
+  try {
+
+    const savedMode =
+      localStorage.getItem(
+        MODE_STORAGE_KEY
+      );
+
+    if (
+      savedMode === "repeat" ||
+      savedMode === "no-repeat"
+    ) {
+
+      mode =
+        savedMode;
+
+    }
+
+  }
+  catch {}
+
+
+  try {
+
+    const savedRound =
+      localStorage.getItem(
+        ROUND_STORAGE_KEY
+      );
+
+    remainingStudents =
+      savedRound
+        ? JSON.parse(savedRound)
+        : [...students];
+
+  }
+  catch {
+
+    remainingStudents =
+      [...students];
+
+  }
+
+
+  /*
+    Remove names from the saved
+    round if they no longer exist
+    in the current roster.
+  */
+
+  remainingStudents =
+    remainingStudents.filter(
+      name =>
+        students.includes(name)
+    );
+
+
+  /*
+    If a student was added since
+    the round was last saved,
+    include them in the current round.
+  */
+
+  students.forEach(
+    name => {
+
+      const alreadyUsed =
+        !remainingStudents.includes(name);
+
+      const hasValidSavedRound =
+        localStorage.getItem(
+          ROUND_STORAGE_KEY
+        );
+
+      if (
+        !hasValidSavedRound &&
+        !alreadyUsed
+      ) {
+
+        remainingStudents.push(
+          name
+        );
+
+      }
+
+    }
+  );
+
+
+  saveRound();
+
+}
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+function saveStudents() {
+
+  localStorage.setItem(
+    STUDENT_STORAGE_KEY,
+    JSON.stringify(students)
+  );
+
+}
+
+
+function saveMode() {
+
+  localStorage.setItem(
+    MODE_STORAGE_KEY,
+    mode
+  );
+
+}
+
+
+function saveRound() {
+
+  localStorage.setItem(
+    ROUND_STORAGE_KEY,
+    JSON.stringify(
+      remainingStudents
+    )
+  );
+
+}
+
+
+/* =========================================
+   MODE
+========================================= */
+
+function setMode(
+  newMode
+) {
+
+  mode =
+    newMode;
+
+  saveMode();
+
+  updateModeUI();
+
+  updateStatus();
+
+}
+
+
+function updateModeUI() {
+
+  noRepeatButton
+    .classList
+    .toggle(
+      "selected",
+      mode === "no-repeat"
+    );
+
+
+  repeatButton
+    .classList
+    .toggle(
+      "selected",
+      mode === "repeat"
+    );
+
+
+  resetRoundButton.style.display =
+    mode === "no-repeat"
+      ? "inline-block"
+      : "none";
+
+}
+
+
+noRepeatButton.addEventListener(
+  "click",
+  () => {
+
+    setMode(
+      "no-repeat"
+    );
+
+  }
+);
+
+
+repeatButton.addEventListener(
+  "click",
+  () => {
+
+    setMode(
+      "repeat"
+    );
+
+  }
+);
+
+
+/* =========================================
+   PICK STUDENT
+========================================= */
+
+pickButton.addEventListener(
+  "click",
+  pickStudent
+);
+
+
+function pickStudent() {
+
+  if (
+    isPicking
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    students.length === 0
+  ) {
+
+    emptyMessage
+      .classList
+      .add("show");
+
+    return;
+
+  }
+
+
+  emptyMessage
+    .classList
+    .remove("show");
+
+
+  if (
+    mode === "no-repeat" &&
+    remainingStudents.length === 0
+  ) {
+
+    /*
+      Automatically begin
+      a fresh round.
+    */
+
+    remainingStudents =
+      [...students];
+
+    saveRound();
+
+  }
+
+
+  const pool =
+    mode === "repeat"
+      ? [...students]
+      : [...remainingStudents];
+
+
+  if (
+    pool.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  isPicking = true;
+
+  pickButton.disabled =
+    true;
+
+
+  studentName
+    .classList
+    .remove("winner");
+
+
+  studentName
+    .classList
+    .add("shuffling");
+
+
+  const winner =
+    pool[
+      Math.floor(
+        Math.random() *
+        pool.length
+      )
+    ];
+
+
+  let shuffleCount = 0;
+
+  const maxShuffles = 17;
+
+
+  const shuffleTimer =
+    setInterval(
+      () => {
+
+        const randomName =
+          pool[
+            Math.floor(
+              Math.random() *
+              pool.length
+            )
+          ];
+
+
+        studentName.textContent =
+          randomName;
+
+
+        shuffleCount++;
+
+
+        if (
+          shuffleCount >=
+          maxShuffles
+        ) {
+
+          clearInterval(
+            shuffleTimer
+          );
+
+
+          finishPick(
+            winner
+          );
+
+        }
+
+      },
+      75
+    );
+
+}
+
+
+/* =========================================
+   FINISH PICK
+========================================= */
+
+function finishPick(
+  winner
+) {
+
+  studentName.textContent =
+    winner;
+
+
+  studentName
+    .classList
+    .remove("shuffling");
+
+
+  void studentName.offsetWidth;
+
+
+  studentName
+    .classList
+    .add("winner");
+
+
+  if (
+    mode === "no-repeat"
+  ) {
+
+    remainingStudents =
+      remainingStudents.filter(
+        name =>
+          name !== winner
+      );
+
+
+    saveRound();
+
+  }
+
+
+  updateStatus();
+
+  createConfetti();
+
+
+  setTimeout(
+    () => {
+
+      pickButton.disabled =
+        false;
+
+      isPicking =
+        false;
+
+    },
+    450
+  );
+
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+function updateStatus() {
+
+  if (
+    students.length === 0
+  ) {
+
+    roundStatus.textContent =
+      "Add students to get started.";
+
+    pickButton.disabled =
+      true;
+
+    emptyMessage
+      .classList
+      .add("show");
+
+    return;
+
+  }
+
+
+  emptyMessage
+    .classList
+    .remove("show");
+
+
+  if (
+    !isPicking
+  ) {
+
+    pickButton.disabled =
+      false;
+
+  }
+
+
+  if (
+    mode === "repeat"
+  ) {
+
+    roundStatus.textContent =
+      students.length +
+      (
+        students.length === 1
+          ? " student in the class"
+          : " students in the class"
+      );
+
+    return;
+
+  }
+
+
+  if (
+    remainingStudents.length === 0
+  ) {
+
+    roundStatus.textContent =
+      "Everyone had a turn! Pick again to start a new round.";
+
+    return;
+
+  }
+
+
+  roundStatus.textContent =
+    remainingStudents.length +
+    (
+      remainingStudents.length === 1
+        ? " student left this round"
+        : " students left this round"
+    );
+
+}
+
+
+/* =========================================
+   RESET ROUND
+========================================= */
+
+resetRoundButton.addEventListener(
+  "click",
+  resetRound
+);
+
+
+function resetRound() {
+
+  remainingStudents =
+    [...students];
+
+  saveRound();
+
+  studentName.textContent =
+    "Ready?";
+
+  updateStatus();
+
+}
+
+
+/* =========================================
+   OPEN MANAGE STUDENTS
+========================================= */
+
+document
+  .getElementById(
+    "manageStudentsButton"
+  )
+  .addEventListener(
+    "click",
+    openStudentModal
+  );
+
+
+function openStudentModal() {
+
+  renderRoster();
+
+  studentModal
+    .classList
+    .add("open");
+
+
+  setTimeout(
+    () => {
+
+      studentInput.focus();
+
+    },
+    50
+  );
+
+}
+
+
+/* =========================================
+   CLOSE MODAL
+========================================= */
+
+function closeStudentModal() {
+
+  studentModal
+    .classList
+    .remove("open");
+
+
+  studentInput.value =
+    "";
+
+  bulkInput.value =
+    "";
+
+}
+
+
+document
+  .getElementById(
+    "closeModalButton"
+  )
+  .addEventListener(
+    "click",
+    closeStudentModal
+  );
+
+
+document
+  .getElementById(
+    "doneButton"
+  )
+  .addEventListener(
+    "click",
+    closeStudentModal
+  );
+
+
+studentModal.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target ===
+      studentModal
+    ) {
+
+      closeStudentModal();
+
+    }
+
+  }
+);
+
+
+/* =========================================
+   ADD SINGLE STUDENT
+========================================= */
+
+document
+  .getElementById(
+    "addStudentButton"
+  )
+  .addEventListener(
+    "click",
+    addSingleStudent
+  );
+
+
+studentInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      addSingleStudent();
+
+    }
+
+  }
+);
+
+
+function addSingleStudent() {
+
+  const name =
+    cleanName(
+      studentInput.value
+    );
+
+
+  if (
+    !name
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    hasStudent(name)
+  ) {
+
+    studentInput.select();
+
+    return;
+
+  }
+
+
+  students.push(
+    name
+  );
+
+
+  remainingStudents.push(
+    name
+  );
+
+
+  sortStudents();
+
+
+  saveStudents();
+
+  saveRound();
+
+  renderRoster();
+
+  updateStatus();
+
+
+  studentInput.value =
+    "";
+
+  studentInput.focus();
+
+}
+
+
+/* =========================================
+   BULK ADD
+========================================= */
+
+document
+  .getElementById(
+    "bulkAddButton"
+  )
+  .addEventListener(
+    "click",
+    bulkAddStudents
+  );
+
+
+function bulkAddStudents() {
+
+  const raw =
+    bulkInput.value.trim();
+
+
+  if (
+    !raw
+  ) {
+
+    return;
+
+  }
+
+
+  const names =
+    raw
+      .split(
+        /[\n,;]+/
+      )
+      .map(
+        cleanName
+      )
+      .filter(Boolean);
+
+
+  let added = 0;
+
+
+  names.forEach(
+    name => {
+
+      if (
+        !hasStudent(name)
+      ) {
+
+        students.push(
+          name
+        );
+
+
+        remainingStudents.push(
+          name
+        );
+
+
+        added++;
+
+      }
+
+    }
+  );
+
+
+  if (
+    added > 0
+  ) {
+
+    sortStudents();
+
+    saveStudents();
+
+    saveRound();
+
+    renderRoster();
+
+    updateStatus();
+
+  }
+
+
+  bulkInput.value =
+    "";
+
+}
+
+
+/* =========================================
+   ROSTER
+========================================= */
+
+function renderRoster() {
+
+  rosterList.innerHTML =
+    "";
+
+
+  rosterCount.textContent =
+    students.length +
+    (
+      students.length === 1
+        ? " student"
+        : " students"
+    );
+
+
+  if (
+    students.length === 0
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+    empty.className =
+      "no-students";
+
+    empty.textContent =
+      "No students added yet.";
+
+    rosterList.appendChild(
+      empty
+    );
+
+    return;
+
+  }
+
+
+  students.forEach(
+    name => {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "roster-item";
+
+
+      const nameElement =
+        document.createElement(
+          "div"
+        );
+
+      nameElement.className =
+        "roster-name";
+
+      nameElement.textContent =
+        name;
+
+
+      const removeButton =
+        document.createElement(
+          "button"
+        );
+
+      removeButton.type =
+        "button";
+
+      removeButton.className =
+        "remove-student-button";
+
+      removeButton.textContent =
+        "Remove";
+
+
+      removeButton.addEventListener(
+        "click",
+        () => {
+
+          removeStudent(
+            name
+          );
+
+        }
+      );
+
+
+      row.appendChild(
+        nameElement
+      );
+
+
+      row.appendChild(
+        removeButton
+      );
+
+
+      rosterList.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   REMOVE
+========================================= */
+
+function removeStudent(
+  name
+) {
+
+  students =
+    students.filter(
+      student =>
+        student !== name
+    );
+
+
+  remainingStudents =
+    remainingStudents.filter(
+      student =>
+        student !== name
+    );
+
+
+  saveStudents();
+
+  saveRound();
+
+  renderRoster();
+
+  updateStatus();
+
+
+  if (
+    students.length === 0
+  ) {
+
+    studentName.textContent =
+      "Ready?";
+
+  }
+
+}
+
+
+/* =========================================
+   NAME UTILITIES
+========================================= */
+
+function cleanName(
+  value
+) {
+
+  return String(value || "")
+    .trim()
+    .replace(
+      /\s+/g,
+      " "
+    );
+
+}
+
+
+function hasStudent(
+  name
+) {
+
+  return students.some(
+    student =>
+      student.toLowerCase() ===
+      name.toLowerCase()
+  );
+
+}
+
+
+function sortStudents() {
+
+  students.sort(
+    (a,b) =>
+      a.localeCompare(
+        b,
+        undefined,
+        {
+          sensitivity:
+            "base"
+        }
+      )
+  );
+
+}
+
+
+/* =========================================
+   CONFETTI
+========================================= */
+
+function createConfetti() {
+
+  confettiLayer.innerHTML =
+    "";
+
+
+  const colors = [
+    "#69bea9",
+    "#809fe0",
+    "#9589d5",
+    "#df8ca4"
+  ];
+
+
+  const count = 22;
+
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const piece =
+      document.createElement(
+        "div"
+      );
+
+
+    piece.className =
+      "confetti";
+
+
+    piece.style.left =
+      (
+        45 +
+        Math.random() * 10
+      ) + "%";
+
+
+    piece.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    const x =
+      (
+        Math.random() *
+        420
+      ) - 210;
+
+
+    const y =
+      100 +
+      Math.random() *
+      180;
+
+
+    const rotate =
+      (
+        Math.random() *
+        500
+      ) - 250;
+
+
+    piece.style.setProperty(
+      "--x",
+      x + "px"
+    );
+
+
+    piece.style.setProperty(
+      "--y",
+      y + "px"
+    );
+
+
+    piece.style.setProperty(
+      "--r",
+      rotate + "deg"
+    );
+
+
+    confettiLayer.appendChild(
+      piece
+    );
+
+  }
+
+
+  setTimeout(
+    () => {
+
+      confettiLayer.innerHTML =
+        "";
+
+    },
+    1400
+  );
+
+}
+
+
+/* =========================================
+   TOOLS
+========================================= */
+
+document
+  .getElementById(
+    "toolsButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      location.href =
+        "index.html";
+
+    }
+  );
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+loadData();
+
+sortStudents();
+
+updateModeUI();
+
+updateStatus();
+
+renderRoster();
+
+</script>
+
+</body>
+</html>
